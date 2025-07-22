@@ -4,6 +4,7 @@ import CardImage from "@/assets/temp/card-example.png";
 import colors from "@/utils/colors";
 import styled from "@emotion/styled";
 import Image from "next/image";
+import Badge from "./Badge";
 
 interface CardProps {
   title: string;
@@ -16,6 +17,9 @@ interface CardProps {
 export const Card = ({ title, imageUrl, postedDate, deadline, centerName }: CardProps) => {
   return (
     <CardContainer>
+      <div style={{ position: "absolute", top: "12px", right: "12px" }}>
+        <Badge content="D-999" />
+      </div>
       <ImageContainer>
         <StyledImage src={CardImage} alt={title} />
       </ImageContainer>
@@ -37,6 +41,7 @@ export const Card = ({ title, imageUrl, postedDate, deadline, centerName }: Card
 };
 
 const CardContainer = styled.div`
+  position: relative;
   border: 1px solid ${colors.gray[3]};
   background-color: ${colors.white};
   border-radius: 24px;
