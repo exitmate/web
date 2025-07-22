@@ -5,6 +5,7 @@ import colors from "@/utils/colors";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import Badge from "./Badge";
+import BookMark from "./BookMark";
 
 interface CardProps {
   title: string;
@@ -19,6 +20,9 @@ export const Card = ({ title, imageUrl, postedDate, deadline, centerName }: Card
     <CardContainer>
       <div style={{ position: "absolute", top: "12px", right: "12px" }}>
         <Badge content="D-999" />
+      </div>
+      <div style={{ position: "absolute", bottom: "12px", right: "12px" }}>
+        <BookMark isBookmarked={false} />
       </div>
       <ImageContainer>
         <StyledImage src={CardImage} alt={title} />
