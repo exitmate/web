@@ -1,3 +1,4 @@
+import { Header } from "@/features/Header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localfont from "next/font/local";
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pretendard.variable}`}>
       <body className={pretendard.className}>
+        <Header />
         {children}
       </body>
     </html>

@@ -1,0 +1,54 @@
+"use client";
+
+import LogoImage from '@/assets/icons/logo.svg';
+import SearchBar from '@/components/SearchBar';
+import colors from '@/utils/colors';
+import styled from '@emotion/styled';
+import Image from 'next/image';
+
+export const Header = () => {
+  return (
+    <HeaderContainer>
+      <ContentsContainer>
+        <ImageContainer>
+          <Image src={LogoImage} alt="Logo" width={80} height={80}/>
+        </ImageContainer>
+        <SearchBar />
+        <MyPageText>마이페이지</MyPageText>
+      </ContentsContainer>
+    </HeaderContainer>
+  );
+}
+
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+`;
+  
+const ContentsContainer = styled.div`
+  display: grid;
+  width: 80%;
+  grid-template-columns: 1fr 4fr 1fr;
+  align-items: center;
+  Justify-content: center;
+`;
+
+const ImageContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const MyPageText = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${colors.black};
+  cursor: pointer;
+
+  `;
