@@ -1,4 +1,4 @@
-import Card from "@/components/Card";
+import Card from "@/features/ProgramCard";
 
 export const ProgramsPage = () => {
   return (
