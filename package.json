@@ -10,20 +10,24 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.14.1",
+    "@prisma/client": "6.12.0",
     "next": "15.4.2",
+    "next-auth": "^4.24.11",
     "normalize.css": "^8.0.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^20.19.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
     "eslint-config-prettier": "^10.1.8",
-    "typescript": "^5"
+    "prisma": "^6.12.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@9.11.0+sha1.4cd20e68438613738e8f2bc9aece61eaa6b3e649"
 }
