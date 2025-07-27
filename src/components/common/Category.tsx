@@ -18,7 +18,9 @@ export const Category = ({ category, contents, setCategory }: CategoryProps) => 
   return (
     <CategoryContainer onClick={() => setIsOpen(!isOpen)}>
       <p>{category}</p>
-      <ArrowDown isOpen={isOpen} src={ArrowDownIcon} alt="arrow-down" width={24} height={24} />
+      <ArrowDownSection isOpen={isOpen}>
+        <Image src={ArrowDownIcon} alt="arrow-down" width={24} height={24} />
+      </ArrowDownSection>
       {isOpen && (
         <CategoryContents>
           {contents.map((content) => (
@@ -47,7 +49,12 @@ const CategoryContainer = styled.div`
   color: ${colors.gray[7]};
 `;
 
-const ArrowDown = styled(Image)<{ isOpen: boolean }>`
+const ArrowDownSection = styled.div<{ isOpen: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   transform: ${({ isOpen }) => isOpen ? "rotate(180deg)" : "rotate(0deg)"};
   transition: transform 0.3s ease;
 `;
