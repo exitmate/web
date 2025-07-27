@@ -30,7 +30,7 @@ const HeaderContainer = styled.div`
   
 const ContentsContainer = styled.div`
   display: grid;
-  width: 80%;
+  width: 100%;
   grid-template-columns: 1fr 4fr 1fr;
   align-items: center;
   Justify-content: center;
