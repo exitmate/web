@@ -6,6 +6,7 @@ import Category from "@/components/common/Category";
 import PageNation from "@/components/common/PageNation";
 import Toggle from "@/components/common/Toggle";
 import ProgramCard from "@/components/ProgramCard";
+import { AvailableProgramCount } from "@/features/AvailableProgramCount";
 import RecommendedProgramList from "@/features/RecommendedProgramList";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ export const ProgramsPage = () => {
   return (
     <div>
       <RecommendedProgramList />
+      <AvailableProgramCount />
       <ProgramCard 
         title="2025년 부산시 소상공인 사업 정리 도우미 지원 사업"
         imageUrl="/path/to/image.jpg"
