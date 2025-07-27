@@ -10,9 +10,9 @@ export const RecommendedProgramList = () => {
       <PaddedBox>
         <Title>추천 지원 사업 Top 5</Title>
         <ProgramCardContainer>
-          {programList.map((program) => (
+          {programList.slice(0, 5).map((program) => (  
             <ProgramCard 
-              key={program.title}
+              key={program.id}
               title={program.title}
               imageUrl={program.imageUrl}
               postedDate={program.postedDate}
@@ -50,6 +50,7 @@ const ProgramCardContainer = styled.div`
   width: 100%;
   gap: 16px;
   margin-top: 24px;
+  overflow: hidden;
 `;
 
 export default RecommendedProgramList;
