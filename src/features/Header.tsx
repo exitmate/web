@@ -1,6 +1,7 @@
 "use client";
 
 import LogoImage from '@/assets/icons/logo.svg';
+import PaddedBox from '@/components/common/PaddedBox';
 import SearchBar from '@/components/common/SearchBar';
 import colors from '@/utils/colors';
 import styled from '@emotion/styled';
@@ -8,15 +9,17 @@ import Image from 'next/image';
 
 export const Header = () => {
   return (
-    <HeaderContainer>
-      <ContentsContainer>
-        <ImageContainer>
-          <Image src={LogoImage} alt="Logo" width={80} height={80}/>
-        </ImageContainer>
-        <SearchBar />
-        <MyPageText>마이페이지</MyPageText>
-      </ContentsContainer>
-    </HeaderContainer>
+    <PaddedBox>
+      <HeaderContainer>
+        <ContentsContainer>
+          <ImageContainer>
+            <Image src={LogoImage} alt="Logo" width={80} height={80}/>
+          </ImageContainer>
+          <SearchBar />
+          <MyPageText>마이페이지</MyPageText>
+        </ContentsContainer>
+      </HeaderContainer>
+    </PaddedBox>
   );
 }
 

@@ -35,13 +35,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pretendard.variable}`}>
       <body className={pretendard.className}>
-        <div style={{
-          width: "80%",
-          height: "100%"
-        }}>
-          <Header />
-          {children}
-        </div>
+        <Header />
+        {children}
       </body>
     </html>
   );
