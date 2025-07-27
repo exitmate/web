@@ -2,6 +2,7 @@
 
 import MyIcon from "@/assets/icons/my.svg";
 import Card from "@/components/Card";
+import Category from "@/components/Category";
 import Toggle from "@/components/Toggle";
 import ProgramCard from "@/features/ProgramCard";
 import { useState } from "react";
@@ -9,10 +10,7 @@ import { useState } from "react";
 export const ProgramsPage = () => {
 
   const [isOn, setIsOn] = useState(false);
-
-  const handleToggle = () => {
-    setIsOn(!isOn);
-  }
+  const [category, setCategory] = useState("마감 유형");
 
   return (
     <div>
@@ -25,6 +23,7 @@ export const ProgramsPage = () => {
       />
       <Card programCount={10} title={["김이름님이 신청가능한", "지원사업 개수"]} iconUrl={MyIcon} />
       <Toggle isOn={isOn} setIsOn={setIsOn} />
+      <Category category={category} contents={["상시모집", "마감일 존재"]} setCategory={setCategory} />
     </div>
   ); 
 }
