@@ -1,8 +1,19 @@
+"use client";
+
 import MyIcon from "@/assets/icons/my.svg";
 import Card from "@/components/Card";
+import Toggle from "@/components/Toggle";
 import ProgramCard from "@/features/ProgramCard";
+import { useState } from "react";
 
 export const ProgramsPage = () => {
+
+  const [isOn, setIsOn] = useState(false);
+
+  const handleToggle = () => {
+    setIsOn(!isOn);
+  }
+
   return (
     <div>
       <ProgramCard 
@@ -13,6 +24,7 @@ export const ProgramsPage = () => {
         centerName="부산시소상공인종합지원센터"
       />
       <Card programCount={10} title={["김이름님이 신청가능한", "지원사업 개수"]} iconUrl={MyIcon} />
+      <Toggle isOn={isOn} setIsOn={setIsOn} />
     </div>
   ); 
 }
