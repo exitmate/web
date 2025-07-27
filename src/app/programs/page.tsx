@@ -3,6 +3,7 @@
 import MyIcon from "@/assets/icons/my.svg";
 import Card from "@/components/common/Card";
 import Category from "@/components/common/Category";
+import PageNation from "@/components/common/PageNation";
 import Toggle from "@/components/common/Toggle";
 import ProgramCard from "@/components/ProgramCard";
 import { useState } from "react";
@@ -11,6 +12,8 @@ export const ProgramsPage = () => {
 
   const [isOn, setIsOn] = useState(false);
   const [category, setCategory] = useState("마감 유형");
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 20; // 예시로 20페이지 설정
 
   return (
     <div>
@@ -24,6 +27,11 @@ export const ProgramsPage = () => {
       <Card programCount={10} title={["김이름님이 신청가능한", "지원사업 개수"]} iconUrl={MyIcon} />
       <Toggle isOn={isOn} setIsOn={setIsOn} />
       <Category category={category} contents={["상시모집", "마감일 존재"]} setCategory={setCategory} />
+      <PageNation 
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+      />
     </div>
   ); 
 }
