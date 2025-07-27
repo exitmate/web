@@ -1,10 +1,10 @@
 "use client";
 
 import MyIcon from "@/assets/icons/my.svg";
-import Card from "@/components/Card";
-import Category from "@/components/Category";
-import Toggle from "@/components/Toggle";
-import ProgramCard from "@/features/ProgramCard";
+import Card from "@/components/common/Card";
+import Category from "@/components/common/Category";
+import Toggle from "@/components/common/Toggle";
+import ProgramCard from "@/components/ProgramCard";
 import { useState } from "react";
 
 export const ProgramsPage = () => {

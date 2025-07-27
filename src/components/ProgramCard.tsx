@@ -4,8 +4,8 @@ import CardImage from "@/assets/temp/card-example.png";
 import colors from "@/utils/colors";
 import styled from "@emotion/styled";
 import Image from "next/image";
-import Badge from "../components/Badge";
-import BookMark from "../components/BookMark";
+import Badge from "./common/Badge";
+import BookMark from "./common/BookMark";
 
 interface CardProps {
   title: string;

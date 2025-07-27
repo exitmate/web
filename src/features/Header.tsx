@@ -1,7 +1,7 @@
 "use client";
 
 import LogoImage from '@/assets/icons/logo.svg';
-import SearchBar from '@/components/SearchBar';
+import SearchBar from '@/components/common/SearchBar';
 import colors from '@/utils/colors';
 import styled from '@emotion/styled';
 import Image from 'next/image';
