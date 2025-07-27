@@ -1,5 +1,5 @@
 import MyIcon from "@/assets/icons/my.svg";
-import Card from "@/components/common/Card";
+import UserCard from "@/components/UserCard";
 import colors from "@/utils/colors";
 import styled from "@emotion/styled";
 
@@ -25,8 +25,16 @@ export const AvailableProgramCount = () => {
         <BlackBoldText> 지원 사업 정보</BlackBoldText>
       </TextContainer>
       <ProgramCardContainer>
-        <Card programCount={10} title={["김이름님이 신청가능한", "지원사업 개수"]} iconUrl={MyIcon} />
-        <Card programCount={10} title={["김이름님이 신청가능한", "지원사업 개수"]} iconUrl={MyIcon} />
+        <UserCard
+          imageUrl={MyIcon}
+          title={["김이름님이 신청가능한", "지원사업 개수"]}
+          programCount={10}
+        />
+        <UserCard
+          imageUrl={MyIcon}
+          title={["김이름님이 신청가능한", "지원사업 개수"]}
+          programCount={10}
+        />
       </ProgramCardContainer>
     </AvailableProgramCountContainer>
   );
@@ -34,7 +42,7 @@ export const AvailableProgramCount = () => {
 
 const AvailableProgramCountContainer = styled.div`
   display: flex;
-  align-items: center;
+  padding: 52px 0 80px 0;
   justify-content: space-between;
 `;
 
