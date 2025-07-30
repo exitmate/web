@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model Member {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  kakaoClientId         String   @unique
+  kakaoNickname         String
+  email                 String?   @unique
+  name                  String?
+  birthDate             DateTime?
+  gender                Gender?
+
+  agreedPrivacyPolicy   Boolean @default(false)  // 개인정보 수집 동의
+  agreedTermsOfUse      Boolean @default(false)  // 이용약관 동의
+  agreedDataUsage       Boolean @default(false)  // 데이터 활용 동의
+  agreedMarketing       Boolean @default(false)  // 마케팅 수집 동의 (선택)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+	@@map("Member")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
