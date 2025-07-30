@@ -13,21 +13,23 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-model User {
-  id                    String   @id @default(auto()) @map("_id") @db.ObjectId   
-  email                 String   @unique
-  password              String
-  name                  String
-  birthDate             DateTime
-  gender                Gender
+model Member {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  kakaoClientId         String   @unique
+  kakaoNickname         String
+  email                 String?   @unique
+  name                  String?
+  birthDate             DateTime?
+  gender                Gender?
 
-  agreedPrivacyPolicy   Boolean  // 개인정보 수집 동의
-  agreedTermsOfUse      Boolean  // 이용약관 동의
-  agreedDataUsage       Boolean  // 데이터 활용 동의
-  agreedMarketing       Boolean? // 마케팅 수집 동의 (선택)
+  agreedPrivacyPolicy   Boolean @default(false)  // 개인정보 수집 동의
+  agreedTermsOfUse      Boolean @default(false)  // 이용약관 동의
+  agreedDataUsage       Boolean @default(false)  // 데이터 활용 동의
+  agreedMarketing       Boolean @default(false)  // 마케팅 수집 동의 (선택)
 
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+	@@map("Member")
 }
 
 enum Gender {
