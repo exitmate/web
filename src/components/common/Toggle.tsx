@@ -10,8 +10,8 @@ interface ToggleProps {
 
 export const Toggle = ({ isOn, setIsOn }: ToggleProps) => {
   return (
-    <ToggleContainer isOn={isOn}>
-      <ToggleButton isOn={isOn} onClick={() => {setIsOn(!isOn)}} />
+    <ToggleContainer isOn={isOn} onClick={() => {setIsOn(!isOn)}}>
+      <ToggleButton isOn={isOn} />
     </ToggleContainer>
   );
 };
