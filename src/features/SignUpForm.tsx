@@ -1,4 +1,5 @@
 import { CommonInput } from "@/components/common/CommonInput";
+import CommonSelect from "@/components/common/CommonSelect";
 import colors from "@/utils/colors";
 import { FieldLabel, FieldRoot, Fieldset, FieldsetContent } from "@chakra-ui/react";
 import styled from "@emotion/styled";
@@ -11,20 +12,31 @@ export const SignUpForm = () => {
     name: z.string().min(1).max(10), 
     email: z.string().min(1, "이메일을 입력해주세요").email("올바른 이메일 형식이 아닙니다"),
     birth: z.string(),  
-    gender: z.enum(["male", "female"]),
+    gender: z.string().min(1, "성별을 선택해주세요").refine((val) => val === "male" || val === "female", "올바른 성별을 선택해주세요"),
     agreeToTerms: z.boolean(),
     agreeToPrivacy: z.boolean(),
   });
 
-  const { register, watch, handleSubmit, formState: { errors } } = useForm<z.infer<typeof schema>>({
+  const { register, watch, handleSubmit, formState: { errors }, setValue } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     mode: "all",
     shouldUnregister: false,
+    defaultValues: {
+      name: "",
+      email: "",
+      birth: "",
+      gender: "",
+      agreeToTerms: false,
+      agreeToPrivacy: false,
+    },
   });
   
   const onSubmit = (data: z.infer<typeof schema>) => {
     console.log(data);
   };
+
+  console.log('gender value:', watch("gender"));
+  console.log('gender isInvalid:', watch("gender") === "" || !!errors.gender);
   
   return (
     <Fieldset.Root
@@ -48,6 +60,20 @@ export const SignUpForm = () => {
             register={register("name")}
             type="text"
             isInvalid={watch("name") === "" || !!errors.name}
+          />
+        </FieldRoot>
+        <FieldRoot>
+          <CustomFieldLabel>성별</CustomFieldLabel>
+          <CommonSelect
+            placeholder="성별을 선택해주세요"
+            items={[{ label: "남자", value: "male" }, { label: "여자", value: "female" }]}
+            register={register("gender")}
+            isInvalid={watch("gender") === "" || !!errors.gender}
+            selectedValue={watch("gender") || ""}
+            onValueChange={(value) => {
+              console.log('Setting gender value:', value);
+              setValue("gender", value);
+            }}
           />
         </FieldRoot>
       </FieldsetContent>
