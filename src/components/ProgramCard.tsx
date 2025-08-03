@@ -52,6 +52,7 @@ const CardContainer = styled.div`
   width: 227px;
   height: 270px;
   text-align: center;
+  flex: 1;
 `;
 
 const ImageContainer = styled.div`
