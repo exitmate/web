@@ -1,22 +1,25 @@
 import colors from "@/utils/colors";
 import { Checkbox } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import { UseFormRegisterReturn } from "react-hook-form";
 
 interface CommonCheckboxProps {
   label?: string;
-  register?: UseFormRegisterReturn;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 }
 
-export const CommonCheckbox = ({ label, register }: CommonCheckboxProps) => {
+export const CommonCheckbox = ({ label, checked, onChange }: CommonCheckboxProps) => {
   return (
-    <CheckboxRoot>
-      <Checkbox.HiddenInput name={register?.name} {...register} />
+    <CheckboxRoot checked={checked} onCheckedChange={(details) => {
+      onChange(Boolean(details.checked));
+    }}>
+      <Checkbox.HiddenInput/>
       <CustomCheckboxControl />
       <CustomCheckboxLabel>{label}</CustomCheckboxLabel>
     </CheckboxRoot>
   );
 };
+
 
 const CheckboxRoot = styled(Checkbox.Root)`
   display: flex;

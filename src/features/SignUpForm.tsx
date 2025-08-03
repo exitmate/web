@@ -1,4 +1,5 @@
 import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
+import { CommonButton } from "@/components/common/CommonButton";
 import { CommonCheckbox } from "@/components/common/CommonCheckbox";
 import { CommonInput } from "@/components/common/CommonInput";
 import CommonSelect from "@/components/common/CommonSelect";
@@ -9,7 +10,7 @@ import { FieldLabel, FieldRoot, Fieldset, FieldsetContent, Text } from "@chakra-
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const ReadFullText = ({ url }: { url: string }) => {
@@ -27,13 +28,13 @@ export const SignUpForm = () => {
     email: z.string().min(1, "이메일을 입력해주세요").email("올바른 이메일 형식이 아닙니다"),
     birth: z.string().min(1, "생년월일을 선택해주세요"),
     gender: z.string().min(1, "성별을 선택해주세요").refine((val) => val === "male" || val === "female", "올바른 성별을 선택해주세요"),
-    agreeToTerms: z.boolean(),
-    agreeToPrivacy: z.boolean(),
+    agreeToTerms: z.boolean().refine((val) => val === true, "개인정보 처리방침에 동의해주세요"),
+    agreeToPrivacy: z.boolean().refine((val) => val === true, "이용약관에 동의해주세요"),
   });
 
-  const { register, watch, handleSubmit, formState: { errors }, setValue } = useForm<z.infer<typeof schema>>({
+  const { register, watch, handleSubmit, getValues, formState: { errors, isValid }, setValue, control } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    mode: "all",
+    mode: "onChange",
     shouldUnregister: false,
     defaultValues: {
       name: "",
@@ -45,8 +46,9 @@ export const SignUpForm = () => {
     },
   });
   
-  const onSubmit = (data: z.infer<typeof schema>) => {
-    console.log(data);
+  const onSubmit = () => {
+    console.log(errors);
+    console.log(getValues());
   };
 
   const handleDateChange = (year: string, month: string, day: string) => {
@@ -57,11 +59,9 @@ export const SignUpForm = () => {
       setValue("birth", "");
     }
   };
-
-  console.log('gender value:', watch("gender"));
-  console.log('gender isInvalid:', watch("gender") === "" || !!errors.gender);
   
   return (
+    <form onSubmit={handleSubmit(onSubmit)}>
     <Fieldset.Root
       size="sm"
       invalid
@@ -104,18 +104,41 @@ export const SignUpForm = () => {
         <Spacing height={24} />
         <FieldRoot>
           <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
-          <CommonCheckbox label="개인정보 처리방침에 동의합니다." register={register("agreeToTerms")} />
-          <ReadFullText url="https://www.google.com" />
+            <Controller
+                control={control}
+                name="agreeToTerms"
+                render={({ field }) => (
+                  <CommonCheckbox
+                    label="개인정보 처리방침에 동의합니다."
+                    checked={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />  
+            <ReadFullText url="https://www.google.com" />
           </div>
         </FieldRoot>
         <FieldRoot>
           <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
-            <CommonCheckbox label="이용약관에 동의합니다." register={register("agreeToPrivacy")} />
+            <Controller
+                control={control}
+                name="agreeToPrivacy"
+                render={({ field }) => (
+                  <CommonCheckbox
+                    label="이용약관에 동의합니다."
+                    checked={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
             <ReadFullText url="https://www.google.com" />
           </div>
         </FieldRoot>
+        <Spacing height={24} />
+        <CommonButton label="다음 단계로 넘어가기" disabled={!isValid} type="submit" />
       </FieldsetContent>
     </Fieldset.Root>
+    </form>
   );
 };
 
