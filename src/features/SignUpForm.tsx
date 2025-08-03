@@ -1,12 +1,25 @@
+import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
+import { CommonCheckbox } from "@/components/common/CommonCheckbox";
 import { CommonInput } from "@/components/common/CommonInput";
 import CommonSelect from "@/components/common/CommonSelect";
 import DatePicker from "@/components/common/DatePicker";
+import Spacing from "@/components/common/Spacing";
 import colors from "@/utils/colors";
-import { FieldLabel, FieldRoot, Fieldset, FieldsetContent } from "@chakra-ui/react";
+import { FieldLabel, FieldRoot, Fieldset, FieldsetContent, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+const ReadFullText = ({ url }: { url: string }) => {
+  return (
+    <ReadFullTextContainer onClick={() => window.open(url, "_blank")}>
+      <Text>전문보기</Text>
+      <Image src={ArrowRightIcon} alt="arrow-right" />
+    </ReadFullTextContainer>
+  );
+};
 
 export const SignUpForm = () => {
   const schema = z.object({
@@ -88,6 +101,19 @@ export const SignUpForm = () => {
             onDateChange={handleDateChange}
           />
         </FieldRoot>
+        <Spacing height={24} />
+        <FieldRoot>
+          <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
+          <CommonCheckbox label="개인정보 처리방침에 동의합니다." register={register("agreeToTerms")} />
+          <ReadFullText url="https://www.google.com" />
+          </div>
+        </FieldRoot>
+        <FieldRoot>
+          <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
+            <CommonCheckbox label="이용약관에 동의합니다." register={register("agreeToPrivacy")} />
+            <ReadFullText url="https://www.google.com" />
+          </div>
+        </FieldRoot>
       </FieldsetContent>
     </Fieldset.Root>
   );
@@ -97,6 +123,14 @@ const CustomFieldLabel = styled(FieldLabel)`
   font-size: 12px;
   font-weight: 700;
   color: ${colors.gray[8]};
+`;
+
+const ReadFullTextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 300;
+  font-size: 12px;
+  color: ${colors.gray[6]};
 `;
 
 export default SignUpForm;
