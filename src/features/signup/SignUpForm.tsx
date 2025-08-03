@@ -1,3 +1,4 @@
+"use client";
 import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
 import { CommonButton } from "@/components/common/CommonButton";
 import { CommonCheckbox } from "@/components/common/CommonCheckbox";
@@ -61,6 +62,7 @@ export const SignUpForm = () => {
   };
   
   return (
+    <SignUpFormContainer>
     <form onSubmit={handleSubmit(onSubmit)}>
     <Fieldset.Root
       size="sm"
@@ -139,8 +141,13 @@ export const SignUpForm = () => {
       </FieldsetContent>
     </Fieldset.Root>
     </form>
+    </SignUpFormContainer>
   );
 };
+
+const SignUpFormContainer = styled.div`
+  max-width: 438px;
+`;
 
 const CustomFieldLabel = styled(FieldLabel)`
   font-size: 12px;

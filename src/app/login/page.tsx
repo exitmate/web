@@ -1,6 +1,6 @@
 "use client";
 
-import { SignUpForm } from "@/features/SignUpForm";
+import { SignUpForm } from "@/features/signup/SignUpForm";
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
