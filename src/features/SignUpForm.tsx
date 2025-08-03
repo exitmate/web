@@ -1,5 +1,6 @@
 import { CommonInput } from "@/components/common/CommonInput";
 import CommonSelect from "@/components/common/CommonSelect";
+import DatePicker from "@/components/common/DatePicker";
 import colors from "@/utils/colors";
 import { FieldLabel, FieldRoot, Fieldset, FieldsetContent } from "@chakra-ui/react";
 import styled from "@emotion/styled";
@@ -11,7 +12,7 @@ export const SignUpForm = () => {
   const schema = z.object({
     name: z.string().min(1).max(10), 
     email: z.string().min(1, "이메일을 입력해주세요").email("올바른 이메일 형식이 아닙니다"),
-    birth: z.string(),  
+    birth: z.string().min(1, "생년월일을 선택해주세요"),
     gender: z.string().min(1, "성별을 선택해주세요").refine((val) => val === "male" || val === "female", "올바른 성별을 선택해주세요"),
     agreeToTerms: z.boolean(),
     agreeToPrivacy: z.boolean(),
@@ -33,6 +34,15 @@ export const SignUpForm = () => {
   
   const onSubmit = (data: z.infer<typeof schema>) => {
     console.log(data);
+  };
+
+  const handleDateChange = (year: string, month: string, day: string) => {
+    if (year && month && day) {
+      const birthDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      setValue("birth", birthDate);
+    } else {
+      setValue("birth", "");
+    }
   };
 
   console.log('gender value:', watch("gender"));
@@ -69,11 +79,13 @@ export const SignUpForm = () => {
             items={[{ label: "남자", value: "male" }, { label: "여자", value: "female" }]}
             register={register("gender")}
             isInvalid={watch("gender") === "" || !!errors.gender}
-            selectedValue={watch("gender") || ""}
-            onValueChange={(value) => {
-              console.log('Setting gender value:', value);
-              setValue("gender", value);
-            }}
+          />
+        </FieldRoot>
+        <FieldRoot>
+          <CustomFieldLabel>생년월일</CustomFieldLabel>
+          <DatePicker 
+            isInvalid={watch("birth") === "" || !!errors.birth}
+            onDateChange={handleDateChange}
           />
         </FieldRoot>
       </FieldsetContent>

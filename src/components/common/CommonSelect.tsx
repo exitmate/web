@@ -11,15 +11,23 @@ interface CommonSelectProps {
   }[];
   register?: UseFormRegisterReturn;
   isInvalid?: boolean;
+  onValueChange?: (value: string) => void;
 }
 
-export const CommonSelect = ({ placeholder, items, register, isInvalid }: CommonSelectProps) => {
+export const CommonSelect = ({ placeholder, items, register, isInvalid, onValueChange }: CommonSelectProps) => {
   const collection = createListCollection({
     items,
   });
 
   return (
-    <Select.Root collection={collection} >
+    <Select.Root 
+      collection={collection} 
+      onValueChange={(details) => {
+        if (onValueChange && details.value) {
+          onValueChange(details.value[0]);
+        }
+      }}
+    >
       <Select.HiddenSelect {...register} />
       <Select.Control>
         <CustomSelectTrigger isInvalid={isInvalid}>
