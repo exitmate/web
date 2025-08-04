@@ -146,7 +146,11 @@ export const SignUpForm = () => {
 };
 
 const SignUpFormContainer = styled.div`
+  width: 100%;
   max-width: 438px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 `;
 
 const CustomFieldLabel = styled(FieldLabel)`
