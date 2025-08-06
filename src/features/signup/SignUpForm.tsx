@@ -11,6 +11,7 @@ import { FieldLabel, FieldRoot, Fieldset, FieldsetContent, Text } from "@chakra-
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -24,6 +25,7 @@ const ReadFullText = ({ url }: { url: string }) => {
 };
 
 export const SignUpForm = () => {
+  const router = useRouter();
   const schema = z.object({
     name: z.string().min(1).max(10), 
     email: z.string().min(1, "이메일을 입력해주세요").email("올바른 이메일 형식이 아닙니다"),
@@ -50,6 +52,7 @@ export const SignUpForm = () => {
   const onSubmit = () => {
     console.log(errors);
     console.log(getValues());
+    router.push("/signup/detail");
   };
 
   const handleDateChange = (year: string, month: string, day: string) => {
