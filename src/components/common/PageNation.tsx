@@ -128,7 +128,7 @@ const PageNumber = styled.button<{ isActive: boolean }>`
   border-bottom: 2px solid ${({ isActive }) => isActive ? colors.point : 'transparent'};
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: ${({ isActive }) => isActive ? 700 : 500};
   transition: all 0.2s;
 `;
 

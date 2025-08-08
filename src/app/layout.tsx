@@ -1,3 +1,4 @@
+import { Provider } from "@/components/ui/provider";
 import { Header } from "@/features/Header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -22,10 +23,12 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${pretendard.variable}`}>
+    <html lang="en" className={`${pretendard.variable}`} suppressHydrationWarning>
       <body className={pretendard.className}>
-        <Header />
-        {children}
+        <Provider>
+          <Header />
+          {children}
+        </Provider>
       </body>
     </html>
   )
