@@ -41,8 +41,8 @@ const SignupStepCardContainer = styled.div<{ disabled: boolean }>`
 export const SignUpStepCards = ({ step }: SignupStepCardContentProps) => {
   return (
     <SignupStepCardsContainer>
-      <SignupStepCard step={1} title="회원가입" description="회원가입 정보를 입력해주세요." disabled={!(step === 1)} />
-      <SignupStepCard step={2} title="회원가입" description="회원가입 정보를 입력해주세요." disabled={!(step === 2)} />
+      <SignupStepCard step={1} title="기본정보 입력하기" description="소셜로그인으로 입력한 개인정보를 입력해요." disabled={!(step === 1)} />
+      <SignupStepCard step={2} title="업장정보 입력하기" description="채팅을 이용해서 업장 정보를 입력해주세요." disabled={!(step === 2)} />
     </SignupStepCardsContainer>
   );
 };
