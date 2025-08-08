@@ -4,6 +4,8 @@ import CardImage from "@/assets/temp/card-example.png";
 import colors from "@/utils/colors";
 import styled from "@emotion/styled";
 import Image from "next/image";
+import Badge from "./common/Badge";
+import BookMark from "./common/BookMark";
 
 interface CardProps {
   title: string;
@@ -13,9 +15,15 @@ interface CardProps {
   centerName: string;
 }
 
-export const Card = ({ title, imageUrl, postedDate, deadline, centerName }: CardProps) => {
+export const ProgramCard = ({ title, imageUrl, postedDate, deadline, centerName }: CardProps) => {
   return (
     <CardContainer>
+      <div style={{ position: "absolute", top: "12px", right: "12px" }}>
+        <Badge content="D-999" />
+      </div>
+      <div style={{ position: "absolute", bottom: "12px", right: "12px" }}>
+        <BookMark isBookmarked={false} />
+      </div>
       <ImageContainer>
         <StyledImage src={CardImage} alt={title} />
       </ImageContainer>
@@ -37,6 +45,7 @@ export const Card = ({ title, imageUrl, postedDate, deadline, centerName }: Card
 };
 
 const CardContainer = styled.div`
+  position: relative;
   border: 1px solid ${colors.gray[3]};
   background-color: ${colors.white};
   border-radius: 24px;
@@ -126,4 +135,4 @@ const PostedDate = styled.p`
   color: ${colors.gray[6]};
 `;
 
-export default Card;
+export default ProgramCard;
