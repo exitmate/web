@@ -1,12 +1,13 @@
 "use client";
 import PaddedBox from "@/components/common/PaddedBox";
+import { ChatBox } from "@/features/chat/ChatBox";
 import styled from "@emotion/styled";
 
 export const SignupDetailPage = () => {
   return (
     <PaddedBox style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", marginTop: "20px" }}>
       <SignupPageContainer>
-        
+        <ChatBox />
       </SignupPageContainer>
     </PaddedBox>
   );
