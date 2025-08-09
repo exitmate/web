@@ -9,29 +9,155 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+  output   = "../src/generated/zod"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-model User {
-  id                    String   @id @default(auto()) @map("_id") @db.ObjectId   
-  email                 String   @unique
-  password              String
-  name                  String
-  birthDate             DateTime
-  gender                Gender
 
-  agreedPrivacyPolicy   Boolean  // 개인정보 수집 동의
-  agreedTermsOfUse      Boolean  // 이용약관 동의
-  agreedDataUsage       Boolean  // 데이터 활용 동의
-  agreedMarketing       Boolean? // 마케팅 수집 동의 (선택)
+model Member {
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+  kakaoClientId       String         @unique
+  kakaoNickname       String
+  email               String?        @unique
+  name                String?
+  birthDate           DateTime?
+  gender              Gender?
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  agreedPrivacyPolicy Boolean        @default(false)
+  agreedTermsOfUse    Boolean        @default(false)
+  agreedDataUsage     Boolean        @default(false)
+  agreedMarketing     Boolean        @default(false)
+
+  businessInfo        BusinessInfo?
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@map("Member")
 }
 
 enum Gender {
   MALE
   FEMALE
   OTHER
+}
+
+model BusinessInfo {
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+
+  region             String          // 사업장 소재지 (시/군/구)
+  industryCategory   IndustryCategory // 업종 대분류
+  industryDetail     String          // 업종 세분류
+  openedAt           DateTime        // 개업년월일
+  isClosed           Boolean         @default(false)
+  closedAt           DateTime?       // 폐업년월일
+  isReemployed       Boolean?        // 취업 여부
+  isDemolished       Boolean?        // 철거 여부
+
+  monthlySalesRange  SalesRange      // 월평균 매출액 구간
+  areaSizeM2         Float?          // 점포 면적
+  employeeCount      Int?            // 종업원 수
+
+  leaseType          LeaseType       // 임대차 계약 형태
+  depositAmount      Int?            // 보증금
+  monthlyRent        Int?            // 월세
+
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  member             Member?         @relation(fields: [memberId], references: [id])
+  memberId           String?         @unique @db.ObjectId
+	@@map("BusinessInfo")
+}
+
+enum IndustryCategory {
+  FOOD_SERVICE
+  NON_ALCOHOL_CAFE
+  OTHER
+}
+
+enum SalesRange {
+  BELOW_500
+  FROM_500_TO_1000
+  FROM_1000_TO_1500
+  FROM_1500_TO_2000
+  FROM_2000_TO_5000
+  ABOVE_5000
+}
+
+enum LeaseType {
+  OWNED
+  MONTHLY
+}
+
+model SupportProject {
+  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+  logoSrc                 String?  // 로고 이미지 URL
+  title                   String   // 제목
+  host                    String   // 주최단체
+  
+  applicationType         ApplicationType // 지원사업 모집 종류. 상시/선착순/유기한
+  deadline                DateTime? // 마감일자, null일 시 소진 시까지
+  isOpen                  Boolean @default(true) // 모집/마감 여부 -> 마감 시 업데이트 필요
+
+  detailPageUrl           String?  // 페이지 url
+  inquiryPhone            String?  // 주최측 연락처
+  inquiryEmail            String?  // 주최측 이메일
+
+  requiredDocs            String[] // 필요서류
+  eligibility             SupportEligibility
+  applicationRequirements String[] // 자격요건 목록
+  // applicationDetails      String?  // 지원 상세정보. 지원내용 및 자격조건으로 귀결될 것 같아 제외
+  restrictions            String[] // 제한사항
+
+  services                Service[] // 지원내용. 하나의 공고에는 여러개의 지원 내용들이 1:N관계로 지정될 수 있음.
+
+  createdAt               DateTime @default(now()) // 공고일자
+  updatedAt               DateTime @updatedAt // 공고 마지막 수정일자
+
+  @@index([deadline])
+  @@index([isOpen])
+  @@index([host])
+}
+
+type SupportEligibility {
+  mustBeInRegion        String?   // 지역 제한 (ex. "부산광역시")
+  mustBePlannedClosure  Boolean   // 폐업 예정자만 해당
+  mustBeClosed          Boolean   // 기폐업자만 해당
+  mustBeClosedAfter     DateTime? // 폐업일이 이 날짜 이후여야 함 (ex. 2025-01-01)
+  mustBeClosedWithin    Int?      // 폐업일이 특정 일수 이하여야 함 (ex. 60일 이내)
+  mustOperateAtLeast    Int?      // 최소 운영 일수 (ex. 60일)
+  mustNotBeCorporation  Boolean   // 법인 불가 여부 (true면 법인 불가)
+}
+
+enum ApplicationType {
+  ALWAYS     // 상시
+  FIRST_COME // 소진 시 종료
+  DEADLINED  // 마감일 존재
+}
+
+model Service {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  type            ServiceType
+  maxAmount       Int?        // 지원금액 (원 단위)
+
+  project         SupportProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId       String         @db.ObjectId
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+}
+
+enum ServiceType {
+  STORE_DEMOLITION_SUBSIDY // 점포철거지원금
+  CLOSURE_SUPPORT_SUBSIDY  // 폐업지원금
+  CLOSURE_CONSULTING       // 폐업 컨설팅
+  REEMPLOYMENT_EDUCATION   // 재취업/재창업 교육
+  BUSINESS_EDUCATION       // 경영 교육
 }
