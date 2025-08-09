@@ -1,15 +1,28 @@
-import Card from "@/components/Card";
+"use client";
+
+import PaddedBox from "@/components/common/PaddedBox";
+import AvailableProgramCount from "@/features/AvailableProgramCount";
+import { GridProgramCard } from "@/features/GridProgramCard";
+import RecommendedProgramList from "@/features/RecommendedProgramList";
+import { Filter } from "@/utils/types";
+import { useState } from "react";
 
 export const ProgramsPage = () => {
+
+  const [filter, setFilter] = useState<Filter>({
+    deadlineType: "모집 유형",
+    supportType: "지원 유형",
+    highAmountOrder: true,
+    onlySuitableForMe: true,
+  });
+
   return (
     <div>
-      <Card 
-        title="2025년 부산시 소상공인 사업 정리 도우미 지원 사업"
-        imageUrl="/path/to/image.jpg"
-        postedDate="2023-03-27"
-        deadline="2023-12-31"
-        centerName="부산시소상공인종합지원센터"
-      />
+      <RecommendedProgramList />
+      <PaddedBox>
+        <AvailableProgramCount />
+        <GridProgramCard />
+      </PaddedBox>
     </div>
   ); 
 }
