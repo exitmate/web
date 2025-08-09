@@ -17,3 +17,17 @@ export const PaginationRequestSchema = z.object({
 })
 
 export type PaginationRequest = z.infer<typeof PaginationRequestSchema>
+
+export type DataResponse<T> = {
+  data: T
+}
+
+export type PaginatedDataResponse<T> = {
+  data: T
+  pagination: Pagination
+  filters: Record<string, string | boolean | number | undefined>
+}
+
+export type ErrorResponse = {
+  error: string
+}
