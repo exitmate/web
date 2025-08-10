@@ -1,5 +1,5 @@
 import colors from "@/utils/colors";
-import { keyframes } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 
 interface ChatBubbleItemProps {
@@ -8,7 +8,7 @@ interface ChatBubbleItemProps {
   index?: number;
 }
 
-export const ChatBubbleItem = ({ message, isUser, index = 0 }: ChatBubbleItemProps) => {
+export const ChatBubbleItem = ({ message, isUser, index }: ChatBubbleItemProps) => {
   return <ChatBubbleItemContainer isUser={isUser} index={index}>{message.map((msg, msgIndex) => <div key={msgIndex}>{msg}</div>)}</ChatBubbleItemContainer>;
 };
 
@@ -23,18 +23,22 @@ const fadeInUp = keyframes`
   }
 `;
 
-const ChatBubbleItemContainer = styled.div<{ isUser: boolean; index: number }>`
+const ChatBubbleItemContainer = styled.div<{ isUser: boolean; index?: number }>`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  max-width: 391px;
+  width: fit-content;
   padding: 20px;
+  font-size: 16px;
   gap: 8px;
   border-radius: 10px;
   color: ${({ isUser }) => (isUser ? colors.white : colors.gray[7])};
   background-color: ${({ isUser }) => (isUser ? colors.point : colors.gray[1])};
-  opacity: 0;
-  animation: ${fadeInUp} 0.5s ease-out both;
-  animation-delay: ${({ index }) => index * 0.2}s;
+  align-self: ${({ isUser }) => (isUser ? "flex-end" : "flex-start")};
+  opacity: ${({ isUser}) => (isUser ? 1 : 0)};
+  animation: ${({ isUser }) => (isUser ? 'none' : css`${fadeInUp} 0.5s ease-out both`)};
+  animation-delay: ${({ isUser, index }) => (isUser ? '0s' : `${(index || 0) * 0.2}s`)};
+  animation-fill-mode: forwards;
   will-change: transform, opacity;
 
   @media (prefers-reduced-motion: reduce) {
