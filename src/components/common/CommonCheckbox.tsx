@@ -1,32 +1,38 @@
-import colors from "@/utils/colors";
-import { Checkbox } from "@chakra-ui/react";
-import styled from "@emotion/styled";
+import colors from '@/utils/colors'
+import { Checkbox } from '@chakra-ui/react'
+import styled from '@emotion/styled'
 
 interface CommonCheckboxProps {
-  label?: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  label?: string
+  checked: boolean
+  onChange: (checked: boolean) => void
 }
 
-export const CommonCheckbox = ({ label, checked, onChange }: CommonCheckboxProps) => {
+export const CommonCheckbox = ({
+  label,
+  checked,
+  onChange,
+}: CommonCheckboxProps) => {
   return (
-    <CheckboxRoot checked={checked} onCheckedChange={(details) => {
-      onChange(Boolean(details.checked));
-    }}>
-      <Checkbox.HiddenInput/>
+    <CheckboxRoot
+      checked={checked}
+      onCheckedChange={(details) => {
+        onChange(Boolean(details.checked))
+      }}
+    >
+      <Checkbox.HiddenInput />
       <CustomCheckboxControl />
       <CustomCheckboxLabel>{label}</CustomCheckboxLabel>
     </CheckboxRoot>
-  );
-};
-
+  )
+}
 
 const CheckboxRoot = styled(Checkbox.Root)`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-`;
+`
 
 const CustomCheckboxControl = styled(Checkbox.Control)`
   width: 16px;
@@ -35,13 +41,13 @@ const CustomCheckboxControl = styled(Checkbox.Control)`
   border-radius: 4px;
   background-color: white;
 
-  &[data-state="checked"] {
+  &[data-state='checked'] {
     background-color: ${colors.point};
     border-color: ${colors.point};
   }
-`;
+`
 
 const CustomCheckboxLabel = styled(Checkbox.Label)`
   font-size: 16px;
   color: ${colors.gray[7]};
-`;
+`

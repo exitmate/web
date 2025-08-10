@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import LogoImage from '@/assets/icons/logo.svg';
-import PaddedBox from '@/components/common/PaddedBox';
-import SearchBar from '@/components/common/SearchBar';
-import colors from '@/utils/colors';
-import styled from '@emotion/styled';
-import Image from 'next/image';
+import LogoImage from '@/assets/icons/logo.svg'
+import PaddedBox from '@/components/common/PaddedBox'
+import SearchBar from '@/components/common/SearchBar'
+import colors from '@/utils/colors'
+import styled from '@emotion/styled'
+import Image from 'next/image'
 
 export const Header = () => {
   return (
@@ -13,14 +13,14 @@ export const Header = () => {
       <HeaderContainer>
         <ContentsContainer>
           <ImageContainer>
-            <Image src={LogoImage} alt="Logo" width={80} height={80}/>
+            <Image src={LogoImage} alt="Logo" width={80} height={80} />
           </ImageContainer>
           <SearchBar />
           <MyPageText>마이페이지</MyPageText>
         </ContentsContainer>
       </HeaderContainer>
     </PaddedBox>
-  );
+  )
 }
 
 const HeaderContainer = styled.div`
@@ -29,21 +29,21 @@ const HeaderContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100px;
-`;
-  
+`
+
 const ContentsContainer = styled.div`
   display: grid;
   width: 100%;
   grid-template-columns: 1fr 4fr 1fr;
   align-items: center;
-  Justify-content: center;
-`;
+  justify-content: center;
+`
 
 const ImageContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-`;
+`
 
 const MyPageText = styled.div`
   display: flex;
@@ -53,5 +53,4 @@ const MyPageText = styled.div`
   font-weight: 600;
   color: ${colors.black};
   cursor: pointer;
-
-  `;
+`

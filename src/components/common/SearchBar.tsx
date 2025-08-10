@@ -1,61 +1,82 @@
-import InsertIcon from "@/assets/icons/insert.svg";
-import SearchBarIcon from "@/assets/icons/search-bar.svg";
-import SearchIcon from "@/assets/icons/search.svg";
-import colors from "@/utils/colors";
-import styled from "@emotion/styled";
-import Image from "next/image";
-import { useState } from "react";
+import InsertIcon from '@/assets/icons/insert.svg'
+import SearchBarIcon from '@/assets/icons/search-bar.svg'
+import SearchIcon from '@/assets/icons/search.svg'
+import colors from '@/utils/colors'
+import styled from '@emotion/styled'
+import Image from 'next/image'
+import { useState } from 'react'
 
-const SearchKeyword = ({ keyword, onClick }: { keyword: string, onClick: () => void }) => {
+const SearchKeyword = ({
+  keyword,
+  onClick,
+}: {
+  keyword: string
+  onClick: () => void
+}) => {
   return (
     <SearchKeywordContainer>
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Image src={SearchBarIcon} alt="Search Icon" width={24} height={24} />
         <SearchKeywordText>{keyword}</SearchKeywordText>
       </div>
-      <Image src={InsertIcon} alt="Insert Icon" width={24} height={24} onClick={onClick}/>
+      <Image
+        src={InsertIcon}
+        alt="Insert Icon"
+        width={24}
+        height={24}
+        onClick={onClick}
+      />
     </SearchKeywordContainer>
-  );
+  )
 }
 
-
 export const SearchBar = () => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  console.log(isFocused);
+  const [isFocused, setIsFocused] = useState(false)
+  const [searchKeyword, setSearchKeyword] = useState('')
+  console.log(isFocused)
 
   const handleSetSearchKeyword = (keyword: string) => {
-    setSearchKeyword(keyword);
+    setSearchKeyword(keyword)
   }
 
   return (
-    <InputContainer className={isFocused ? "focused" : ""}>
-        <Input
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          type="text" 
-          placeholder="궁금한 지원사업을 검색하세요." 
-          onFocus={() => setIsFocused(true)} 
-          // onBlur={() => setIsFocused(false)}
-          />
-        <SearchIconContainer>
-          <Image src={SearchIcon} alt="Search Icon" width={24} height={24} />
-        </SearchIconContainer>
-      {isFocused && 
-      <SearchKeywordListContainer>
-        <SearchKeywordList>
-          <SearchKeyword keyword="검색어1" onClick={() => setSearchKeyword("검색어1")}/>
-          <SearchKeyword keyword="검색어2" onClick={() => setSearchKeyword("검색어2")}/>
-          <SearchKeyword keyword="검색어3" onClick={() => setSearchKeyword("검색어3")}/>
-          <SearchKeyword keyword="검색어4" onClick={() => setSearchKeyword("검색어4")}/>
-        </SearchKeywordList>
-          <CloseSection onClick={() => setIsFocused(false)}>
-            닫기
-          </CloseSection>
-      </SearchKeywordListContainer>
-      }
+    <InputContainer className={isFocused ? 'focused' : ''}>
+      <Input
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        type="text"
+        placeholder="궁금한 지원사업을 검색하세요."
+        onFocus={() => setIsFocused(true)}
+        // onBlur={() => setIsFocused(false)}
+      />
+      <SearchIconContainer>
+        <Image src={SearchIcon} alt="Search Icon" width={24} height={24} />
+      </SearchIconContainer>
+      {isFocused && (
+        <SearchKeywordListContainer>
+          <SearchKeywordList>
+            <SearchKeyword
+              keyword="검색어1"
+              onClick={() => setSearchKeyword('검색어1')}
+            />
+            <SearchKeyword
+              keyword="검색어2"
+              onClick={() => setSearchKeyword('검색어2')}
+            />
+            <SearchKeyword
+              keyword="검색어3"
+              onClick={() => setSearchKeyword('검색어3')}
+            />
+            <SearchKeyword
+              keyword="검색어4"
+              onClick={() => setSearchKeyword('검색어4')}
+            />
+          </SearchKeywordList>
+          <CloseSection onClick={() => setIsFocused(false)}>닫기</CloseSection>
+        </SearchKeywordListContainer>
+      )}
     </InputContainer>
-  );
+  )
 }
 
 const InputContainer = styled.div`
@@ -76,7 +97,7 @@ const InputContainer = styled.div`
     border: none;
     border-radius: 16px 16px 0 0;
   }
-`;
+`
 
 const Input = styled.input`
   border: none;
@@ -87,7 +108,7 @@ const Input = styled.input`
   width: 100%;
   color: ${colors.black};
   padding: 16px 20px;
-`;
+`
 
 const SearchIconContainer = styled.div`
   display: flex;
@@ -95,7 +116,7 @@ const SearchIconContainer = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 13.5px 20px;
-`;
+`
 
 const SearchKeywordListContainer = styled.div`
   display: flex;
@@ -108,7 +129,7 @@ const SearchKeywordListContainer = styled.div`
   z-index: 1000;
   box-shadow: 0px 1px 4px rgba(27, 27, 27, 0.12);
   background-color: ${colors.white};
-`;
+`
 
 const SearchKeywordList = styled.div`
   width: 100%;
@@ -117,7 +138,7 @@ const SearchKeywordList = styled.div`
   padding: 8px 0;
   background-color: ${colors.white};
   overflow: hidden;
-`;
+`
 
 const SearchKeywordContainer = styled.div`
   display: flex;
@@ -125,13 +146,13 @@ const SearchKeywordContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-`;
+`
 
 const SearchKeywordText = styled.span`
   font-size: 16px;
   font-weight: 500;
   color: ${colors.black};
-`;
+`
 
 const CloseSection = styled.div`
   display: flex;
@@ -142,6 +163,6 @@ const CloseSection = styled.div`
   padding: 12px 20px;
   cursor: pointer;
   color: ${colors.gray[6]};
-`;
+`
 
-export default SearchBar;
+export default SearchBar
