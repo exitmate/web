@@ -18,9 +18,7 @@ export const infoInput = async (formData: FormData) => {
     kakaoClientId: string
     kakaoNickname: string
   }
-  const userId = user.id
-  const kakaoClientId = user.kakaoClientId
-  const kakaoNickname = user.kakaoNickname
+  const { id: userId, kakaoClientId, kakaoNickname } = user
 
   console.log('현재 로그인한 사용자:', {
     userId,
