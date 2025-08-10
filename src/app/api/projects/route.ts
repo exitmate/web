@@ -4,9 +4,18 @@ import { NextResponse } from 'next/server'
 import z from 'zod'
 import { ProjectSearchSchema } from './schema'
 import { ErrorResponse, PaginatedDataResponse } from '../schema'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/authOptions'
 
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session || !session.user) {
+      return NextResponse.json<ErrorResponse>(
+        { error: '로그인이 필요합니다.' },
+        { status: 401 },
+      )
+    }
     const { searchParams } = new URL(request.url)
 
     const params = Object.fromEntries(searchParams.entries())
