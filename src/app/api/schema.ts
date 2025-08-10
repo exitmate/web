@@ -18,16 +18,25 @@ export const PaginationRequestSchema = z.object({
 
 export type PaginationRequest = z.infer<typeof PaginationRequestSchema>
 
-export type DataResponse<T> = {
-  data: T
+export type DataResponse<TData = unknown> = {
+  data: TData
 }
 
-export type PaginatedDataResponse<T> = {
-  data: T
+export type PaginatedDataResponse<TData = unknown> = {
+  data: TData
   pagination: Pagination
   filters: Record<string, string | boolean | number | undefined>
 }
 
-export type ErrorResponse = {
+export interface FieldError {
+  field: string
+  message: string
+}
+
+export interface ErrorResponse {
   error: string
+}
+
+export interface ValidationErrorResponse {
+  errors: FieldError[]
 }
