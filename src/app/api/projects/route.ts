@@ -1,8 +1,9 @@
-import { SupportProjectWhereInputSchema } from '@/generated/zod'
+import { SupportProject, SupportProjectWhereInputSchema } from '@/generated/zod'
 import prisma from '@/utils/prisma'
 import { NextResponse } from 'next/server'
 import z from 'zod'
 import { ProjectSearchSchema } from './schema'
+import { ErrorResponse, PaginatedDataResponse } from '../schema'
 
 export async function GET(request: Request) {
   try {
@@ -70,10 +71,10 @@ export async function GET(request: Request) {
         isOpen,
       },
     }
-    return NextResponse.json(response)
+    return NextResponse.json<PaginatedDataResponse<SupportProject[]>>(response)
   } catch (error) {
     console.error('지원사업 조회 중 오류 발생:', error)
-    return NextResponse.json(
+    return NextResponse.json<ErrorResponse>(
       { error: '지원사업 조회 중 오류가 발생했습니다.' },
       { status: 500 },
     )

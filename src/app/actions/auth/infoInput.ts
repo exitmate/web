@@ -1,28 +1,7 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { MemberSchema } from '@/generated/zod'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
+import { infoInputSchema } from './schema'
 import { getServerSession } from 'next-auth'
 import z from 'zod'
-
-const today = new Date()
-
-const infoInputSchema = MemberSchema.pick({
-  name: true,
-  email: true,
-  birthDate: true,
-  gender: true,
-  agreedPrivacyPolicy: true,
-  agreedTermsOfUse: true,
-  agreedDataUsage: true,
-  agreedMarketing: true,
-}).extend({
-  agreedPrivacyPolicy: z.literal(true),
-  agreedTermsOfUse: z.literal(true),
-  agreedDataUsage: z.literal(true),
-  birthDate: z
-    .date()
-    .min(new Date('1910-01-01'))
-    .max(new Date(today.getFullYear() - 19, today.getMonth(), today.getDate())),
-})
 
 export const infoInput = async (formData: FormData) => {
   const session = await getServerSession(authOptions)
@@ -34,10 +13,12 @@ export const infoInput = async (formData: FormData) => {
     }
   }
 
-  const user = session.user as any
-  const userId = user.id
-  const kakaoClientId = user.kakaoClientId
-  const kakaoNickname = user.kakaoNickname
+  const user = session.user as {
+    id: string
+    kakaoClientId: string
+    kakaoNickname: string
+  }
+  const { id: userId, kakaoClientId, kakaoNickname } = user
 
   console.log('현재 로그인한 사용자:', {
     userId,
