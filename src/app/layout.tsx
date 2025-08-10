@@ -1,7 +1,6 @@
 import { Provider } from '@/components/ui/provider'
 import { Header } from '@/features/Header'
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import localfont from 'next/font/local'
 import 'normalize.css'
 import './globals.css'
@@ -24,7 +23,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${pretendard.variable}`}
       suppressHydrationWarning
     >
