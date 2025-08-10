@@ -1,9 +1,15 @@
+'use server'
+
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import { infoInputSchema } from './schema'
 import { getServerSession } from 'next-auth'
 import z from 'zod'
+import type { ActionResult } from '../schema'
 
-export const infoInput = async (formData: FormData) => {
+export const infoInput = async (
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> => {
   const session = await getServerSession(authOptions)
 
   if (!session || !session.user) {
@@ -33,7 +39,6 @@ export const infoInput = async (formData: FormData) => {
     return {
       success: true,
       data,
-      user: session.user,
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
