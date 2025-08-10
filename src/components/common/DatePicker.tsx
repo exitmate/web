@@ -1,55 +1,55 @@
-"use client";
-import colors from "@/utils/colors";
-import { Flex, Text } from "@chakra-ui/react";
-import styled from "@emotion/styled";
-import { useState } from "react";
-import { CommonSelect } from "./CommonSelect";
+'use client'
+import colors from '@/utils/colors'
+import { Flex, Text } from '@chakra-ui/react'
+import styled from '@emotion/styled'
+import { useState } from 'react'
+import { CommonSelect } from './CommonSelect'
 
 interface DatePickerProps {
-  isInvalid?: boolean;
-  onDateChange?: (year: string, month: string, day: string) => void;
+  isInvalid?: boolean
+  onDateChange?: (year: string, month: string, day: string) => void
 }
 
 export const DatePicker = ({ isInvalid, onDateChange }: DatePickerProps) => {
-  const [selectedYear, setSelectedYear] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedYear, setSelectedYear] = useState('')
+  const [selectedMonth, setSelectedMonth] = useState('')
+  const [selectedDay, setSelectedDay] = useState('')
 
   const years = Array.from({ length: 106 }, (_, i) => {
-    const year = 2025 - i;
-    return { label: year.toString(), value: year.toString() };
-  });
+    const year = 2025 - i
+    return { label: year.toString(), value: year.toString() }
+  })
 
   const months = Array.from({ length: 12 }, (_, i) => {
-    const month = i + 1;
-    return { label: month.toString(), value: month.toString() };
-  });
+    const month = i + 1
+    return { label: month.toString(), value: month.toString() }
+  })
 
   const days = Array.from({ length: 31 }, (_, i) => {
-    const day = i + 1;
-    return { label: day.toString(), value: day.toString() };
-  });
+    const day = i + 1
+    return { label: day.toString(), value: day.toString() }
+  })
 
   const handleYearChange = (value: string) => {
-    setSelectedYear(value);
+    setSelectedYear(value)
     if (onDateChange) {
-      onDateChange(value, selectedMonth, selectedDay);
+      onDateChange(value, selectedMonth, selectedDay)
     }
-  };
+  }
 
   const handleMonthChange = (value: string) => {
-    setSelectedMonth(value);
+    setSelectedMonth(value)
     if (onDateChange) {
-      onDateChange(selectedYear, value, selectedDay);
+      onDateChange(selectedYear, value, selectedDay)
     }
-  };
+  }
 
   const handleDayChange = (value: string) => {
-    setSelectedDay(value);
+    setSelectedDay(value)
     if (onDateChange) {
-      onDateChange(selectedYear, selectedMonth, value);
+      onDateChange(selectedYear, selectedMonth, value)
     }
-  };
+  }
 
   return (
     <DatePickerContainer>
@@ -81,14 +81,14 @@ export const DatePicker = ({ isInvalid, onDateChange }: DatePickerProps) => {
         <Text>일</Text>
       </DaySelect>
     </DatePickerContainer>
-  );
-};
+  )
+}
 
 const DatePickerContainer = styled(Flex)`
   width: 100%;
   height: 100%;
   gap: 20px;
-`;
+`
 
 const YearSelect = styled.div`
   display: flex;
@@ -97,7 +97,7 @@ const YearSelect = styled.div`
   gap: 12px;
   flex: 2;
   color: ${colors.gray[7]};
-`;
+`
 
 const MonthSelect = styled.div`
   flex: 1;
@@ -106,7 +106,7 @@ const MonthSelect = styled.div`
   justify-content: center;
   gap: 12px;
   color: ${colors.gray[7]};
-`;
+`
 
 const DaySelect = styled.div`
   flex: 1;
@@ -115,6 +115,6 @@ const DaySelect = styled.div`
   justify-content: center;
   gap: 12px;
   color: ${colors.gray[7]};
-`;
+`
 
-export default DatePicker;
+export default DatePicker
