@@ -10,9 +10,10 @@ interface ChatInputProps {
   value: string;
   onSend: (message: string) => void;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
-export const ChatInput = ({ onSend, placeholder, value, onChange }: ChatInputProps) => {
+export const ChatInput = ({ onSend, placeholder, value, onChange, disabled }: ChatInputProps) => {
   const [active, setActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -36,8 +37,9 @@ export const ChatInput = ({ onSend, placeholder, value, onChange }: ChatInputPro
       value={value} 
       onChange={handleChange}
       onKeyPress={handleKeyPress}
+      disabled={disabled}
     />
-    <SendButton onClick={() => onSend(value)} active={active} disabled={!active}>
+    <SendButton onClick={() => onSend(value)} active={active} disabled={!active || disabled}>
       <Image src={sendIcon} alt="send" />
     </SendButton>
   </ChatInputContainer>

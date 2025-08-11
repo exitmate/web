@@ -3,13 +3,13 @@ import { css, keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 
 interface ChatBubbleItemProps {
-  message: string[];
+  message: React.ReactNode;
   isUser: boolean;
   index?: number;
 }
 
 export const ChatBubbleItem = ({ message, isUser, index }: ChatBubbleItemProps) => {
-  return <ChatBubbleItemContainer isUser={isUser} index={index}>{message.map((msg, msgIndex) => <div key={msgIndex}>{msg}</div>)}</ChatBubbleItemContainer>;
+    return <ChatBubbleItemContainer isUser={isUser} index={index}>{message}</ChatBubbleItemContainer>;
 };
 
 const fadeInUp = keyframes`
