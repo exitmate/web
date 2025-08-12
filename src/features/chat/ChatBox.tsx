@@ -1,58 +1,16 @@
+import { script, Step } from '@/utils/scripts'
 import { Text } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { useEffect, useRef, useState } from 'react'
 import { ChatBubbleItem } from './ChatBubbleItem'
 import { ChatInput } from './ChatInput'
-
-interface ChatMessage {
-  id: number
-  message: React.ReactNode
-  isUser: boolean
-}
-
-type Step = {
-  id: number
-  role: 'bot' | 'user'
-  content: React.ReactNode
-}
-
-const script: Step[] = [
-  {
-    id: 0,
-    role: 'bot',
-    content: (
-      <>
-        <p>안녕하세요 <span style={{ fontWeight: 'bold' }}>김이름</span> 사장님!</p>
-        <p>ExitMate는 사장님의 새로운 도전을 응원합니다.</p>
-      </>
-    ),
-  },
-  {
-    id: 1,
-    role: 'bot',
-    content: (
-      <>
-        <p>사장님께 도움을 드리기 위해 몇 가지 정보를 여쭤볼게요.</p>
-        <p>정보를 채팅창에 입력하거나 선택지를 클릭해주세요.</p>
-      </>
-    ),
-  },
-  { id: 2, role: 'bot', content: <p>주문 받습니다. 어떤 걸 원하시나요?</p> },
-  { id: 3, role: 'user', content: <p>원하시는 주문 내용을 입력하세요.</p> },
-  {
-    id: 4,
-    role: 'bot',
-    content: <p>네, 가능합니다. 연락처도 남겨주실 수 있나요?</p>,
-  },
-  { id: 5, role: 'user', content: <p>연락처를 입력하세요.</p> },
-  { id: 6, role: 'bot', content: <p>감사합니다! 곧 확인해서 회신드릴게요.</p> },
-]
+import { ToggleButtonGroup } from './ToggleButtonGroup'
 
 export const ChatBox = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [messages, setMessages] = useState<Step[]>([])
   const [inputValue, setInputValue] = useState('')
-  const [stepIndex, setStepIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<number, string>>({})
+  const [index, setIndex] = useState(0)
+  const [answers, setAnswers] = useState<Record<string, string>>({})
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const idRef = useRef(0)
 
@@ -68,8 +26,8 @@ export const ChatBox = () => {
     scrollToBottom()
   }, [messages])
 
-  const stepIndexRef = useRef(stepIndex)
-  useEffect(() => { stepIndexRef.current = stepIndex }, [stepIndex])
+  const stepIndexRef = useRef(index)
+  useEffect(() => { stepIndexRef.current = index }, [index])
 
   const streamingRef = useRef(false)
   const timersRef = useRef<number[]>([])
@@ -84,7 +42,6 @@ export const ChatBox = () => {
     if (streamingRef.current) return
     streamingRef.current = true
 
-    // 현재 인덱스에서 연속된 bot 단계 모으기
     let i = stepIndexRef.current
     const botSteps: Step[] = []
     while (i < script.length && script[i].role === 'bot') {
@@ -92,27 +49,25 @@ export const ChatBox = () => {
       i++
     }
 
-    // 다음 턴 준비: 미리 인덱스를 올려두면 중간에 입력이 와도 안전
     stepIndexRef.current = i
-    setStepIndex(i)
+    setIndex(i)
 
     if (botSteps.length === 0) {
       streamingRef.current = false
       return
     }
 
-    // 순차 출력
     botSteps.forEach((step, idx) => {
       const t = window.setTimeout(() => {
         setMessages(prev => [
           ...prev,
-          { id: nextId(), message: step.content, isUser: false },
+          { ...step, id: nextId() },
         ])
 
         if (idx === botSteps.length - 1) {
           streamingRef.current = false
         }
-      }, idx * gapMs) // 0ms, 600ms, 1200ms...
+        }, idx * gapMs)
       timersRef.current.push(t)
     })
   }
@@ -131,38 +86,67 @@ export const ChatBox = () => {
 
     setMessages((prev) => [
       ...prev,
-      { id: nextId(), message: trimmed, isUser: true },
+      { ...current, id: nextId(), input: 'text', content: trimmed },
     ])
 
     setInputValue('')
 
     if (expectingUser) {
-      setAnswers(prev => ({ ...prev, [current.id]: trimmed }))
+      setAnswers(prev => ({ ...prev, [current.field]: trimmed }))
       stepIndexRef.current += 1
-      setStepIndex(stepIndexRef.current)
+      setIndex(stepIndexRef.current)
       pushUntilUserTurnWithDelay(700)
     }
   }
 
   const isUserTurn = script[stepIndexRef.current]?.role === 'user'
+  const currentPlaceholder = isUserTurn ? '메시지를 입력해주세요.' : '업종을 선택해주세요.'
+  const currentStep = script[stepIndexRef.current]?.step ?? 1
 
   return (
     <>
       <ChatBoxContainer ref={chatContainerRef}>
         {messages.map((m) => (
-          <ChatBubbleItem key={m.id} message={m.message} isUser={m.isUser} />
+          m.input === 'select' && m.options ? (
+            <ToggleButtonGroup
+              key={m.id}
+              items={m.options}
+              value={answers[m.field]}
+              setValue={(value) => {
+                setAnswers({ ...answers, [m.field]: value })
+                setInputValue(value)
+                setIndex(stepIndexRef.current + 1)
+              }}
+            />
+          ) : ( 
+            <ChatBubbleItem key={m.id} message={m.content} isUser={m.role === 'user'} title={m.title} />
+          )
         ))}
       </ChatBoxContainer>
 
       <ChatInput
         onSend={handleSend}
-        placeholder="메시지를 입력해주세요."
+        placeholder={currentPlaceholder}
         value={inputValue}
         onChange={setInputValue}
         disabled={!isUserTurn}
       />
 
       <Debug>
+      <ToggleButtonGroup
+        items={[
+          [
+            { value: 'food', label: '음식점업' },
+            { value: 'beverage', label: '비알코올 음료점업' }
+          ],
+          [
+            { value: 'bar', label: '주점업' },
+            { value: 'cafe', label: '카페' }
+          ]
+        ]}
+        value={answers.industryCategory}
+        setValue={(value) => setAnswers({ ...answers, industryCategory: value })}
+      />
         <pre>{JSON.stringify(answers, null, 2)}</pre>
       </Debug>
     </>
