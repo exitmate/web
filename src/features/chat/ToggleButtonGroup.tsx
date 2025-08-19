@@ -8,7 +8,7 @@ import { useState } from "react"
 
 interface ToggleButtonGroupProps {
   items: SelectOption[][] | SelectOption[]
-  setValue: (value: string, nextId: number) => void
+  setValue: (value: string, label: string, nextId: number) => void
 }
 
 export const ToggleButtonGroup = ({ items, setValue }: ToggleButtonGroupProps) => {
@@ -22,7 +22,7 @@ export const ToggleButtonGroup = ({ items, setValue }: ToggleButtonGroupProps) =
                 <ToggleButton
                   key={item.value}
                   onClick={() => {
-                    setValue(item.label, item.nextId ?? 0)
+                    setValue(item.value, item.label, item.nextId ?? 0)
                     setActive(item.value)
                   }
                   }
@@ -39,7 +39,7 @@ export const ToggleButtonGroup = ({ items, setValue }: ToggleButtonGroupProps) =
                 <ToggleButton
                   key={item.value}
                   onClick={() => {
-                    setValue(item.label, item.nextId ?? 0 )
+                    setValue(item.value, item.label, item.nextId ?? 0 )
                     setActive(item.value)
                     }
                   }

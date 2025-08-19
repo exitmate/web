@@ -1,3 +1,4 @@
+import SegmentedProgress from '@/components/common/SegmentedProgress'
 import colors from '@/utils/colors'
 import { constraintsForField } from '@/utils/inputConstraints'
 import { script, Step } from '@/utils/scripts'
@@ -64,16 +65,17 @@ export const ChatBox = () => {
     });
   };
 
-const handleSelect = (selected: string, nextId?: number) => {
+const handleSelect = (selectedValue: string, selectedLabel: string, nextId?: string) => {
   const current = script[stepIndexRef.current];
+  console.log(selectedValue, selectedLabel, nextId)
 
   setMessages(prev => [
     ...prev,
-    { ...current, id: Date.now(), role: 'user', input: 'text', content: selected } as Step,
+    { ...current, id: Date.now(), role: 'user', input: 'text', content: selectedLabel } as Step,
   ]);
 
   if (!current.field.includes('confirm')) {
-    setAnswers(prev => ({ ...prev, [current.field]: selected }));
+    setAnswers(prev => ({ ...prev, [current.field]: selectedValue }));
   }
 
   const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndexRef.current + 1);
@@ -120,6 +122,7 @@ const handleSend = (message: string) => {
 
   return (
     <>
+      <SegmentedProgress total={7} current={script[stepIndexRef.current].step} />
       <ChatBoxContainer ref={chatContainerRef}>
         {messages.map((m) => (
           m.input === 'select' && m.options ? (

@@ -90,7 +90,7 @@ export const industryCategoryDetailItems2 = [
 
 export const script: Step[] = [
   {
-    step: 1,
+    step: 0,
     field: 'question',
     id: 0,
     nextId: 1,
@@ -103,7 +103,7 @@ export const script: Step[] = [
     ),
   },
   {
-    step: 1,
+    step: 0,
     field: 'question',
     id: 1,
     nextId: 2,
@@ -121,7 +121,7 @@ export const script: Step[] = [
     id: 2,
     nextId: 3,
     role: 'bot',
-    title: '사업장 소재지',
+    title: 'STEP1. 사업장 소재지',
     content: (
       <>
         <p>사업장이 속한 시 또는 군을 채팅창에 입력해주세요.</p>
@@ -129,7 +129,7 @@ export const script: Step[] = [
     ),
   },
   { 
-    step: 2,
+    step: 1,
     field: 'city', 
     id: 3, 
     nextId: 4,
@@ -138,7 +138,7 @@ export const script: Step[] = [
     content: <p>시군</p> 
   },
   {
-    step: 2,
+    step: 1,
     field: 'question',
     id: 4,
     nextId: 5,
@@ -146,7 +146,7 @@ export const script: Step[] = [
     content: <p>사업장이 속한 군 또는 구를 채팅창에 입력해주세요.</p>,
   },
   {   
-    step: 2,
+    step: 1,
     field: 'county', 
     id: 5, 
     nextId: 6,
@@ -160,7 +160,7 @@ export const script: Step[] = [
     id: 6, 
     nextId: 7,
     role: 'bot', 
-    title: '업종',
+    title: 'STEP2. 업종',
     content: <p>아래 두개의 업종 중 하나를 선택하거나 채팅창에 입력해주세요.</p> 
   },
   {
@@ -238,7 +238,7 @@ export const script: Step[] = [
     role: 'bot',
     nextId: 16,
     input: 'text',
-    title: '개업년월일',
+    title: 'STEP3. 개업년월일',
     content: <p>개업한 연도와 월, 일을 형식에 맞게 아래 채팅창에 입력해주세요.</p> ,
     placeholder: '개업한 연도와 월, 일을 8자리로 입력해주세요(예시: 20230803)'
   },
@@ -263,7 +263,7 @@ export const script: Step[] = [
   },
   {
     id: 18,
-    step: 2,
+    step: 3,
     field: 'openedAtConfirm',
     role: 'bot',
     input: 'select',
@@ -293,18 +293,17 @@ export const script: Step[] = [
     id: 21,
     step: 3,
     field: 'isClosed',
-    title: '폐업 여부',
+    title: 'STEP4. 폐업 여부',
     role: 'bot',
     input: 'text',
     content: <p>현재 폐업완료 하셨나요?</p> ,
   },
   {
     id: 22,
-    step: 3,
+    step: 4,
     field: 'isClosed',
     role: 'bot',
     input: 'select',
-    title: '폐업 여부',
     options: [
       { value: 'true', label: '네', nextId: 24},
       { value: 'false', label: '아니오', nextId: 35},
@@ -312,7 +311,7 @@ export const script: Step[] = [
   },
   {
     id: 23,
-    step: 3,
+    step: 4,
     field: 'isClosed',
     role: 'user',
     input: 'text',
@@ -320,7 +319,7 @@ export const script: Step[] = [
   },
   {
     id: 24,
-    step: 3,
+    step: 4,
     field: 'isClosed',
     role: 'bot',
     input: 'text',
@@ -330,7 +329,7 @@ export const script: Step[] = [
   {
     id: 25,
     nextId: 26,
-    step: 3,
+    step: 4,
     field: 'closedAt',
     role: 'user',
     input: 'text',
@@ -339,7 +338,7 @@ export const script: Step[] = [
   },
   {
     id: 26,
-    step: 3,
+    step: 4,
     field: 'closedAt',
     role: 'bot',
     input: 'text',
@@ -347,7 +346,7 @@ export const script: Step[] = [
   },
   {
     id: 27,
-    step: 3,
+    step: 4,
     field: 'confirm',
     role: 'bot',
     input: 'select',
@@ -358,7 +357,7 @@ export const script: Step[] = [
   },
   {
     id: 28,
-    step: 3,
+    step: 4,
     field: 'confirm',
     role: 'user',
     input: 'text',
@@ -366,7 +365,7 @@ export const script: Step[] = [
   },
   {
     id: 29,
-    step: 3,
+    step: 4,
     field: 'confirm',
     role: 'bot',
     input: 'text',
@@ -374,7 +373,7 @@ export const script: Step[] = [
   },
   {
     id: 30,
-    step: 3,
+    step: 4,
     field: 'isReemployed',
     role: 'bot',
     input: 'select',
@@ -385,7 +384,7 @@ export const script: Step[] = [
   },
   {
     id: 31,
-    step: 3,
+    step: 4,
     nextId: 32,
     field: 'isReemployed',
     role: 'user',
@@ -394,7 +393,7 @@ export const script: Step[] = [
   },
   {
     id: 32,
-    step: 3,
+    step: 4,
     field: 'confirm',
     role: 'bot',
     input: 'text',
@@ -402,7 +401,7 @@ export const script: Step[] = [
   },
   {
     id: 33,
-    step: 3,
+    step: 4,
     field: 'isDemolished',
     role: 'bot',
     input: 'select',
@@ -413,7 +412,7 @@ export const script: Step[] = [
   },
   {
     id: 34,
-    step: 3,
+    step: 4,
     nextId: 35,
     field: 'isDemolished',
     role: 'user',
@@ -422,7 +421,7 @@ export const script: Step[] = [
   },
   {
     id: 35,
-    step: 3,
+    step: 4,
     field: 'confirm',
     role: 'bot',
     input: 'text',
@@ -430,9 +429,9 @@ export const script: Step[] = [
   },
   {
     id: 36, 
-    step: 3,
+    step: 5,
     field: 'monthlySalesRange',
-    title: '월평균 매출액',
+    title: 'STEP5. 월평균 매출액',
     role: 'bot',
     input: 'text',
     content: 
@@ -443,7 +442,7 @@ export const script: Step[] = [
   },
   {
     id: 37,
-    step: 3,
+    step: 5,
     field: 'monthlySalesRange',
     role: 'bot',
     input: 'select',
@@ -462,7 +461,7 @@ export const script: Step[] = [
   },
   {
     id: 38,
-    step: 3,
+    step: 5,
     field: 'monthlySalesRange',
     role: 'user',
     input: 'text',
@@ -470,16 +469,16 @@ export const script: Step[] = [
   },
   {
     id: 39,
-    step: 3,
+    step: 6,
     field: 'areaSizeM2',
     role: 'bot',
-    title: '점포 면적',
+    title: 'STEP6. 점포 면적',
     input: 'text',
     content: <p>폐업 (예정)점포의 면적(M2단위)을 단위 없이 입력해주세요.</p> ,
   },
   {
     id: 40,
-    step: 3,
+    step: 6,
     nextId: 41,
     field: 'areaSizeM2',
     role: 'user',
@@ -488,7 +487,7 @@ export const script: Step[] = [
   },
   {
     id: 41,
-    step: 3,
+    step: 6,
     nextId: 42,
     field: 'employeeCount',
     role: 'bot',
@@ -497,7 +496,7 @@ export const script: Step[] = [
   },
   {
     id: 42,
-    step: 3,
+    step: 6,
     nextId: 43,
     field: 'employeeCount',
     role: 'user',
@@ -506,7 +505,7 @@ export const script: Step[] = [
   },
   {
     id: 43,
-    step: 3,
+    step: 6,
     field: 'employeeCount',
     role: 'bot',
     input: 'text',
@@ -514,17 +513,17 @@ export const script: Step[] = [
   },
   {
     id: 44,
-    step: 3,
+    step: 7,
     field: 'leaseType',
     role: 'bot',
-    title: '임대차 계약 형태',
+    title: 'STEP7. 임대차 계약 형태',
     input: 'text',
     content: <p>마지막 입력 정보에요.</p> ,
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
     id: 45,
-    step: 3,
+    step: 7,
     field: 'leaseType',
     role: 'bot',
     input: 'text',
@@ -533,7 +532,7 @@ export const script: Step[] = [
   },
   {
     id: 46,
-    step: 3,
+    step: 7,
     field: 'leaseType',
     role: 'bot',
     input: 'select',
@@ -545,7 +544,7 @@ export const script: Step[] = [
   },
   {
     id: 47,
-    step: 3,
+    step: 7,
     field: 'leaseType',
     role: 'user',
     input: 'text',
@@ -554,7 +553,7 @@ export const script: Step[] = [
   },
   {
     id: 48,
-    step: 3,
+    step: 7,
     field: 'depositAmount',
     role: 'bot',
     input: 'text',
@@ -562,7 +561,7 @@ export const script: Step[] = [
   },
   {
     id: 49,
-    step: 3,
+    step: 7,
     nextId: 50,
     field: 'depositAmount',
     role: 'user',
@@ -571,7 +570,7 @@ export const script: Step[] = [
   },
   {
     id: 50,
-    step: 3,
+    step: 7,
     field: 'monthlyRent',
     role: 'bot',
     input: 'text',
@@ -579,7 +578,7 @@ export const script: Step[] = [
   },
   {
     id: 51,
-    step: 3,
+    step: 7,
     nextId: 52,
     field: 'monthlyRent',
     role: 'user',
@@ -588,7 +587,7 @@ export const script: Step[] = [
   },
   {
     id: 52,
-    step: 3,
+    step: 7,
     field: 'confirm',
     role: 'bot',
     input: 'text',
@@ -596,7 +595,7 @@ export const script: Step[] = [
   },
   {
     id: 53,
-    step: 3,
+    step: 7,
     field: 'confirm',
     role: 'user',
     input: 'text',
