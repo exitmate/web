@@ -1,24 +1,25 @@
 "use client"
 
 import colors from "@/utils/colors"
+import { SelectOption } from "@/utils/scripts"
 import styled from "@emotion/styled"
 
 interface ToggleButtonGroupProps {
-  items: { value: string, label: string }[][] | { value: string, label: string }[]
+  items: SelectOption[][] | SelectOption[]
   value: string
-  setValue: (value: string) => void
+  setValue: (value: string, nextStep: number) => void
 }
 
 export const ToggleButtonGroup = ({ items, value, setValue }: ToggleButtonGroupProps) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {Array.isArray(items[0])
-        ? (items as { value: string, label: string }[][]).map((row, rowIndex) => (
+        ? (items as { value: string, label: string, nextStep: number }[][]).map((row, rowIndex) => (
             <div key={rowIndex} style={{ display: 'flex', gap: '8px' }}>
               {row.map((item) => (
                 <ToggleButton
                   key={item.value}
-                  onClick={() => setValue(item.value)}
+                  onClick={() => setValue(item.value, item.nextStep)}
                   active={value === item.value}
                 >
               {item.label}
@@ -28,10 +29,10 @@ export const ToggleButtonGroup = ({ items, value, setValue }: ToggleButtonGroupP
           ))
         : (
             <div style={{ display: 'flex', gap: '8px' }}>
-              {(items as { value: string, label: string }[]).map((item) => (
+              {(items as { value: string, label: string, nextId: number }[]).map((item) => (
                 <ToggleButton
                   key={item.value}
-                  onClick={() => setValue(item.value)}
+                  onClick={() => setValue(item.value, item.nextId)}
                   active={value === item.value}
                 >
               {item.label}
