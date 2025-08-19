@@ -104,6 +104,7 @@ const handleSend = (message: string) => {
               key={m.id}
               items={m.options}
               value={answers[m.field]}
+              index={index}
               setValue={(value: string ) => {
                 setInputValue(value)
               }}
