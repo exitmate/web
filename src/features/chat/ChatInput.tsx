@@ -1,5 +1,6 @@
 import sendIcon from "@/assets/icons/arrow-up.svg";
 import colors from "@/utils/colors";
+import { applyConstraints, InputConstraints } from "@/utils/inputConstraints";
 import { Textarea } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Image from "next/image";
@@ -11,13 +12,14 @@ interface ChatInputProps {
   onSend: (message: string) => void;
   onChange: (value: string) => void;
   disabled?: boolean;
+  constraints?: InputConstraints;
 }
 
-export const ChatInput = ({ onSend, placeholder, value, onChange, disabled }: ChatInputProps) => {
+export const ChatInput = ({ onSend, placeholder, value, onChange, disabled, constraints }: ChatInputProps) => {
   const [active, setActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
+    const newValue = applyConstraints(e.target.value, constraints);
     setActive(newValue.length > 0);
     onChange(newValue);
   };

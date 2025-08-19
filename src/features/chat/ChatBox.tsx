@@ -1,4 +1,5 @@
 import colors from '@/utils/colors'
+import { constraintsForField } from '@/utils/inputConstraints'
 import { script, Step } from '@/utils/scripts'
 import styled from '@emotion/styled'
 import { useEffect, useRef, useState } from 'react'
@@ -63,10 +64,31 @@ export const ChatBox = () => {
     });
   };
 
+const handleSelect = (selected: string, nextId?: number) => {
+  const current = script[stepIndexRef.current];
+
+  setMessages(prev => [
+    ...prev,
+    { ...current, id: Date.now(), role: 'user', input: 'text', content: selected } as Step,
+  ]);
+
+  if (!current.field.includes('confirm')) {
+    setAnswers(prev => ({ ...prev, [current.field]: selected }));
+  }
+
+  const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndexRef.current + 1);
+  stepIndexRef.current = target;
+  setIndex(target);
+
+  pushUntilUserTurnWithDelay(700);
+};
+
 
   useEffect(() => {
     pushUntilUserTurnWithDelay(1000)
   }, [])
+
+  const inputConstraints = constraintsForField(script[stepIndexRef.current].field);
 
 const handleSend = (message: string) => {
   const trimmed = message.trim();
@@ -84,7 +106,7 @@ const handleSend = (message: string) => {
   if (expectingUser) {
     setAnswers(prev => ({ ...prev, [current.field]: trimmed }));
 
-    const targetIndex = current.nextId ?? stepIndexRef.current + 1;
+    const targetIndex = current.nextId ?? index;
     stepIndexRef.current = targetIndex;
     setIndex(targetIndex);
 
@@ -93,7 +115,8 @@ const handleSend = (message: string) => {
 };
 
   const isUserTurn = script[stepIndexRef.current]?.role === 'user'
-  const currentPlaceholder = isUserTurn ? '메시지를 입력해주세요.' : '업종을 선택해주세요.'
+  const currentPlaceholder = script[stepIndexRef.current]?.placeholder ?? '메시지를 입력해주세요.'
+
 
   return (
     <>
@@ -101,14 +124,10 @@ const handleSend = (message: string) => {
         {messages.map((m) => (
           m.input === 'select' && m.options ? (
             !answers[m.field] && <ToggleButtonGroup
-              key={m.id}
-              items={m.options}
-              value={answers[m.field]}
-              index={index}
-              setValue={(value: string ) => {
-                setInputValue(value)
-              }}
-            />
+            key={m.id}
+            items={m.options}
+            setValue={handleSelect}
+          />
           ) : ( 
             <ChatBubbleItem key={m.id} message={m.content} isUser={m.role === 'user'} title={m.title} />
           )
@@ -121,11 +140,13 @@ const handleSend = (message: string) => {
         value={inputValue}
         onChange={setInputValue}
         disabled={!isUserTurn}
+        constraints={inputConstraints}
       />
 
       <Debug>
         <pre>{JSON.stringify(answers, null, 2)}</pre>
         <pre>{JSON.stringify(stepIndexRef.current, null, 2)}</pre>
+        <pre>{JSON.stringify(index, null, 2)}</pre>
       </Debug>
     </>
   )
