@@ -2,8 +2,12 @@ import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-import { DataResponse, ErrorResponse, ValidationErrorResponse } from '../schema'
-import { businessInfoInputSchema } from './schema'
+import { ErrorResponse, ValidationErrorResponse } from '../schema'
+import {
+  BusinessInfoInputResponse,
+  BusinessInfoInputResponseSchema,
+  BusinessInfoInputSchema,
+} from './schema'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { id: userId } = token
     const body = await request.json()
 
-    const data = businessInfoInputSchema.parse(body)
+    const data = BusinessInfoInputSchema.parse(body)
 
     // 기존 BusinessInfo 확인
     const existingBusinessInfo = await prisma.businessInfo.findUnique({
@@ -29,8 +33,7 @@ export async function POST(request: NextRequest) {
     if (existingBusinessInfo) {
       return NextResponse.json<ErrorResponse>(
         {
-          error:
-            '이미 사업자 정보가 존재합니다. PUT 메소드를 사용하여 업데이트해주세요.',
+          error: '이미 사업자 정보가 존재합니다.',
         },
         { status: 409 },
       )
@@ -44,7 +47,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json<DataResponse<typeof businessInfo>>({
+    return NextResponse.json<BusinessInfoInputResponse>({
       data: businessInfo,
     })
   } catch (error) {
@@ -82,7 +85,7 @@ export async function PUT(request: NextRequest) {
     const { id: userId } = token
     const body = await request.json()
 
-    const data = businessInfoInputSchema.parse(body)
+    const data = BusinessInfoInputSchema.parse(body)
 
     // 기존 BusinessInfo 확인
     const existingBusinessInfo = await prisma.businessInfo.findUnique({
@@ -108,7 +111,7 @@ export async function PUT(request: NextRequest) {
       },
     })
 
-    return NextResponse.json<DataResponse<typeof businessInfo>>({
+    return NextResponse.json<BusinessInfoInputResponse>({
       data: businessInfo,
     })
   } catch (error) {

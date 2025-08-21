@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { DataResponse, ErrorResponse, ValidationErrorResponse } from '../schema'
-import { infoInputSchema } from './schema'
+import { MemberInfoInputResponse, MemberInfoInputSchema } from './schema'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const { id: userId } = token
     const body = await request.json()
 
-    const data = infoInputSchema.parse(body)
+    const data = MemberInfoInputSchema.parse(body)
 
     const updatedMember = await prisma.member.update({
       where: {
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json<DataResponse<typeof updatedMember>>({
+    return NextResponse.json<MemberInfoInputResponse>({
       data: updatedMember,
     })
   } catch (error) {

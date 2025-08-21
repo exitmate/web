@@ -1,7 +1,15 @@
 import { BusinessInfoSchema } from '@/generated/zod'
 import z from 'zod'
+import { DataResponseSchema } from '../schema'
 
-export const businessInfoInputSchema = BusinessInfoSchema.pick({
+export const BusinessInfoInputResponseSchema =
+  DataResponseSchema(BusinessInfoSchema)
+
+export type BusinessInfoInputResponse = z.infer<
+  typeof BusinessInfoInputResponseSchema
+>
+
+export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
   region: true,
   industryCategory: true,
   industryDetail: true,

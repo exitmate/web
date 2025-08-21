@@ -1,7 +1,14 @@
 import { MemberSchema } from '@/generated/zod'
 import z from 'zod'
+import { DataResponseSchema } from '../schema'
 
-export const infoInputSchema = MemberSchema.pick({
+export const MemberInfoInputResponseSchema = DataResponseSchema(MemberSchema)
+
+export type MemberInfoInputResponse = z.infer<
+  typeof MemberInfoInputResponseSchema
+>
+
+export const MemberInfoInputSchema = MemberSchema.pick({
   name: true,
   email: true,
   birthDate: true,
