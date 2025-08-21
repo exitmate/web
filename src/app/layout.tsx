@@ -1,10 +1,9 @@
-import { Provider } from "@/components/ui/provider";
-import { Header } from "@/features/Header";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import localfont from "next/font/local";
-import "normalize.css";
-import "./globals.css";
+import { Provider } from '@/components/ui/provider'
+import { Header } from '@/features/Header'
+import type { Metadata } from 'next'
+import localfont from 'next/font/local'
+import 'normalize.css'
+import './globals.css'
 
 const pretendard = localfont({
   src: '../../public/fonts/PretendardVariable.woff2',
@@ -23,7 +22,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${pretendard.variable}`} suppressHydrationWarning>
+    <html
+      lang="ko"
+      className={`${pretendard.variable}`}
+      suppressHydrationWarning
+    >
       <body className={pretendard.className}>
         <Provider>
           <Header />

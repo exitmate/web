@@ -7,6 +7,12 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+generator zod {
+  provider = "zod-prisma-types"
+  output   = "../src/generated/zod"
 }
 
 datasource db {
@@ -73,7 +79,6 @@ model BusinessInfo {
 enum IndustryCategory {
   FOOD_SERVICE
   NON_ALCOHOL_CAFE
-  OTHER
 }
 
 enum SalesRange {
@@ -136,17 +141,10 @@ enum ApplicationType {
   DEADLINED  // 마감일 존재
 }
 
-model Service {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+type Service {
   type            ServiceType
-  maxAmount       Int?        // 지원금액 (원 단위)
-
-  project         SupportProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId       String         @db.ObjectId
-
+  maxAmount       Int?
   createdAt       DateTime @default(now())
-
-  @@index([projectId])
 }
 
 enum ServiceType {

@@ -1,19 +1,23 @@
-"use client";
+'use client'
 
-import ArrowDownIcon from "@/assets/icons/arrow-down.svg";
-import colors from "@/utils/colors";
-import styled from "@emotion/styled";
-import Image from "next/image";
-import { useState } from "react";
+import ArrowDownIcon from '@/assets/icons/arrow-down.svg'
+import colors from '@/utils/colors'
+import styled from '@emotion/styled'
+import Image from 'next/image'
+import { useState } from 'react'
 
 interface CategoryProps {
-  category: string;
-  setCategory: (category: string) => void;
-  contents: string[];
+  category: string
+  setCategory: (category: string) => void
+  contents: string[]
 }
 
-export const Category = ({ category, contents, setCategory }: CategoryProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const Category = ({
+  category,
+  contents,
+  setCategory,
+}: CategoryProps) => {
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <CategoryContainer onClick={() => setIsOpen(!isOpen)}>
@@ -24,13 +28,15 @@ export const Category = ({ category, contents, setCategory }: CategoryProps) => 
       {isOpen && (
         <CategoryContents>
           {contents.map((content) => (
-            <p key={content} onClick={() => setCategory(content)}>{content}</p>
+            <p key={content} onClick={() => setCategory(content)}>
+              {content}
+            </p>
           ))}
         </CategoryContents>
       )}
     </CategoryContainer>
-  );
-};
+  )
+}
 
 const CategoryContainer = styled.div`
   display: flex;
@@ -47,7 +53,7 @@ const CategoryContainer = styled.div`
   font-size: 16px;
   font-weight: 500;
   color: ${colors.gray[7]};
-`;
+`
 
 const ArrowDownSection = styled.div<{ isOpen: boolean }>`
   display: flex;
@@ -55,9 +61,9 @@ const ArrowDownSection = styled.div<{ isOpen: boolean }>`
   justify-content: center;
   width: 24px;
   height: 24px;
-  transform: ${({ isOpen }) => isOpen ? "rotate(180deg)" : "rotate(0deg)"};
+  transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.3s ease;
-`;
+`
 
 const CategoryContents = styled.div`
   display: flex;
@@ -71,7 +77,6 @@ const CategoryContents = styled.div`
   height: fit-content;
   background-color: ${colors.white};
   border: 1px solid ${colors.gray[6]};
-`;
+`
 
-
-export default Category;
+export default Category

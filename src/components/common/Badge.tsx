@@ -1,16 +1,16 @@
-import colors from "@/utils/colors";
-import styled from "@emotion/styled";
+import colors from '@/utils/colors'
+import styled from '@emotion/styled'
 
 interface BadgeProps {
-  content: string;
+  content: string
 }
 
-export const Badge = ({content}: BadgeProps) => {
+export const Badge = ({ content }: BadgeProps) => {
   return (
     <BadgeContainer>
       <span>{content}</span>
     </BadgeContainer>
-  );
+  )
 }
 
 const BadgeContainer = styled.div`
@@ -24,6 +24,6 @@ const BadgeContainer = styled.div`
   font-size: 12px;
   font-weight: 600;
   color: ${colors.white};
-`;
+`
 
-export default Badge;
+export default Badge

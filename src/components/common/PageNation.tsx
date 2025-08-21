@@ -1,60 +1,69 @@
-"use client";
+'use client'
 
-import ArrowLeftEndIcon from "@/assets/icons/arrow-left-end.svg";
-import ArrowLeftIcon from "@/assets/icons/arrow-left.svg";
-import ArrowRightEndIcon from "@/assets/icons/arrow-right-end.svg";
-import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
-import colors from "@/utils/colors";
-import styled from "@emotion/styled";
-import Image from "next/image";
+import ArrowLeftEndIcon from '@/assets/icons/arrow-left-end.svg'
+import ArrowLeftIcon from '@/assets/icons/arrow-left.svg'
+import ArrowRightEndIcon from '@/assets/icons/arrow-right-end.svg'
+import ArrowRightIcon from '@/assets/icons/arrow-right.svg'
+import colors from '@/utils/colors'
+import styled from '@emotion/styled'
+import Image from 'next/image'
 
 interface PageNationProps {
-  currentPage: number;
-  setCurrentPage: (page: number) => void;
-  totalPages: number;
+  currentPage: number
+  setCurrentPage: (page: number) => void
+  totalPages: number
 }
 
-export const PageNation = ({ currentPage, setCurrentPage, totalPages }: PageNationProps) => {
-  const currentGroup = Math.floor((currentPage - 1) / 5);
-  const startPage = currentGroup * 5 + 1;
-  const endPage = Math.min(startPage + 4, totalPages);
-  
-  const pageNumbers = [];
+export const PageNation = ({
+  currentPage,
+  setCurrentPage,
+  totalPages,
+}: PageNationProps) => {
+  const currentGroup = Math.floor((currentPage - 1) / 5)
+  const startPage = currentGroup * 5 + 1
+  const endPage = Math.min(startPage + 4, totalPages)
+
+  const pageNumbers = []
   for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
+    pageNumbers.push(i)
   }
 
   const handlePageClick = (page: number) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      setCurrentPage(page)
     }
-  };
+  }
 
   const handleFirstPage = () => {
-    setCurrentPage(1);
-  };
+    setCurrentPage(1)
+  }
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage(currentPage - 1)
     }
-  };
+  }
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage(currentPage + 1)
     }
-  };
+  }
 
   const handleLastPage = () => {
-    setCurrentPage(totalPages);
-  };
+    setCurrentPage(totalPages)
+  }
 
   return (
     <PageNationContainer>
       <ArrowSection>
         <ArrowButton onClick={handleFirstPage} disabled={currentPage === 1}>
-          <Image src={ArrowLeftEndIcon} alt="left-arrow-end" width={24} height={24} />
+          <Image
+            src={ArrowLeftEndIcon}
+            alt="left-arrow-end"
+            width={24}
+            height={24}
+          />
         </ArrowButton>
         <ArrowButton onClick={handlePrevPage} disabled={currentPage === 1}>
           <Image src={ArrowLeftIcon} alt="left-arrow" width={24} height={24} />
@@ -72,15 +81,31 @@ export const PageNation = ({ currentPage, setCurrentPage, totalPages }: PageNati
         ))}
       </PageNumberSection>
       <ArrowSection>
-        <ArrowButton onClick={handleNextPage} disabled={currentPage === totalPages}>
-          <Image src={ArrowRightIcon} alt="right-arrow" width={24} height={24} />
+        <ArrowButton
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          <Image
+            src={ArrowRightIcon}
+            alt="right-arrow"
+            width={24}
+            height={24}
+          />
         </ArrowButton>
-        <ArrowButton onClick={handleLastPage} disabled={currentPage === totalPages}>
-          <Image src={ArrowRightEndIcon} alt="right-arrow-end" width={24} height={24} />
+        <ArrowButton
+          onClick={handleLastPage}
+          disabled={currentPage === totalPages}
+        >
+          <Image
+            src={ArrowRightEndIcon}
+            alt="right-arrow-end"
+            width={24}
+            height={24}
+          />
         </ArrowButton>
       </ArrowSection>
     </PageNationContainer>
-  );
+  )
 }
 
 const PageNationContainer = styled.div`
@@ -89,20 +114,20 @@ const PageNationContainer = styled.div`
   width: 276px;
   height: 28px;
   gap: 12px;
-`;
+`
 
 const ArrowSection = styled.div`
   display: flex;
   align-items: center;
   width: fit-content;
-`;
+`
 
 const PageNumberSection = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
   width: fit-content;
-`;
+`
 
 const ArrowButton = styled.button`
   display: flex;
@@ -114,7 +139,7 @@ const ArrowButton = styled.button`
   padding: 4px;
   border-radius: 4px;
   transition: background-color 0.2s;
-`;
+`
 
 const PageNumber = styled.button<{ isActive: boolean }>`
   display: flex;
@@ -123,13 +148,14 @@ const PageNumber = styled.button<{ isActive: boolean }>`
   width: 28px;
   height: 28px;
   background-color: transparent;
-  color: ${({ isActive }) => isActive ? colors.point : colors.gray[6]};
+  color: ${({ isActive }) => (isActive ? colors.point : colors.gray[6])};
   border: none;
-  border-bottom: 2px solid ${({ isActive }) => isActive ? colors.point : 'transparent'};
+  border-bottom: 2px solid
+    ${({ isActive }) => (isActive ? colors.point : 'transparent')};
   cursor: pointer;
   font-size: 16px;
-  font-weight: ${({ isActive }) => isActive ? 700 : 500};
+  font-weight: ${({ isActive }) => (isActive ? 700 : 500)};
   transition: all 0.2s;
-`;
+`
 
-export default PageNation;
+export default PageNation
