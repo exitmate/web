@@ -18,25 +18,46 @@ export const PaginationRequestSchema = z.object({
 
 export type PaginationRequest = z.infer<typeof PaginationRequestSchema>
 
-export type DataResponse<TData = unknown> = {
-  data: TData
-}
+export const DataResponseSchema = <TData extends z.ZodType>(
+  dataSchema: TData,
+) =>
+  z.object({
+    data: dataSchema,
+  })
 
-export type PaginatedDataResponse<TData = unknown> = {
-  data: TData
-  pagination: Pagination
-  filters: Record<string, string | boolean | number | undefined>
-}
+export type DataResponse<TData extends z.ZodType> = z.infer<
+  typeof DataResponseSchema<TData>
+>
 
-export interface FieldError {
-  field: string
-  message: string
-}
+export const PaginatedDataResponseSchema = <TData extends z.ZodType>(
+  dataSchema: TData,
+) =>
+  z.object({
+    data: dataSchema,
+    pagination: PaginationSchema,
+  })
 
-export interface ErrorResponse {
-  error: string
-}
+export type PaginatedDataResponse<TData extends z.ZodType> = z.infer<
+  typeof PaginatedDataResponseSchema<TData>
+>
 
-export interface ValidationErrorResponse {
-  errors: FieldError[]
-}
+export const FieldErrorSchema = z.object({
+  field: z.string(),
+  message: z.string(),
+})
+
+export type FieldError = z.infer<typeof FieldErrorSchema>
+
+export const ErrorResponseSchema = z.object({
+  error: z.string(),
+})
+
+export type ErrorResponse = z.infer<typeof ErrorResponseSchema>
+
+export const ValidationErrorResponseSchema = z.object({
+  errors: z.array(FieldErrorSchema),
+})
+
+export type ValidationErrorResponse = z.infer<
+  typeof ValidationErrorResponseSchema
+>

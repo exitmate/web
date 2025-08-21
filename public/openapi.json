@@ -1,0 +1,539 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Exitmate API",
+    "version": "1.0.0",
+    "description": "Exitmate API 명세"
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local 서버"
+    }
+  ],
+  "paths": {
+    "/api/business": {
+      "post": {
+        "summary": "사용자 업장 정보 입력",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "industryCategory": {
+                    "type": "string",
+                    "enum": ["FOOD_SERVICE", "NON_ALCOHOL_CAFE"]
+                  },
+                  "industryDetail": {
+                    "type": "string"
+                  },
+                  "openedAt": {
+                    "type": "string"
+                  },
+                  "isClosed": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "closedAt": {
+                    "type": "string"
+                  },
+                  "isReemployed": {
+                    "type": "boolean"
+                  },
+                  "isDemolished": {
+                    "type": "boolean"
+                  },
+                  "monthlySalesRange": {
+                    "type": "string",
+                    "enum": [
+                      "BELOW_500",
+                      "FROM_500_TO_1000",
+                      "FROM_1000_TO_1500",
+                      "FROM_1500_TO_2000",
+                      "FROM_2000_TO_5000",
+                      "ABOVE_5000"
+                    ]
+                  },
+                  "areaSizeM2": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "employeeCount": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "leaseType": {
+                    "type": "string",
+                    "enum": ["OWNED", "MONTHLY"]
+                  },
+                  "depositAmount": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "monthlyRent": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "region",
+                  "industryCategory",
+                  "industryDetail",
+                  "openedAt",
+                  "monthlySalesRange",
+                  "leaseType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "사용자 업장 정보 입력 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "industryCategory": {
+                          "type": "string",
+                          "enum": ["FOOD_SERVICE", "NON_ALCOHOL_CAFE"]
+                        },
+                        "monthlySalesRange": {
+                          "type": "string",
+                          "enum": [
+                            "BELOW_500",
+                            "FROM_500_TO_1000",
+                            "FROM_1000_TO_1500",
+                            "FROM_1500_TO_2000",
+                            "FROM_2000_TO_5000",
+                            "ABOVE_5000"
+                          ]
+                        },
+                        "leaseType": {
+                          "type": "string",
+                          "enum": ["OWNED", "MONTHLY"]
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        },
+                        "industryDetail": {
+                          "type": "string"
+                        },
+                        "openedAt": {
+                          "type": "string"
+                        },
+                        "isClosed": {
+                          "type": "boolean"
+                        },
+                        "closedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "isReemployed": {
+                          "anyOf": [
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "isDemolished": {
+                          "anyOf": [
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "areaSizeM2": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "employeeCount": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "depositAmount": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "monthlyRent": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "memberId": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "industryCategory",
+                        "monthlySalesRange",
+                        "leaseType",
+                        "id",
+                        "region",
+                        "industryDetail",
+                        "openedAt",
+                        "isClosed",
+                        "closedAt",
+                        "isReemployed",
+                        "isDemolished",
+                        "areaSizeM2",
+                        "employeeCount",
+                        "depositAmount",
+                        "monthlyRent",
+                        "createdAt",
+                        "updatedAt",
+                        "memberId"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["data"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members": {
+      "post": {
+        "summary": "사용자 정보 입력",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "birthDate": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": ["MALE", "FEMALE", "OTHER"]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "agreedPrivacyPolicy": {
+                    "type": "boolean"
+                  },
+                  "agreedTermsOfUse": {
+                    "type": "boolean"
+                  },
+                  "agreedDataUsage": {
+                    "type": "boolean"
+                  },
+                  "agreedMarketing": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "birthDate",
+                  "gender",
+                  "agreedPrivacyPolicy",
+                  "agreedTermsOfUse",
+                  "agreedDataUsage"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "사용자 정보 입력 성공",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "summary": "지원사업 필터 및 조회",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "지원사업 필터 및 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "applicationType": {
+                            "type": "string",
+                            "enum": ["ALWAYS", "FIRST_COME", "DEADLINED"]
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "logoSrc": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "host": {
+                            "type": "string"
+                          },
+                          "deadline": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "isOpen": {
+                            "type": "boolean"
+                          },
+                          "detailPageUrl": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "inquiryPhone": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "inquiryEmail": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "requiredDocs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "applicationRequirements": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "restrictions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "applicationType",
+                          "id",
+                          "logoSrc",
+                          "title",
+                          "host",
+                          "deadline",
+                          "isOpen",
+                          "detailPageUrl",
+                          "inquiryPhone",
+                          "inquiryEmail",
+                          "requiredDocs",
+                          "applicationRequirements",
+                          "restrictions",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "totalCount": {
+                          "type": "number"
+                        },
+                        "limit": {
+                          "type": "number"
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "hasPrevPage": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "currentPage",
+                        "totalPages",
+                        "totalCount",
+                        "limit",
+                        "hasNextPage",
+                        "hasPrevPage"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["data", "pagination"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
