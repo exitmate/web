@@ -1,6 +1,9 @@
-'use client'
-import PaddedBox from '@/components/common/PaddedBox'
-import styled from '@emotion/styled'
+"use client";
+import PaddedBox from "@/components/common/PaddedBox";
+import { ChatBox } from "@/features/chat/ChatBox";
+import { SignUpStepCards } from "@/features/signup/SignUpStepCards";
+import colors from "@/utils/colors";
+import styled from "@emotion/styled";
 
 const SignupDetailPage = () => {
   return (
@@ -13,10 +16,20 @@ const SignupDetailPage = () => {
         marginTop: '20px',
       }}
     >
-      <SignupPageContainer></SignupPageContainer>
+      <SignupPageContainer>
+        <TitleText>회원가입</TitleText>
+        <SignUpStepCards step={2} />
+        <ChatBox />
+      </SignupPageContainer>
     </PaddedBox>
   )
 }
+
+const TitleText = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  color: ${colors.gray[7]};
+`;
 
 const SignupPageContainer = styled.div`
   display: flex;
