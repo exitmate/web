@@ -1,24 +1,71 @@
-import { BusinessInfo, Prisma } from '@/generated/prisma'
+import { BusinessInfo, Prisma, SupportProject } from '@/generated/prisma'
 import prisma from '@/utils/prisma'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
-import z, { ZodError } from 'zod'
+import z from 'zod'
 import { authOptions } from '../auth/[...nextauth]/authOptions'
-import { ErrorResponse, ValidationErrorResponse } from '../schema'
-import { ProjectSearchParams } from './schema'
+import {
+  ErrorResponse,
+  PaginatedDataResponse,
+  ValidationErrorResponse,
+} from '../schema'
+import { ProjectSearchParams, ProjectSearchSchema } from './schema'
+import { Session } from 'next-auth/jwt'
+import { SupportProjectSchema } from '@/generated/zod'
+import { getPaginatedParams, getPaginationInfo } from '../utils'
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session
     if (!session || !session.user) {
       return NextResponse.json<ErrorResponse>(
         { error: '로그인이 필요합니다.' },
         { status: 401 },
       )
     }
+    const businessInfo = await prisma.businessInfo.findFirst({
+      where: {
+        memberId: session.user.id,
+      },
+    })
+    if (!businessInfo) {
+      return NextResponse.json<ErrorResponse>(
+        { error: '사업자 정보가 없습니다.' },
+        { status: 400 },
+      )
+    }
     const { searchParams } = new URL(request.url)
-
     const params = Object.fromEntries(searchParams.entries())
+    const projectSearchParams = ProjectSearchSchema.parse(params)
+    const where = getWhere(projectSearchParams, businessInfo)
+    const orderBy = getOrderBy(projectSearchParams)
+    const { skip, take } = getPaginatedParams(
+      projectSearchParams.page,
+      projectSearchParams.limit,
+    )
+    console.log(projectSearchParams)
+    const projects = await prisma.supportProject.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+    })
+    console.dir(where, { depth: null })
+    console.dir(orderBy, { depth: null })
+
+    const totalCount = await prisma.supportProject.count({
+      where,
+    })
+    return NextResponse.json<
+      PaginatedDataResponse<typeof SupportProjectSchema>
+    >({
+      data: projects,
+      pagination: getPaginationInfo(
+        projectSearchParams.page,
+        projectSearchParams.limit,
+        totalCount,
+      ),
+    })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json<ValidationErrorResponse>(
@@ -42,20 +89,31 @@ function getOrderBy({
   applicationType,
   serviceType,
 }: ProjectSearchParams): Prisma.SupportProjectFindManyArgs['orderBy'] {
+  const ret: Prisma.SupportProjectFindManyArgs['orderBy'] = []
+  if (
+    serviceType === 'STORE_DEMOLITION_SUBSIDY' ||
+    serviceType === 'CLOSURE_SUPPORT_SUBSIDY'
+  ) {
+    ret.push({
+      maxAmount: 'desc',
+    })
+  }
   if (
     (applicationType && applicationType === 'ALWAYS') ||
     applicationType === 'FIRST_COME'
   ) {
-    return {
+    ret.push({
       createdAt: 'desc',
-    }
+    })
   }
 
   if (applicationType === 'DEADLINED') {
-    return {
+    ret.push({
       deadline: 'asc',
-    }
+    })
   }
+
+  return ret
 }
 
 function getWhere(
@@ -70,9 +128,7 @@ function getWhere(
 ): Prisma.SupportProjectFindManyArgs['where'] {
   const and: Prisma.SupportProjectWhereInput[] = []
 
-  if (isOpen) {
-    and.push({ isOpen: true })
-  }
+  and.push({ isOpen })
   if (applicationType) {
     and.push({ applicationType })
   }
@@ -191,13 +247,13 @@ function salesRangeToCondition(
 ): Prisma.SupportProjectWhereInput {
   switch (range) {
     case 'under_100':
-      return { services: { some: { maxAmount: { lte: 100 } } } }
+      return { maxAmount: { lte: 1_000_000 } }
     case '100_to_300':
-      return { services: { some: { maxAmount: { gte: 100, lte: 300 } } } }
+      return { maxAmount: { gte: 1_000_000, lte: 3_000_000 } }
     case '300_to_500':
-      return { services: { some: { maxAmount: { gte: 300, lte: 500 } } } }
+      return { maxAmount: { gte: 3_000_000, lte: 5_000_000 } }
     case 'above_500':
-      return { services: { some: { maxAmount: { gte: 500 } } } }
+      return { maxAmount: { gte: 5_000_000 } }
     default:
       return {}
   }
