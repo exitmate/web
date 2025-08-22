@@ -12,8 +12,12 @@ export const ProjectSearchSchema = PaginationRequestSchema.extend({
   maxAmountRange: z
     .enum(['under_100', '100_to_300', '300_to_500', 'above_500'])
     .optional(),
-  isOpen: z.coerce.boolean().default(true),
-  appliableOnly: z.coerce.boolean().default(true),
+  isOpen: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .optional(),
+  appliableOnly: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .optional(),
 })
 
 export type ProjectSearchParams = z.infer<typeof ProjectSearchSchema>
