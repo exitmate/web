@@ -349,7 +349,104 @@
           "200": {
             "description": "사용자 정보 입력 성공",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "gender": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": ["MALE", "FEMALE", "OTHER"]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "kakaoClientId": {
+                          "type": "string"
+                        },
+                        "kakaoNickname": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "name": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "birthDate": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "agreedPrivacyPolicy": {
+                          "type": "boolean"
+                        },
+                        "agreedTermsOfUse": {
+                          "type": "boolean"
+                        },
+                        "agreedDataUsage": {
+                          "type": "boolean"
+                        },
+                        "agreedMarketing": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "gender",
+                        "id",
+                        "kakaoClientId",
+                        "kakaoNickname",
+                        "email",
+                        "name",
+                        "birthDate",
+                        "agreedPrivacyPolicy",
+                        "agreedTermsOfUse",
+                        "agreedDataUsage",
+                        "agreedMarketing",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["data"],
+                  "additionalProperties": false
+                }
+              }
             }
           }
         }
@@ -462,6 +559,18 @@
                           },
                           "updatedAt": {
                             "type": "string"
+                          },
+                          "maxAmount": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -479,7 +588,8 @@
                           "applicationRequirements",
                           "restrictions",
                           "createdAt",
-                          "updatedAt"
+                          "updatedAt",
+                          "maxAmount"
                         ],
                         "additionalProperties": false
                       }
