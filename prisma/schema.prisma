@@ -127,12 +127,17 @@ model SupportProject {
 
 type SupportEligibility {
   mustBeInRegion        String?   // 지역 제한 (ex. "부산광역시")
-  mustBePlannedClosure  Boolean   // 폐업 예정자만 해당
-  mustBeClosed          Boolean   // 기폐업자만 해당
+  closureCondition      EligibilityClosureCondition?
   mustBeClosedAfter     DateTime? // 폐업일이 이 날짜 이후여야 함 (ex. 2025-01-01)
   mustBeClosedWithin    Int?      // 폐업일이 특정 일수 이하여야 함 (ex. 60일 이내)
   mustOperateAtLeast    Int?      // 최소 운영 일수 (ex. 60일)
   mustNotBeCorporation  Boolean   // 법인 불가 여부 (true면 법인 불가)
+}
+
+enum EligibilityClosureCondition {
+  MUST_BE_CLOSED
+  MUST_BE_NOT_CLOSED
+  NONE
 }
 
 enum ApplicationType {
