@@ -3,11 +3,7 @@ import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { ErrorResponse, ValidationErrorResponse } from '../schema'
-import {
-  BusinessInfoInputResponse,
-  BusinessInfoInputResponseSchema,
-  BusinessInfoInputSchema,
-} from './schema'
+import { BusinessInfoInputResponse, BusinessInfoInputSchema } from './schema'
 
 export async function POST(request: NextRequest) {
   try {
