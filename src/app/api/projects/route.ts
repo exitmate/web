@@ -1,31 +1,30 @@
 import { BusinessInfo, Prisma, SupportProject } from '@/generated/prisma'
 import prisma from '@/utils/prisma'
-import { getServerSession } from 'next-auth'
-import { NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
+import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-import { authOptions } from '../auth/[...nextauth]/authOptions'
 import {
   ErrorResponse,
   PaginatedDataResponse,
   ValidationErrorResponse,
 } from '../schema'
 import { ProjectSearchParams, ProjectSearchSchema } from './schema'
-import { Session } from 'next-auth/jwt'
 import { SupportProjectSchema } from '@/generated/zod'
 import { getPaginatedParams, getPaginationInfo } from '../utils'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const session = (await getServerSession(authOptions)) as Session
-    if (!session || !session.user) {
+    const token = await getToken({ req: request })
+    if (!token) {
       return NextResponse.json<ErrorResponse>(
         { error: '로그인이 필요합니다.' },
         { status: 401 },
       )
     }
+
     const businessInfo = await prisma.businessInfo.findFirst({
       where: {
-        memberId: session.user.id,
+        memberId: token.id,
       },
     })
     if (!businessInfo) {
@@ -50,8 +49,6 @@ export async function GET(request: Request) {
       skip,
       take,
     })
-    console.dir(where, { depth: null })
-    console.dir(orderBy, { depth: null })
 
     const totalCount = await prisma.supportProject.count({
       where,
