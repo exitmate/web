@@ -2,6 +2,15 @@ import { MemberSchema } from '@/generated/zod'
 import z from 'zod'
 import { DataResponseSchema } from '../schema'
 
+export const MyInfoResponseSchema = DataResponseSchema(
+  MemberSchema.omit({
+    id: true,
+    kakaoClientId: true,
+  }),
+)
+
+export type MyInfoResponse = z.infer<typeof MyInfoResponseSchema>
+
 export const MemberInfoInputResponseSchema = DataResponseSchema(MemberSchema)
 
 export type MemberInfoInputResponse = z.infer<
