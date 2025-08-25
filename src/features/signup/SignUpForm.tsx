@@ -66,8 +66,10 @@ export const SignUpForm = () => {
   console.log(touchedFields)
 
   const onSubmit = () => {
-    console.log(errors)
-    console.log(getValues())
+    fetch('/api/members', {
+      method: 'POST',
+      body: JSON.stringify(getValues()),
+    })
     router.push('/signup/detail')
   }
 

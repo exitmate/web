@@ -35,9 +35,9 @@ export default async function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
-        <Provider>
-          <Header />
-          {children}
+          <Provider>
+            <Header />
+            {children}
           <Footer />
         </Provider>
       </body>

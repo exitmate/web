@@ -1,13 +1,24 @@
 'use client'
 
-import { SignUpForm } from '@/features/signup/SignUpForm'
-import { signIn } from 'next-auth/react'
+    import { SessionProvider, signIn, useSession } from 'next-auth/react'
 
 export default function LoginPage() {
   return (
     <div>
-      <button onClick={() => signIn('kakao')}>Kakao Login</button>
-      <SignUpForm />
+      <SessionProvider>
+        <LoginInner />
+      </SessionProvider>
+    </div>
+  )
+}
+
+const LoginInner = () => {
+  const { data: session, status } = useSession()
+  console.log(session)
+  console.log(status)
+  return (
+    <div>
+      <button onClick={() => signIn('kakao', { callbackUrl: '/login' })}>Kakao Login</button>
     </div>
   )
 }
