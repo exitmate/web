@@ -1,4 +1,5 @@
 'use client'
+import { MemberInfoInputSchema } from '@/app/api/members/schema'
 import ArrowRightIcon from '@/assets/icons/arrow-right.svg'
 import { CommonButton } from '@/components/common/CommonButton'
 import { CommonCheckbox } from '@/components/common/CommonCheckbox'
@@ -6,7 +7,6 @@ import { CommonInput } from '@/components/common/CommonInput'
 import CommonSelect from '@/components/common/CommonSelect'
 import DatePicker from '@/components/common/DatePicker'
 import Spacing from '@/components/common/Spacing'
-import { MemberSchema } from '@/generated/zod'
 import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
 import {
@@ -20,6 +20,7 @@ import styled from '@emotion/styled'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -38,21 +39,21 @@ export const SignUpForm = () => {
 
   const {
     register,
-    watch,
     handleSubmit,
     getValues,
-    formState: { errors, isValid },
-    setValue,
+    formState: { errors, isValid, touchedFields },
+    setValue, 
+    trigger,
     control,
-  } = useForm<z.input<typeof MemberSchema>>({
-    resolver: zodResolver(MemberSchema),
+  } = useForm<z.input<typeof MemberInfoInputSchema>>({
+    resolver: zodResolver(MemberInfoInputSchema),
     mode: 'onChange',
     shouldUnregister: false,
     defaultValues: {
       name: '',
       email: '',
-      birthDate: new Date(),
-      gender: null,
+      birthDate: undefined as unknown as Date,
+      gender: undefined as unknown as 'MALE' | 'FEMALE' | 'OTHER',
       agreedPrivacyPolicy: false,
       agreedTermsOfUse: false,
       agreedDataUsage: false,
@@ -60,25 +61,33 @@ export const SignUpForm = () => {
     },
   })
 
+  console.log(errors)
+  console.log(isValid)
+  console.log(touchedFields)
+
   const onSubmit = () => {
     console.log(errors)
     console.log(getValues())
     router.push('/signup/detail')
   }
 
+  useEffect(() => {
+    trigger()
+  }, [trigger])
+
   const handleDateChange = (year: string, month: string, day: string) => {
     if (year && month && day) {
-      const birthDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-      setValue('birthDate', new Date(birthDate))
+      const birthDate = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`
+      setValue('birthDate', new Date(birthDate), { shouldValidate: true, shouldDirty: true, shouldTouch: true })
     } else {
-      setValue('birthDate', new Date())
+      setValue('birthDate', undefined, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
     }
   }
 
   return (
     <SignUpFormContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Fieldset.Root size="sm" invalid>
+        <Fieldset.Root size="sm" >
           <FieldsetContent>
             <FieldRoot>
               <CustomFieldLabel>이메일</CustomFieldLabel>
@@ -86,7 +95,8 @@ export const SignUpForm = () => {
                 placeholder="이메일을 입력해주세요."
                 register={register('email')}
                 type="email"
-                isInvalid={watch('email') === null || !!errors.email}
+                isInvalid={!!errors.email}
+                errorMessage={touchedFields.email ? errors.email?.message : undefined}
               />
             </FieldRoot>
             <FieldRoot>
@@ -95,7 +105,8 @@ export const SignUpForm = () => {
                 placeholder="이름을 입력해주세요."
                 register={register('name')}
                 type="text"
-                isInvalid={watch('name') === null || !!errors.name}
+                isInvalid={!!errors.name}
+                errorMessage={touchedFields.name ? errors.name?.message : undefined}
               />
             </FieldRoot>
             <FieldRoot>
@@ -103,21 +114,23 @@ export const SignUpForm = () => {
               <CommonSelect
                 placeholder="성별을 선택해주세요"
                 items={[
-                  { label: '남자', value: 'male' },
-                  { label: '여자', value: 'female' },
+                  { label: '남자', value: 'MALE' },
+                  { label: '여자', value: 'FEMALE' },
                 ]}
                 register={register('gender')}
-                isInvalid={watch('gender') === null || !!errors.gender}
+                isInvalid={!!errors.gender}
+                errorMessage={touchedFields.gender ? errors.gender?.message : undefined}
               />
             </FieldRoot>
             <FieldRoot>
               <CustomFieldLabel>생년월일</CustomFieldLabel>
               <DatePicker
-                isInvalid={watch('birthDate') === null || !!errors.birthDate}
+                isInvalid={!!errors.birthDate}
                 onDateChange={handleDateChange}
+                errorMessage={touchedFields.birthDate ? errors.birthDate?.message : undefined}
               />
             </FieldRoot>
-            <Spacing height={24} />
+            <Spacing height={18} />
             <FieldRoot>
               <div
                 style={{
@@ -134,7 +147,7 @@ export const SignUpForm = () => {
                   render={({ field }) => (
                     <CommonCheckbox
                       label="[필수] 개인정보 처리방침에 동의합니다."
-                      checked={field.value}
+                      checked={!!field.value}
                       onChange={field.onChange}
                     />
                   )}
@@ -158,7 +171,7 @@ export const SignUpForm = () => {
                   render={({ field }) => (
                     <CommonCheckbox
                       label="[필수]이용약관에 동의합니다."
-                      checked={field.value}
+                      checked={!!field.value}
                       onChange={field.onChange}
                     />
                   )}
@@ -182,7 +195,7 @@ export const SignUpForm = () => {
                   render={({ field }) => (
                     <CommonCheckbox
                       label="[필수] 데이터 활용에 동의합니다."
-                      checked={field.value}
+                      checked={!!field.value}
                       onChange={field.onChange}
                     />
                   )}
@@ -206,7 +219,7 @@ export const SignUpForm = () => {
                   render={({ field }) => (
                     <CommonCheckbox
                       label="[선택] 마케팅 수신에 동의합니다."
-                      checked={field.value}
+                      checked={!!field.value}
                       onChange={field.onChange}
                     />
                   )}

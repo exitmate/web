@@ -12,6 +12,7 @@ export const colors = {
     8: '#343537',
   },
   black: '#1b1b1b',
+  error: '#FF3E3E',
 }
 
 export default colors
