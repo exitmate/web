@@ -1,12 +1,17 @@
-import SegmentedProgress from '@/components/common/SegmentedProgress'
-import colors from '@/utils/colors'
-import { constraintsForField } from '@/utils/inputConstraints'
-import { script, Step } from '@/utils/scripts'
-import styled from '@emotion/styled'
-import { useEffect, useRef, useState } from 'react'
-import { ChatBubbleItem } from './ChatBubbleItem'
-import { ChatInput } from './ChatInput'
-import { ToggleButtonGroup } from './ToggleButtonGroup'
+import { BusinessInfoInputSchema } from '@/app/api/business/schema';
+import SegmentedProgress from '@/components/common/SegmentedProgress';
+import useUserStore from '@/stores/user';
+import colors from '@/utils/colors';
+import { constraintsForField } from '@/utils/inputConstraints';
+import { script as scriptData, Step } from '@/utils/scripts';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
+import { ChatBubbleItem } from './ChatBubbleItem';
+import { ChatInput } from './ChatInput';
+import { ToggleButtonGroup } from './ToggleButtonGroup';
 
 export const ChatBox = () => {
   const [messages, setMessages] = useState<Step[]>([])
@@ -14,6 +19,12 @@ export const ChatBox = () => {
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const { businessInfo, setBusinessInfo } = useUserStore();
+  const script = scriptData(businessInfo)
+
+  const { register, handleSubmit, formState: { errors } } = useForm<z.input<typeof BusinessInfoInputSchema>>({
+    resolver: zodResolver(BusinessInfoInputSchema),
+  })
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -26,6 +37,10 @@ export const ChatBox = () => {
   }, [messages])
 
   const stepIndexRef = useRef(index)
+  console.log(stepIndexRef.current)
+  const currentStep = script[stepIndexRef.current];
+  console.log(script)
+  console.log(currentStep)
   useEffect(() => { stepIndexRef.current = index }, [index])
 
   const streamingRef = useRef(false)
@@ -43,11 +58,15 @@ export const ChatBox = () => {
   
     let i = stepIndexRef.current;
     const botSteps: Step[] = [];
-    while (i < script.length && script[i]?.role === 'bot') {
-      botSteps.push(script[i]);
+    while (
+      i < script.length &&
+      script[i]?.role === 'bot'
+    ) {
+      // role이 string이 아니라 "bot" 리터럴 타입이어야 하므로 타입 단언 추가
+      botSteps.push({ ...script[i], role: "bot" } as Step);
       i = script[i].nextId ?? i + 1;
     }
-  
+
     stepIndexRef.current = i;
     setIndex(i);
   
@@ -65,7 +84,7 @@ export const ChatBox = () => {
     });
   };
 
-const handleSelect = (selectedValue: string, selectedLabel: string, nextId?: string) => {
+const handleSelect = (selectedValue: string, selectedLabel: string, nextId: number) => {
   const current = script[stepIndexRef.current];
   console.log(selectedValue, selectedLabel, nextId)
 
@@ -76,6 +95,7 @@ const handleSelect = (selectedValue: string, selectedLabel: string, nextId?: str
 
   if (!current.field.includes('confirm')) {
     setAnswers(prev => ({ ...prev, [current.field]: selectedValue }));
+    setBusinessInfo({ [current.field]: selectedValue })
   }
 
   const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndexRef.current + 1);
@@ -90,7 +110,7 @@ const handleSelect = (selectedValue: string, selectedLabel: string, nextId?: str
     pushUntilUserTurnWithDelay(1000)
   }, [])
 
-  const inputConstraints = constraintsForField(script[stepIndexRef.current].field);
+  const inputConstraints = constraintsForField(currentStep.field ?? '');
 
 const handleSend = (message: string) => {
   const trimmed = message.trim();
@@ -101,12 +121,13 @@ const handleSend = (message: string) => {
 
   setMessages(prev => [
     ...prev,
-    { ...current, id: Date.now(), input: 'text', content: trimmed },
+    { ...(current as Step), id: Date.now(), input: 'text', content: trimmed, role: 'user' },
   ]);
   setInputValue('');
 
   if (expectingUser) {
     setAnswers(prev => ({ ...prev, [current.field]: trimmed }));
+    setBusinessInfo({ [current.field]: trimmed })
 
     const targetIndex = current.nextId ?? index;
     stepIndexRef.current = targetIndex;
@@ -117,8 +138,12 @@ const handleSend = (message: string) => {
 };
 
   const isUserTurn = script[stepIndexRef.current]?.role === 'user'
-  const currentPlaceholder = script[stepIndexRef.current]?.placeholder ?? '메시지를 입력해주세요.'
+  const currentPlaceholder = script[stepIndexRef.current]?.placeholder ?? '메시지를 입력해주세요.';
 
+  // any 타입 대신 명확한 타입 지정 (예시로 Record<string, unknown> 사용)
+  const onSubmit = (data: Record<string, unknown>) => {
+    console.log(data);
+  }
 
   return (
     <>
@@ -192,5 +217,3 @@ const Debug = styled.div`
   font-size: 12px;
   color: #666;
 `
-
-export default ChatBox

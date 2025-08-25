@@ -1,5 +1,5 @@
 import colors from '@/utils/colors'
-import { createListCollection, Select } from '@chakra-ui/react'
+import { createListCollection, Portal, Select } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
@@ -43,25 +43,17 @@ export const CommonSelect = ({
           <Select.Indicator />
         </CustomIndicatorGroup>
       </Select.Control>
-      <Select.Positioner style={{ marginTop: '-52px' }}>
-        <CustomSelect>
-          <CustomSelectItem
-            item={placeholder}
-            style={{
-              color: colors.gray[6],
-              pointerEvents: 'none',
-              opacity: 0.5,
-            }}
-          >
-            {placeholder}
-          </CustomSelectItem>
-          {items.map((item, index) => (
-            <CustomSelectItem key={index} item={item.value}>
-              {item.label}
-            </CustomSelectItem>
-          ))}
-        </CustomSelect>
-      </Select.Positioner>
+      <Portal>
+  <Select.Positioner>
+    <CustomSelect>
+      {items.map((it) => (
+        <CustomSelectItem key={it.value} item={it}>
+          {it.label}
+        </CustomSelectItem>
+      ))}
+    </CustomSelect>
+  </Select.Positioner>
+</Portal>
     </Select.Root>
   )
 }
@@ -90,6 +82,8 @@ const CustomSelect = styled(Select.Content)`
   box-shadow: none;
   font-size: 16px;
   color: ${colors.gray[7]};
+  max-height: calc(5 * 48px); /* item height * visible count */
+  overflow-y: auto;
 `
 
 const CustomSelectItem = styled(Select.Item)`

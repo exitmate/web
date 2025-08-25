@@ -1,4 +1,5 @@
-
+import { BusinessInfo } from "@/generated/prisma";
+import colors from "./colors";
 type Base = {
   step: number
   field: string
@@ -88,7 +89,22 @@ export const industryCategoryDetailItems2 = [
   ],
 ]
 
-export const script: Step[] = [
+  const renderDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+  
+    return (
+      <>
+        <span style={{ color: colors.point }}>{year}</span>년{" "}
+        <span style={{ color: colors.point }}>{month}</span>월{" "}
+        <span style={{ color: colors.point }}>{day}</span>일
+      </>
+    );
+  }
+
+export const script = (businessInfo: BusinessInfo, userName: string) => {
+  return [
   {
     step: 0,
     field: 'question',
@@ -97,7 +113,7 @@ export const script: Step[] = [
     role: 'bot',
     content: (
       <>
-        <p>안녕하세요 <span style={{ fontWeight: 'bold' }}>김이름</span> 사장님!</p>
+        <p>안녕하세요 <span style={{ fontWeight: 'bold' }}>{userName}</span> 사장님!</p>
         <p>ExitMate는 사장님의 새로운 도전을 응원합니다.</p>
       </>
     ),
@@ -259,7 +275,7 @@ export const script: Step[] = [
     field: 'openedAt',
     role: 'bot',
     input: 'text',
-    content: <p>개업한 연도와 월, 일 인가요?</p> ,
+    content: <p>개업한 연도와 월, 일이 {renderDateString(businessInfo.openedAt)}이 맞나요?</p> ,
   },
   {
     id: 18,
@@ -602,3 +618,4 @@ export const script: Step[] = [
     content: <p>끝</p> ,
   },
 ]
+}
