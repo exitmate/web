@@ -18,10 +18,18 @@ export const MemberInfoInputSchema = MemberSchema.pick({
   agreedDataUsage: true,
   agreedMarketing: true,
 }).extend({
-  agreedPrivacyPolicy: z.coerce.boolean().pipe(z.literal(true)),
-  agreedTermsOfUse: z.coerce.boolean().pipe(z.literal(true)),
-  agreedDataUsage: z.coerce.boolean().pipe(z.literal(true)),
-  agreedMarketing: z.coerce.boolean().default(false),
+  agreedPrivacyPolicy: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .pipe(z.literal(true)),
+  agreedTermsOfUse: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .pipe(z.literal(true)),
+  agreedDataUsage: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .pipe(z.literal(true)),
+  agreedMarketing: z
+    .preprocess((v) => v === 'true' || v === true, z.boolean())
+    .default(false),
   birthDate: z.coerce
     .date()
     .min(new Date('1910-01-01'))
