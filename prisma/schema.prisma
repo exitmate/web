@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -120,6 +114,8 @@ model SupportProject {
   createdAt               DateTime @default(now()) // 공고일자
   updatedAt               DateTime @updatedAt // 공고 마지막 수정일자
 
+  maxAmount               Int? @map("_maxAmount") // 최대 지원금액, 조회용 필드
+
   @@index([deadline])
   @@index([isOpen])
   @@index([host])
@@ -127,12 +123,17 @@ model SupportProject {
 
 type SupportEligibility {
   mustBeInRegion        String?   // 지역 제한 (ex. "부산광역시")
-  mustBePlannedClosure  Boolean   // 폐업 예정자만 해당
-  mustBeClosed          Boolean   // 기폐업자만 해당
+  closureCondition      EligibilityClosureCondition?
   mustBeClosedAfter     DateTime? // 폐업일이 이 날짜 이후여야 함 (ex. 2025-01-01)
   mustBeClosedWithin    Int?      // 폐업일이 특정 일수 이하여야 함 (ex. 60일 이내)
   mustOperateAtLeast    Int?      // 최소 운영 일수 (ex. 60일)
   mustNotBeCorporation  Boolean   // 법인 불가 여부 (true면 법인 불가)
+}
+
+enum EligibilityClosureCondition {
+  MUST_BE_CLOSED
+  MUST_BE_NOT_CLOSED
+  NONE
 }
 
 enum ApplicationType {

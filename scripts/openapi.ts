@@ -3,6 +3,7 @@ import path from 'path'
 import { pathToFileURL } from 'url'
 import { createDocument } from 'zod-openapi'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PathsObject = Record<string, any>
 
 let memoizedMergedPaths: PathsObject | null = null
