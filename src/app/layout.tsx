@@ -1,4 +1,5 @@
 import { Provider } from '@/components/ui/provider'
+import Footer from '@/features/Footer'
 import { Header } from '@/features/Header'
 import type { Metadata } from 'next'
 import localfont from 'next/font/local'
@@ -27,10 +28,17 @@ export default async function RootLayout({
       className={`${pretendard.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
+      </head>
       <body className={pretendard.className}>
         <Provider>
           <Header />
           {children}
+          <Footer />
         </Provider>
       </body>
     </html>
