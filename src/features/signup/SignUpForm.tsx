@@ -7,6 +7,7 @@ import { CommonInput } from '@/components/common/CommonInput'
 import CommonSelect from '@/components/common/CommonSelect'
 import DatePicker from '@/components/common/DatePicker'
 import Spacing from '@/components/common/Spacing'
+import { Member } from '@/generated/prisma'
 import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
 import {
@@ -22,7 +23,6 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 const ReadFullText = ({ url }: { url: string }) => {
   return (
@@ -45,15 +45,15 @@ export const SignUpForm = () => {
     setValue, 
     trigger,
     control,
-  } = useForm<z.input<typeof MemberInfoInputSchema>>({
+  } = useForm({
     resolver: zodResolver(MemberInfoInputSchema),
     mode: 'onChange',
     shouldUnregister: false,
     defaultValues: {
       name: '',
       email: '',
-      birthDate: undefined as unknown as Date,
-      gender: undefined as unknown as 'MALE' | 'FEMALE' | 'OTHER',
+      birthDate: undefined,
+      gender: undefined,
       agreedPrivacyPolicy: false,
       agreedTermsOfUse: false,
       agreedDataUsage: false,
@@ -61,17 +61,34 @@ export const SignUpForm = () => {
     },
   })
 
-  console.log(errors)
-  console.log(isValid)
-  console.log(touchedFields)
-
-  const onSubmit = () => {
-    fetch('/api/members', {
+const onSubmit = async () => {
+  try {
+    const payload = getValues();
+    const res = await fetch('/api/members', {
       method: 'POST',
-      body: JSON.stringify(getValues()),
-    })
-    router.push('/signup/detail')
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      let message = '서버 오류';
+      try {
+        const json = text ? JSON.parse(text) : null;
+        message = json?.message ?? message;
+      } catch {
+        /* ignore JSON parse error */
+      }
+      alert(`회원가입에 실패했습니다: ${message}`);
+      return;
+    }
+    setMember(payload as Partial<Member>);
+    router.push('/signup/detail');
+  } catch (err) {
+    console.error('Fetch 에러:', err);
+    alert('네트워크에 문제가 발생했습니다. 다시 시도해주세요.');
   }
+};
 
   useEffect(() => {
     trigger()

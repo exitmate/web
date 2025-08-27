@@ -3,7 +3,7 @@ import { create } from 'zustand'
 
 type UserStore = {
   member: Member
-  businessInfo: BusinessInfo | null
+  businessInfo: BusinessInfo
   setMember: (patch: Partial<Member>) => void
   setBusinessInfo: (patch: Partial<BusinessInfo>) => void
   reset: () => void

@@ -23,7 +23,7 @@ type UserTextStep = Base & {
   content?: React.ReactNode
 }
 
-export type Step = BotStep | UserTextStep 
+export type Step = (BotStep | UserTextStep) & { _key: string }
 
 export type SelectOption = {
   value: string
@@ -46,8 +46,8 @@ export enum LeaseType {
 }
 
 export const industryCategoryItems = [
-  { value: '음식점업', label: '음식점업', nextId: 12},
-  { value: '비알코올 음료점업', label: '비알코올 음료점업', nextId: 9},
+  { value: 'FOOD_SERVICE', label: '음식점업', nextId: 12},
+  { value: 'NON_ALCOHOL_CAFE', label: '비알코올 음료점업', nextId: 9},
 ]
 
 export const industryCategoryDetailItems1 = [

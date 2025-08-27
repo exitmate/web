@@ -6,7 +6,7 @@ import { constraintsForField } from '@/utils/inputConstraints';
 import { script as scriptData, Step } from '@/utils/scripts';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { ChatBubbleItem } from './ChatBubbleItem';
@@ -16,15 +16,31 @@ import { ToggleButtonGroup } from './ToggleButtonGroup';
 export const ChatBox = () => {
   const [messages, setMessages] = useState<Step[]>([])
   const [inputValue, setInputValue] = useState('')
-  const [index, setIndex] = useState(0)
+  const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const chatContainerRef = useRef<HTMLDivElement>(null)
-  const { businessInfo, setBusinessInfo } = useUserStore();
-  const script = scriptData(businessInfo)
+  const { businessInfo, setBusinessInfo, member } = useUserStore();
+  const script = useMemo(() => scriptData(businessInfo, member.name || ""), [businessInfo])
+  const didAutoStartRef = useRef(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<z.input<typeof BusinessInfoInputSchema>>({
     resolver: zodResolver(BusinessInfoInputSchema),
   })
+
+  console.log(businessInfo)
+
+  useEffect(() => {
+    if (didAutoStartRef.current) return;
+    if (script.length === 0) return;
+    if (messages.length > 0) return;
+    if (streamingRef.current) return;
+  
+    didAutoStartRef.current = true;
+    setStepIndex(0);
+    pushUntilUserTurnWithDelay(700, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [script]);
+  
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -36,12 +52,7 @@ export const ChatBox = () => {
     scrollToBottom()
   }, [messages])
 
-  const stepIndexRef = useRef(index)
-  console.log(stepIndexRef.current)
-  const currentStep = script[stepIndexRef.current];
-  console.log(script)
-  console.log(currentStep)
-  useEffect(() => { stepIndexRef.current = index }, [index])
+  const currentStep = script[stepIndex];
 
   const streamingRef = useRef(false)
   const timersRef = useRef<number[]>([])
@@ -50,116 +61,119 @@ export const ChatBox = () => {
     timersRef.current.forEach(t => clearTimeout(t))
     timersRef.current = []
   }
-  useEffect(() => () => clearAllTimers(), [])
 
-  const pushUntilUserTurnWithDelay = (gapMs: number = 600) => {
+  const playBotSteps = async (steps: Step[], baseDelay = 700) => {
+    const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+  
+    for (let k = 0; k < steps.length; k++) {
+      const s = steps[k];
+  
+      setMessages(prev => [...prev, { ...s, _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}` }]);
+      if (k === steps.length - 1 && s.input === 'select') break;
+  
+      const shouldDelay = s.role === 'bot' && s.input !== 'select';
+      if (shouldDelay) {
+        await sleep(baseDelay);
+      }
+    }
+  };
+
+  const pushUntilUserTurnWithDelay = async (baseDelay = 700, startAt?: number) => {
     if (streamingRef.current) return;
     streamingRef.current = true;
   
-    let i = stepIndexRef.current;
+    let i = typeof startAt === 'number' ? startAt : stepIndex;
     const botSteps: Step[] = [];
-    while (
-      i < script.length &&
-      script[i]?.role === 'bot'
-    ) {
-      // role이 string이 아니라 "bot" 리터럴 타입이어야 하므로 타입 단언 추가
-      botSteps.push({ ...script[i], role: "bot" } as Step);
+    const seen = new Set<number>();
+  
+    while (i < script.length && script[i]?.role === 'bot') {
+      if (seen.has(i)) break;
+      seen.add(i);
+      botSteps.push(script[i] as Step);
       i = script[i].nextId ?? i + 1;
     }
-
-    stepIndexRef.current = i;
-    setIndex(i);
   
-    if (botSteps.length === 0) {
-      streamingRef.current = false;
-      return;
+    if (botSteps.length) {
+      await playBotSteps(botSteps, baseDelay);
     }
   
-    botSteps.forEach((step, idx) => {
-      const t = window.setTimeout(() => {
-        setMessages(prev => [...prev, { ...step, id: Date.now() }]);
-        if (idx === botSteps.length - 1) streamingRef.current = false;
-      }, idx * gapMs);
-      timersRef.current.push(t);
-    });
+    setStepIndex(i);
+    streamingRef.current = false;
   };
 
-const handleSelect = (selectedValue: string, selectedLabel: string, nextId: number) => {
-  const current = script[stepIndexRef.current];
-  console.log(selectedValue, selectedLabel, nextId)
-
-  setMessages(prev => [
-    ...prev,
-    { ...current, id: Date.now(), role: 'user', input: 'text', content: selectedLabel } as Step,
-  ]);
-
-  if (!current.field.includes('confirm')) {
-    setAnswers(prev => ({ ...prev, [current.field]: selectedValue }));
-    setBusinessInfo({ [current.field]: selectedValue })
-  }
-
-  const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndexRef.current + 1);
-  stepIndexRef.current = target;
-  setIndex(target);
-
-  pushUntilUserTurnWithDelay(700);
-};
-
-
-  useEffect(() => {
-    pushUntilUserTurnWithDelay(1000)
-  }, [])
+  const handleSelect = (selectedValue: string, selectedLabel: string, nextId: number) => {
+    const current = script[stepIndex];
+  
+    setMessages((prev) => [
+      ...prev,
+      { ...current, _key: `${performance.now()}-${stepIndex}`, role: 'user', input: 'text', content: selectedLabel },
+    ]);
+  
+    if (!current.field.includes('confirm')) {
+      setAnswers((prev) => ({ ...prev, [current.field]: selectedValue }));
+      setBusinessInfo({ [current.field]: selectedValue });
+    }
+  
+    const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndex + 1);
+    setStepIndex(target);
+    pushUntilUserTurnWithDelay(700, target);
+  };
 
   const inputConstraints = constraintsForField(currentStep.field ?? '');
 
-const handleSend = (message: string) => {
-  const trimmed = message.trim();
-  if (!trimmed) return;
+  const handleSend = (message: string) => {
+    const trimmed = message.trim();
+    if (!trimmed) return;
+  
+    const current = script[stepIndex];
+    const expectingUser = current?.role === 'user';
+  
+    setMessages((prev) => [
+      ...prev,
+      { ...(current as Step), _key: `${performance.now()}-${stepIndex}`, input: 'text', content: trimmed, role: 'user' },
+    ]);
+    setInputValue('');
+  
+    if (expectingUser) {
+      setAnswers((prev) => ({ ...prev, [current.field]: trimmed }));
+      if (current.field === 'city') {
+      } else if (current.field === 'county') {
+        setBusinessInfo({ region: answers.city + ' ' + trimmed });
+      } else if (current.field.endsWith('At')) {
+        setBusinessInfo({ [current.field]: new Date(trimmed) });
+      }
+      else {
+        setBusinessInfo({ [current.field]: trimmed });
+      }
+  
+      const target = current.nextId ?? (stepIndex + 1);
+      setStepIndex(target);
+      pushUntilUserTurnWithDelay(700, target);
+    }
+  };
 
-  const current = script[stepIndexRef.current];
-  const expectingUser = current?.role === 'user';
+  const isUserTurn = script[stepIndex]?.role === 'user'
+  const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
 
-  setMessages(prev => [
-    ...prev,
-    { ...(current as Step), id: Date.now(), input: 'text', content: trimmed, role: 'user' },
-  ]);
-  setInputValue('');
-
-  if (expectingUser) {
-    setAnswers(prev => ({ ...prev, [current.field]: trimmed }));
-    setBusinessInfo({ [current.field]: trimmed })
-
-    const targetIndex = current.nextId ?? index;
-    stepIndexRef.current = targetIndex;
-    setIndex(targetIndex);
-
-    pushUntilUserTurnWithDelay(700);
-  }
-};
-
-  const isUserTurn = script[stepIndexRef.current]?.role === 'user'
-  const currentPlaceholder = script[stepIndexRef.current]?.placeholder ?? '메시지를 입력해주세요.';
-
-  // any 타입 대신 명확한 타입 지정 (예시로 Record<string, unknown> 사용)
   const onSubmit = (data: Record<string, unknown>) => {
     console.log(data);
   }
 
   return (
     <>
-      <SegmentedProgress total={7} current={script[stepIndexRef.current].step} />
+      <SegmentedProgress total={7} current={script[stepIndex].step} />
       <ChatBoxContainer ref={chatContainerRef}>
-        {messages.map((m) => (
+        {messages.map((m, idx) => (
           m.input === 'select' && m.options ? (
             !answers[m.field] && <ToggleButtonGroup
-            key={m.id}
+            key={m._key}
             items={m.options}
             setValue={handleSelect}
           />
           ) : ( 
-            <ChatBubbleItem key={m.id} message={m.content} isUser={m.role === 'user'} title={m.title} />
+            <ChatBubbleItem key={m._key} message={m.content} isUser={m.role === 'user'} title={m.title} index={idx} />
           )
-        ))}
+        ))} 
       </ChatBoxContainer>
 
       <ChatInput
@@ -173,8 +187,7 @@ const handleSend = (message: string) => {
 
       <Debug>
         <pre>{JSON.stringify(answers, null, 2)}</pre>
-        <pre>{JSON.stringify(stepIndexRef.current, null, 2)}</pre>
-        <pre>{JSON.stringify(index, null, 2)}</pre>
+        <pre>{JSON.stringify(stepIndex, null, 2)}</pre>
       </Debug>
     </>
   )
