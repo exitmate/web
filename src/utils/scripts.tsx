@@ -7,23 +7,22 @@ type Base = {
   title?: string
   nextId?: number
   placeholder?: string
+  role: string
 }
 
 type BotStep = Base & {
-  role: 'bot'
-  input?: 'text' | 'select' | 'chips'
+  input?: string
   content?: React.ReactNode
   options?: SelectOption[][] | SelectOption[]
 }
 
 type UserTextStep = Base & {
-  role: 'user'
   input: 'text'
   placeholder?: string
   content?: React.ReactNode
 }
 
-export type Step = (BotStep | UserTextStep) & { _key: string }
+export type Step = (BotStep | UserTextStep) & { _key?: string }
 
 export type SelectOption = {
   value: string
@@ -90,9 +89,11 @@ export const industryCategoryDetailItems2 = [
 ]
 
   const renderDateString = (date: Date) => {
+    console.log(date)
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
+    console.log(year, month, day)
   
     return (
       <>

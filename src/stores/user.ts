@@ -59,9 +59,7 @@ const useUserStore = create<UserStore>((set) => ({
   setBusinessInfo: (patch: Partial<BusinessInfo>) =>
     set((state) => ({
       ...state,
-      businessInfo: state.businessInfo
-        ? { ...state.businessInfo, ...patch }
-        : (patch as BusinessInfo),
+      businessInfo: { ...state.businessInfo, ...patch },
     })),
 
   reset: () =>

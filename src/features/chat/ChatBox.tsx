@@ -13,8 +13,15 @@ import { ChatBubbleItem } from './ChatBubbleItem';
 import { ChatInput } from './ChatInput';
 import { ToggleButtonGroup } from './ToggleButtonGroup';
 
+type Msg = {
+  stepId: number;
+  role: 'bot' | 'user';
+  _key: string;
+  contentText?: string;
+};
+
 export const ChatBox = () => {
-  const [messages, setMessages] = useState<Step[]>([])
+  const [messages, setMessages] = useState<Msg[]>([])
   const [inputValue, setInputValue] = useState('')
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({})
@@ -22,8 +29,12 @@ export const ChatBox = () => {
   const { businessInfo, setBusinessInfo, member } = useUserStore();
   const script = useMemo(() => scriptData(businessInfo, member.name || ""), [businessInfo])
   const didAutoStartRef = useRef(false)
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<z.input<typeof BusinessInfoInputSchema>>({
+  const isUserTurn = script[stepIndex]?.role === 'user'
+  const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
+
+  const { formState: { errors } } = useForm<z.input<typeof BusinessInfoInputSchema>>({
     resolver: zodResolver(BusinessInfoInputSchema),
   })
 
@@ -52,15 +63,15 @@ export const ChatBox = () => {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    if (isUserTurn) {
+      inputRef.current?.focus();
+    }
+  }, [isUserTurn]);
+
   const currentStep = script[stepIndex];
 
   const streamingRef = useRef(false)
-  const timersRef = useRef<number[]>([])
-
-  const clearAllTimers = () => {
-    timersRef.current.forEach(t => clearTimeout(t))
-    timersRef.current = []
-  }
 
   const playBotSteps = async (steps: Step[], baseDelay = 700) => {
     const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
@@ -68,7 +79,7 @@ export const ChatBox = () => {
     for (let k = 0; k < steps.length; k++) {
       const s = steps[k];
   
-      setMessages(prev => [...prev, { ...s, _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}` }]);
+      setMessages(prev => [...prev, { stepId: s.id, role: 'bot', _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}` }]);
       if (k === steps.length - 1 && s.input === 'select') break;
   
       const shouldDelay = s.role === 'bot' && s.input !== 'select';
@@ -104,9 +115,9 @@ export const ChatBox = () => {
   const handleSelect = (selectedValue: string, selectedLabel: string, nextId: number) => {
     const current = script[stepIndex];
   
-    setMessages((prev) => [
+    setMessages(prev => [
       ...prev,
-      { ...current, _key: `${performance.now()}-${stepIndex}`, role: 'user', input: 'text', content: selectedLabel },
+      { stepId: current.id, role: 'user', contentText: selectedLabel, _key: `${performance.now()}-${stepIndex}` },
     ]);
   
     if (!current.field.includes('confirm')) {
@@ -128,9 +139,9 @@ export const ChatBox = () => {
     const current = script[stepIndex];
     const expectingUser = current?.role === 'user';
   
-    setMessages((prev) => [
+    setMessages(prev => [
       ...prev,
-      { ...(current as Step), _key: `${performance.now()}-${stepIndex}`, input: 'text', content: trimmed, role: 'user' },
+      { stepId: current.id, role: 'user', contentText: trimmed, _key: `${performance.now()}-${stepIndex}` },
     ]);
     setInputValue('');
   
@@ -140,7 +151,10 @@ export const ChatBox = () => {
       } else if (current.field === 'county') {
         setBusinessInfo({ region: answers.city + ' ' + trimmed });
       } else if (current.field.endsWith('At')) {
-        setBusinessInfo({ [current.field]: new Date(trimmed) });
+        const year = parseInt(trimmed.slice(0, 4), 10);
+        const month = parseInt(trimmed.slice(4, 6), 10) - 1;
+        const day = parseInt(trimmed.slice(6, 8), 10);
+        setBusinessInfo({ [current.field]: new Date(year, month, day) });
       }
       else {
         setBusinessInfo({ [current.field]: trimmed });
@@ -152,31 +166,47 @@ export const ChatBox = () => {
     }
   };
 
-  const isUserTurn = script[stepIndex]?.role === 'user'
-  const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
-
   const onSubmit = (data: Record<string, unknown>) => {
     console.log(data);
   }
+
+  const renderContent = (step: Step, fallbackUserText?: string) => {
+    if (step.role === 'user' && fallbackUserText) return fallbackUserText;
+  
+    const c = step.content;
+    if (typeof c === 'function') {
+      return (c as (ctx:{businessInfo: typeof businessInfo; userName:string}) => React.ReactNode)({
+        businessInfo,
+        userName: member.name || '',
+      });
+    }
+    return c;
+  };
 
   return (
     <>
       <SegmentedProgress total={7} current={script[stepIndex].step} />
       <ChatBoxContainer ref={chatContainerRef}>
-        {messages.map((m, idx) => (
-          m.input === 'select' && m.options ? (
-            !answers[m.field] && <ToggleButtonGroup
-            key={m._key}
-            items={m.options}
-            setValue={handleSelect}
-          />
-          ) : ( 
-            <ChatBubbleItem key={m._key} message={m.content} isUser={m.role === 'user'} title={m.title} index={idx} />
-          )
-        ))} 
+        {messages.map((m, idx) => {
+          const step = script[m.stepId]
+          console.log(step)
+          if (step.role === 'bot' && step.input === 'select' && step.options) {
+            if (answers[m.stepId]) return null;
+            return (
+              <ToggleButtonGroup
+                key={m._key}
+                items={step.options}
+                setValue={handleSelect}
+              />
+            )
+          } else {
+              return <ChatBubbleItem key={m._key} message={renderContent(step, m.contentText)} isUser={m.role === 'user'} title={step.title} index={idx} />
+          }
+        })} 
       </ChatBoxContainer>
 
       <ChatInput
+        ref={inputRef }
         onSend={handleSend}
         placeholder={currentPlaceholder}
         value={inputValue}

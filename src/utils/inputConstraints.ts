@@ -1,5 +1,6 @@
 export type InputConstraints = {
   maxLength?: number;
+  minLength?: number;
   numericOnly?: boolean;
   allowed?: RegExp;
   pattern?: RegExp;
@@ -25,6 +26,7 @@ export const constraintsForField = (field?: string): InputConstraints | undefine
   return {
     allowNewline: false,
     trim: true,
+    minLength: 8,
     numericOnly: true,
     maxLength: 8,
     pattern: /^\d{8}$/,
