@@ -96,12 +96,36 @@ export const industryCategoryDetailItems2 = [
     console.log(year, month, day)
   
     return (
-      <>
+      <span style={{ fontWeight: 'bold' }}>
         <span style={{ color: colors.point }}>{year}</span>년{" "}
         <span style={{ color: colors.point }}>{month}</span>월{" "}
         <span style={{ color: colors.point }}>{day}</span>일
-      </>
+      </span>
     );
+  }
+
+  const renderMonthlySalesRange = (monthlySalesRange: string) => {
+    if (monthlySalesRange === SalesRange.BELOW_500) {
+      return '500만원 미만';
+    } else if (monthlySalesRange === SalesRange.FROM_500_TO_1000) {
+      return '500 ~ 1000만원 사이';
+    } else if (monthlySalesRange === SalesRange.FROM_1000_TO_1500) {
+      return '1000 ~ 1500만원 사이';
+    } else if (monthlySalesRange === SalesRange.FROM_1500_TO_2000) {
+      return '1500 ~ 2000만원 사이';
+    } else if (monthlySalesRange === SalesRange.FROM_2000_TO_5000) {
+      return '2000 ~ 5000만원 사이';
+    } else if (monthlySalesRange === SalesRange.ABOVE_5000) {
+      return '5000만원 이상';
+    }
+  }
+
+  const renderEmployeeCount = (employeeCount: number) => {
+    if (employeeCount < 5) {
+      return '5명 미만';
+    } else {
+      return '5명 이상';
+    }
   }
 
 export const script = (businessInfo: BusinessInfo, userName: string) => {
@@ -139,6 +163,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 3,
     role: 'bot',
     title: 'STEP1. 사업장 소재지',
+    placeholder: '사업장이 속한 시 또는 군을 입력해주세요.',
     content: (
       <>
         <p>사업장이 속한 시 또는 군을 채팅창에 입력해주세요.</p>
@@ -152,6 +177,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 4,
     role: 'user',
     input: 'text',
+    placeholder: '사업장이 속한 시 또는 군을 입력해주세요.',
     content: <p>시군</p> 
   },
   {
@@ -160,6 +186,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     id: 4,
     nextId: 5,
     role: 'bot',
+    placeholder: '사업장이 속한 군 또는 구를 입력해주세요.',
     content: <p>사업장이 속한 군 또는 구를 채팅창에 입력해주세요.</p>,
   },
   {   
@@ -169,6 +196,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 6,
     role: 'user',
     input: 'text',
+    placeholder: '사업장이 속한 군 또는 구를 입력해주세요.',
     content: <p>군 또는 구</p> 
   },
   { 
@@ -178,6 +206,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 7,
     role: 'bot', 
     title: 'STEP2. 업종',
+    placeholder: '업종 대분류를 입력해주세요.',
     content: <p>아래 두개의 업종 중 하나를 선택하거나 채팅창에 입력해주세요.</p> 
   },
   {
@@ -187,6 +216,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'industryCategory',
     role: 'bot',
     input: 'select',
+    placeholder: '업종 대분류를 입력해주세요.',
     options: industryCategoryItems,
   },
   { 
@@ -195,6 +225,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'industryCategory', 
     role: 'user', 
     input: 'text',
+    placeholder: '업종 대분류를 입력해주세요.',
     content: <p>감사합니다! 곧 확인해서 회신드릴게요.</p> 
   },
   {
@@ -203,6 +234,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     step: 2,
     field: 'industryCategoryDetail',
     role: 'bot',
+    placeholder: '업종 대분류를 입력해주세요.',
     content: <p>업종 세분류를 선택하거나 채팅창에 입력해주세요.</p> 
   },
   {
@@ -212,6 +244,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'industryCategoryDetail',
     role: 'bot',
     input: 'select',
+    placeholder: '업종 대분류를 입력해주세요.',
     options: industryCategoryDetailItems1,
   },
   {
@@ -221,6 +254,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 15,
     role: 'user',
     input: 'text',
+    placeholder: '업종 대분류를 입력해주세요.',
     content: <p>업종 세분류 1 유저 대답</p> 
   },
   {
@@ -229,6 +263,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'industryCategoryDetail',
     role: 'bot',
     input: 'text',
+    placeholder: '업종 세분류를 입력해주세요.',
     content: <p>업종 세분류를 선택하거나 채팅창에 입력해주세요.</p> 
   },
   {
@@ -237,6 +272,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'industryCategoryDetail',
     role: 'bot',
     input: 'select',
+    placeholder: '업종 세분류를 입력해주세요.',
     options: industryCategoryDetailItems2,
   },
   {
@@ -246,6 +282,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     nextId: 15,
     role: 'user',
     input: 'text',
+    placeholder: '업종 세분류를 입력해주세요.',
     content: <p>업종 세분류 2 유저 대답</p> 
   },
   {
@@ -276,6 +313,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'openedAt',
     role: 'bot',
     input: 'text',
+    placeholder: '일치여부를 입력해주세요.',
     content: <p>개업한 연도와 월, 일이 {renderDateString(businessInfo.openedAt)}이 맞나요?</p> ,
   },
   {
@@ -284,6 +322,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'openedAtConfirm',
     role: 'bot',
     input: 'select',
+    placeholder: '일치여부를 입력해주세요.',
     options: [
       { value: '네', label: '네', nextId: 21},
       { value: '아니오', label: '아니오', nextId: 20},
@@ -295,6 +334,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'confirm',
     role: 'user',
     input: 'text',
+    placeholder: '일치여부를 입력해주세요.',
     content: <p>개업한 연도와 월, 일 인가요?</p> ,
   },
   {
@@ -314,6 +354,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     role: 'bot',
     input: 'text',
     content: <p>현재 폐업완료 하셨나요?</p> ,
+    placeholder: '폐업 여부를 선택하거나 입력해주세요.',
   },
   {
     id: 22,
@@ -321,6 +362,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'isClosed',
     role: 'bot',
     input: 'select',
+    placeholder: '폐업 여부를 선택하거나 입력해주세요.',
     options: [
       { value: 'true', label: '네', nextId: 24},
       { value: 'false', label: '아니오', nextId: 35},
@@ -332,6 +374,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'isClosed',
     role: 'user',
     input: 'text',
+    placeholder: '폐업 여부를 선택하거나 입력해주세요.',
     content: <p>폐업 여부 답변</p> ,
   },
   {
@@ -359,7 +402,8 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'closedAt',
     role: 'bot',
     input: 'text',
-    content: <p>폐업한 연도와 월, 일 인가요?</p> ,
+    placeholder: '일치여부를 입력해주세요.',
+    content: <p>폐업한 연도와 월, 일이 {renderDateString(businessInfo.closedAt ?? new Date())}이 맞나요?</p> ,
   },
   {
     id: 27,
@@ -367,6 +411,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'confirm',
     role: 'bot',
     input: 'select',
+    placeholder: '일치여부를 입력해주세요.',
     options: [
       { value: '네', label: '네', nextId: 29},
       { value: '아니오', label: '아니오', nextId: 24},
@@ -378,6 +423,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'confirm',
     role: 'user',
     input: 'text',
+    placeholder: '일치여부를 입력해주세요.',
     content: <p>폐업 확인 답변</p> ,
   },
   {
@@ -386,6 +432,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'confirm',
     role: 'bot',
     input: 'text',
+    placeholder: '취업 여부를 선택하거나 입력해주세요.',
     content: <p>현재 취업하셨나요?</p> ,
   },
   {
@@ -394,6 +441,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'isReemployed',
     role: 'bot',
     input: 'select',
+    placeholder: '취업 여부를 선택하거나 입력해주세요.',
     options: [
       { value: 'true', label: '네', nextId: 32},
       { value: 'false', label: '아니오', nextId: 32},
@@ -406,6 +454,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'isReemployed',
     role: 'user',
     input: 'text',
+    placeholder: '취업 여부를 선택하거나 입력해주세요.',
     content: <p>취업 여부 답변</p> ,
   },
   {
@@ -414,6 +463,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'confirm',
     role: 'bot',
     input: 'text',
+    placeholder: '철거 여부를 선택하거나 입력해주세요.',
     content: <p>해당 점포는 철거가 완료되었나요?</p> ,
   },
   {
@@ -422,6 +472,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'isDemolished',
     role: 'bot',
     input: 'select',
+    placeholder: '철거 여부를 선택하거나 입력해주세요.',
     options: [
       { value: 'true', label: '네', nextId: 35},
       { value: 'false', label: '아니오', nextId: 35},
@@ -435,6 +486,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     role: 'user',
     input: 'text',
     content: <p>철거 여부 답변</p> ,
+    placeholder: '철거 여부를 선택하거나 입력해주세요.',
   },
   {
     id: 35,
@@ -443,6 +495,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     role: 'bot',
     input: 'text',
     content: <p>ExitMate에서 사장님의 폐업 이후의 삶이 좋은 방향으로 향하도록 도와드릴게요.</p> ,
+    placeholder: '철거 여부를 선택하거나 입력해주세요.',
   },
   {
     id: 36, 
@@ -451,6 +504,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     title: 'STEP5. 월평균 매출액',
     role: 'bot',
     input: 'text',
+    placeholder: '위에서 월평균 매출액을 선택하거나 정확한 액수를 채팅창에 입력해주세요.',
     content: 
     <>
       <p>폐업(예정) 점포의 월평균 매출액을 알려주세요.</p>
@@ -463,6 +517,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'monthlySalesRange',
     role: 'bot',
     input: 'select',
+    placeholder: '위에서 월평균 매출액을 선택하거나 정확한 액수를 채팅창에 입력해주세요.',
     options: [
       [
       { value: SalesRange.BELOW_500, label: '500만원 미만', nextId: 39},
@@ -482,54 +537,68 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     field: 'monthlySalesRange',
     role: 'user',
     input: 'text',
+    placeholder: '위에서 월평균 매출액을 선택하거나 정확한 액수를 채팅창에 입력해주세요.',
     content: <p>월평균 매출액 답변</p> ,
   },
   {
-    id: 39,
+    id: 39, 
+    step: 5,
+    field: 'monthlySalesRange',
+    role: 'bot',
+    input: 'text',
+    placeholder: '위에서 월평균 매출액을 선택하거나 정확한 액수를 채팅창에 입력해주세요.',
+    content: <p>폐업 (예정) 점포의 월평균 매출액은 {renderMonthlySalesRange(businessInfo.monthlySalesRange)}입니다.</p> ,
+  },
+  {
+    id: 40,
     step: 6,
     field: 'areaSizeM2',
     role: 'bot',
     title: 'STEP6. 점포 면적',
     input: 'text',
+    placeholder: '폐업 (예정)점포의 면적(M2단위)을 단위 없이 입력해주세요.',
     content: <p>폐업 (예정)점포의 면적(M2단위)을 단위 없이 입력해주세요.</p> ,
   },
   {
-    id: 40,
+    id: 41,
     step: 6,
     nextId: 41,
     field: 'areaSizeM2',
     role: 'user',
     input: 'text',
+    placeholder: '폐업 (예정)점포의 면적(M2단위)을 단위 없이 입력해주세요.',
     content: <p>점포 면적 답변</p> ,
   },
   {
-    id: 41,
+    id: 42,
     step: 6,
     nextId: 42,
     field: 'employeeCount',
     role: 'bot',
     input: 'text',
+    placeholder: '일하는 종업원의 수를 단위 없이 입력해주세요.',
     content: <p>사장님의 점포에서 일하는 종업원의 수를 단위 없이 입력해주세요.</p> ,
   },
   {
-    id: 42,
+    id: 43,
     step: 6,
     nextId: 43,
     field: 'employeeCount',
     role: 'user',
     input: 'text',
+    placeholder: '일하는 종업원의 수를 단위 없이 입력해주세요.',
     content: <p>종업원 수 답변</p> ,
   },
   {
-    id: 43,
+    id: 44,
     step: 6,
     field: 'employeeCount',
     role: 'bot',
     input: 'text',
-    content: <p>사장님의 점포는 $$$ 사업장으로 분류됩니다.</p> ,
+    content: <p>사장님의 점포는 {renderEmployeeCount(businessInfo.employeeCount ?? 0)} 사업장으로 분류됩니다.</p> ,
   },
   {
-    id: 44,
+    id: 45,
     step: 7,
     field: 'leaseType',
     role: 'bot',
@@ -539,7 +608,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
-    id: 45,
+    id: 46,
     step: 7,
     field: 'leaseType',
     role: 'bot',
@@ -548,7 +617,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
-    id: 46,
+    id: 47,
     step: 7,
     field: 'leaseType',
     role: 'bot',
@@ -560,7 +629,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
-    id: 47,
+    id: 48,
     step: 7,
     field: 'leaseType',
     role: 'user',
@@ -569,41 +638,45 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
-    id: 48,
+    id: 49,
     step: 7,
     field: 'depositAmount',
     role: 'bot',
     input: 'text',
+    placeholder: '점포의 보증금을 입력해주세요',
     content: <p>점포의 보증금을 입력해주세요</p> ,
   },
   {
-    id: 49,
+    id: 50,
     step: 7,
     nextId: 50,
     field: 'depositAmount',
     role: 'user',
     input: 'text',
+    placeholder: '점포의 보증금을 입력해주세요',
     content: <p>보증금 답변</p> ,
   },
   {
-    id: 50,
+    id: 51,
     step: 7,
     field: 'monthlyRent',
     role: 'bot',
     input: 'text',
+    placeholder: '월세를 입력해주세요',
     content: <p>점포의 월세를 입력해주세요</p> ,
   },
   {
-    id: 51,
+  id: 52,
     step: 7,
     nextId: 52,
     field: 'monthlyRent',
     role: 'user',
     input: 'text',
+    placeholder: '월세를 입력해주세요',
     content: <p>월세 답변</p> ,
   },
   {
-    id: 52,
+    id: 53,
     step: 7,
     field: 'confirm',
     role: 'bot',
@@ -611,12 +684,12 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     content: <p>정보들을 입력해주셔서 감사합니다!</p> ,
   },
   {
-    id: 53,
+    id: 54,
     step: 7,
-    field: 'confirm',
-    role: 'user',
+    field: 'end',
+    role: 'bot',
     input: 'text',
-    content: <p>끝</p> ,
+    content: <p>ExitMate에서 사장님께 가장 도움이 되는 지원 사업을 추천드릴게요.</p> ,
   },
 ]
 }
