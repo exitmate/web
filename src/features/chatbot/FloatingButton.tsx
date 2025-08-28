@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
 import colors from '@/utils/colors'
 import { ChatBot } from './ChatBot'
+import chatBubbleImage from '@/assets/icons/chat-bubble.svg'
+import Image from 'next/image'
 
 export const FloatingChatButton = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -24,7 +26,16 @@ export const FloatingChatButton = () => {
     <>
       <FloatingButtonContainer>
         <FloatingButton onClick={toggleChat} isOpen={isOpen}>
-          {isOpen ? '✕' : '💬'}
+          {isOpen ? (
+            '✕'
+          ) : (
+            <Image
+              src={chatBubbleImage.src}
+              alt="chat-bubble"
+              width={24}
+              height={24}
+            />
+          )}
         </FloatingButton>
       </FloatingButtonContainer>
 
