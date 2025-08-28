@@ -13,6 +13,8 @@ interface CardProps {
   deadline: Date | null
   logoSrc: string | null
   host: string
+  id: string
+  onClick: (id: string) => void
 }
 
 const renderDate = (date: Date | null) => {
@@ -45,9 +47,11 @@ export const ProgramCard = ({
   createdAt,
   deadline,
   host,
+  id,
+  onClick,
 }: CardProps) => {
   return (
-    <CardContainer>
+    <CardContainer onClick={() => onClick(id)}>
       <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
         <Badge content={renderDeadline(deadline ? new Date(deadline) : null)} />
       </div>
@@ -83,6 +87,7 @@ const CardContainer = styled.div`
   height: 270px;
   text-align: center;
   flex: 1;
+  cursor: pointer;
 `
 
 const ImageContainer = styled.div`

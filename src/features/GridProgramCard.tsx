@@ -5,6 +5,7 @@ import { Filter } from '@/utils/types'
 import { Flex } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import FilterSection from './FilterSection'
 
@@ -35,6 +36,7 @@ export const GridProgramCard = () => {
   })
 
   const [currentPage, setCurrentPage] = useState(1)
+  const router = useRouter()
 
   const { data } = useQuery({
     queryKey: ['projects', currentPage, filter],
@@ -43,6 +45,10 @@ export const GridProgramCard = () => {
 
   const items = data?.data ?? [];
   const rows = Math.ceil(items.length / 5);
+
+  const onClickProgramCard = (id: string) => {
+    router.push(`/projects/${id}`)
+  }
 
   return (
     <div>
@@ -58,7 +64,7 @@ export const GridProgramCard = () => {
                     const program = data?.data[programIndex]
 
                   return program ? (
-                    <ProgramCard key={programIndex} {...program} />
+                    <ProgramCard key={programIndex} {...program} onClick={onClickProgramCard} id={program.id} />
                   ) : (
                     <EmptyCard key={programIndex} />
                   )
