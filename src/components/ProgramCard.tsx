@@ -59,7 +59,12 @@ export const ProgramCard = ({
         <BookMark isBookmarked={false} />
       </div>
       <ImageContainer>
-        <StyledImage src={logoSrc || FallbackImage} alt={title} width={100} height={67} />
+        <StyledImage
+          src={logoSrc || FallbackImage}
+          alt={title}
+          width={100}
+          height={67}
+        />
       </ImageContainer>
       <HorizontalLine />
       <TextContainer>
@@ -67,7 +72,9 @@ export const ProgramCard = ({
         <CardTitle>{title}</CardTitle>
         <DeadlineSection>
           <DeadlineLabel>마감</DeadlineLabel>
-          <DeadlineDate>{renderDate(deadline ? new Date(deadline) : null)}</DeadlineDate>
+          <DeadlineDate>
+            {renderDate(deadline ? new Date(deadline) : null)}
+          </DeadlineDate>
         </DeadlineSection>
         <PostedSection>
           <PostedLabel>공고</PostedLabel>

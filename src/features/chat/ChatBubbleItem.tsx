@@ -16,19 +16,19 @@ export const ChatBubbleItem = ({
   title = '',
 }: ChatBubbleItemProps) => {
   return (
-  <>
-  {title && <ChatBubbleTitle>{title}</ChatBubbleTitle>}
-    <ChatBubbleItemContainer isUser={isUser} index={index}>
-      {message}
-    </ChatBubbleItemContainer>
-  </>
+    <>
+      {title && <ChatBubbleTitle>{title}</ChatBubbleTitle>}
+      <ChatBubbleItemContainer isUser={isUser} index={index}>
+        {message}
+      </ChatBubbleItemContainer>
+    </>
   )
 }
 
 const fadeInUp = keyframes`
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -58,11 +58,6 @@ const ChatBubbleItemContainer = styled.div<{ isUser: boolean; index?: number }>`
   animation-delay: 0s;
   animation-fill-mode: forwards;
   will-change: transform, opacity;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-  }
 `
 
 const ChatBubbleTitle = styled.div`

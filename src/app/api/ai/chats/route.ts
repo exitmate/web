@@ -12,7 +12,7 @@ import { getBusinessInfoEntity } from '../utils'
 
 const AI_SERVER_URL = process.env.AI_SERVER_URL
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const token = await getToken({ req: request })
     if (!token) {
