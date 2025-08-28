@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import { DataResponseSchema } from '../../schema'
 
-export const GetAppliableProjectCountResponseSchema = DataResponseSchema(
+export const AppliableProjectCountResponseSchema = DataResponseSchema(
   z.object({
     count: z.number(),
   }),
 )
 
-export type GetAppliableProjectCountResponse = z.infer<
-  typeof GetAppliableProjectCountResponseSchema
+export type AppliableProjectCountResponse = z.infer<
+  typeof AppliableProjectCountResponseSchema
 >

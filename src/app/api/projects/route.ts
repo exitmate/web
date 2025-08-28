@@ -61,9 +61,12 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return buildErrorResponse(error)
+      return NextResponse.json(buildErrorResponse(error), { status: 400 })
     }
-    return buildErrorResponse(error as Error, '서버 오류가 발생했습니다.')
+    return NextResponse.json(
+      buildErrorResponse(error as Error, '서버 오류가 발생했습니다.'),
+      { status: 500 },
+    )
   }
 }
 
