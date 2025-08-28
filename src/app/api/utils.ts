@@ -30,19 +30,19 @@ export function getPaginationInfo(
   }
 }
 
-export function buildErrorResponse<T extends Error>(
-  error: T,
-  errorMessage?: T extends z.ZodError ? undefined : string,
-): T extends z.ZodError ? ValidationErrorResponse : ErrorResponse {
+export function buildErrorResponse(
+  error: Error | z.ZodError,
+  errorMessage?: string,
+): ValidationErrorResponse | ErrorResponse {
   if (error instanceof z.ZodError) {
     return {
       errors: error.issues.map((issue) => ({
         field: issue.path.join('.'),
         message: issue.message,
       })),
-    } as any
+    }
   }
   return {
-    error: errorMessage,
-  } as any
+    error: errorMessage ?? 'Unexpected error',
+  }
 }

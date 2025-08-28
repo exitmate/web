@@ -2,7 +2,7 @@ import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-import { DataResponse, ErrorResponse, ValidationErrorResponse } from '../schema'
+import { ErrorResponse, ValidationErrorResponse } from '../schema'
 import { MemberInfoInputResponse, MemberInfoInputSchema } from './schema'
 
 export async function POST(request: NextRequest) {

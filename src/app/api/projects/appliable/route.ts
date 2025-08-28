@@ -6,7 +6,7 @@ import { buildErrorResponse } from '../../utils'
 import { getPersonalizedWhere } from '../search'
 import { IsAppliableRequestSchema, IsAppliableResponse } from './schema'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const token = await getToken({ req: request })
     if (!token) {
