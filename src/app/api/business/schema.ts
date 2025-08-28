@@ -29,8 +29,18 @@ export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
     openedAt: z.coerce.date(),
     closedAt: z.coerce.date().nullable(),
     isClosed: z.preprocess((v) => v === 'true' || v === true, z.boolean()),
-    isReemployed: z.preprocess((v) => v === 'true' || v === true, z.boolean()).nullable(),
-    isDemolished: z.preprocess((v) => v === 'true' || v === true, z.boolean()).nullable(),
+    isReemployed: z
+      .preprocess((v) => {
+        if (v === null || v === undefined) return false
+        return v === 'true' || v === true
+      }, z.boolean())
+      .nullable(),
+    isDemolished: z
+      .preprocess((v) => {
+        if (v === null || v === undefined) return false
+        return v === 'true' || v === true
+      }, z.boolean())
+      .nullable(),
     areaSizeM2: z.coerce.number().positive(),
     employeeCount: z.coerce.number().int().positive(),
     depositAmount: z.coerce.number().int().positive().nullable(),
@@ -40,17 +50,17 @@ export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
     (data) => {
       if (data.isClosed === false) {
         return (
-          data.closedAt == null && 
+          data.closedAt == null &&
           data.isReemployed == null &&
           data.isDemolished == null
         )
       }
-      return true;
+      return true
     },
     {
       message: '폐업 상태가 아닐 때는 폐업 관련 정보를 입력할 수 없습니다',
       path: ['isClosed'],
-    }
+    },
   )
   .refine(
     (data) => {
