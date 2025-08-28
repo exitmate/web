@@ -40,11 +40,7 @@ export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
     (data) => {
       // 폐업 상태가 아닐 때는 폐업 관련 필드들이 없어야 함
       if (!data.isClosed) {
-        return (
-          !data.closedAt &&
-          data.isReemployed === undefined &&
-          data.isDemolished === undefined
-        )
+        return !data.closedAt && !data.isReemployed && !data.isDemolished
       }
       return true
     },
@@ -70,9 +66,7 @@ export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
     (data) => {
       // 소유인 경우 월세와 보증금을 입력할 수 없음
       if (data.leaseType === 'OWNED') {
-        return (
-          data.monthlyRent === undefined && data.depositAmount === undefined
-        )
+        return !data.monthlyRent && !data.depositAmount
       }
       return true
     },
