@@ -19,18 +19,20 @@ export const RecommendedProgramList = () => {
       <PaddedBox>
         <Title>추천 지원 사업 Top 5</Title>
         <ProgramCardContainer>
-          {isRecommended ? data.data.recommendedProjects.map((program) => (
-            <ProgramCard
-              key={program.id}
-              title={program.title}
-              logoSrc={program.imageUrl}
-              createdAt={new Date(program.postedDate)}
-              deadline={new Date(program.deadline)}
-              host={program.centerName}
-              id={program.id.toString()}
-              onClick={() => {}}
-            />
-          )) : (
+          {isRecommended ? (
+            data.data.recommendedProjects.map((program: any) => (
+              <ProgramCard
+                key={program.id}
+                title={program.title}
+                logoSrc={program.imageUrl}
+                createdAt={new Date(program.postedDate)}
+                deadline={new Date(program.deadline)}
+                host={program.centerName}
+                id={program.id.toString()}
+                onClick={() => {}}
+              />
+            ))
+          ) : (
             <Text>AI가 열심히 생각중이에요...</Text>
           )}
         </ProgramCardContainer>
@@ -45,7 +47,7 @@ const RecommendedProgramListContainer = styled.div<{ isRecommended: boolean }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: ${({ isRecommended }) => isRecommended ? '440px' : '200px'};
+  height: ${({ isRecommended }) => (isRecommended ? '440px' : '200px')};
   box-sizing: border-box;
   background-color: ${colors.gray[1]};
 `
