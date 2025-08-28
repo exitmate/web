@@ -1,6 +1,6 @@
 'use client'
 
-import CardImage from '@/assets/temp/card-example.png'
+import FallbackImage from '@/assets/images/project_fallback.webp'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import Image from 'next/image'
@@ -9,41 +9,69 @@ import BookMark from './common/BookMark'
 
 interface CardProps {
   title: string
-  postedDate: string
-  deadline: string
-  imageUrl: string
-  centerName: string
+  createdAt: Date
+  deadline: Date | null
+  logoSrc: string | null
+  host: string
+  id: string
+  onClick: (id: string) => void
+}
+
+const renderDate = (date: Date | null) => {
+  if (!date) return '없음'
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}.${month}.${day}`
+}
+
+const renderDeadline = (date: Date | null) => {
+  if (!date) return '상시'
+  const now = new Date()
+
+  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  const diffTime = target.getTime() - today.getTime()
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) return 'D-DAY'
+  if (diffDays > 0) return `D-${diffDays}`
+  return `D+${Math.abs(diffDays)}`
 }
 
 export const ProgramCard = ({
   title,
-  // imageUrl,
-  postedDate,
+  logoSrc,
+  createdAt,
   deadline,
-  centerName,
+  host,
+  id,
+  onClick,
 }: CardProps) => {
   return (
-    <CardContainer>
+    <CardContainer onClick={() => onClick(id)}>
       <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
-        <Badge content="D-999" />
+        <Badge content={renderDeadline(deadline ? new Date(deadline) : null)} />
       </div>
       <div style={{ position: 'absolute', bottom: '12px', right: '12px' }}>
         <BookMark isBookmarked={false} />
       </div>
       <ImageContainer>
-        <StyledImage src={CardImage} alt={title} />
+        <StyledImage src={logoSrc || FallbackImage} alt={title} />
       </ImageContainer>
       <HorizontalLine />
       <TextContainer>
-        <CenterName>{centerName}</CenterName>
+        <CenterName>{host}</CenterName>
         <CardTitle>{title}</CardTitle>
         <DeadlineSection>
           <DeadlineLabel>마감</DeadlineLabel>
-          <DeadlineDate>{deadline}</DeadlineDate>
+          <DeadlineDate>{renderDate(deadline ? new Date(deadline) : null)}</DeadlineDate>
         </DeadlineSection>
         <PostedSection>
           <PostedLabel>공고</PostedLabel>
-          <PostedDate>{postedDate}</PostedDate>
+          <PostedDate>{renderDate(createdAt)}</PostedDate>
         </PostedSection>
       </TextContainer>
     </CardContainer>
@@ -59,20 +87,22 @@ const CardContainer = styled.div`
   height: 270px;
   text-align: center;
   flex: 1;
+  cursor: pointer;
 `
 
 const ImageContainer = styled.div`
+  display: flex;
+  height: 120px;
   width: 100%;
-  padding: 28px 0 16px 0;
   justify-content: center;
   align-items: center;
 `
 
 const StyledImage = styled(Image)`
   width: auto;
-  min-height: 67px;
   height: auto;
-  max-width: 100%;
+  max-height: 67px;
+  max-width: 100px;
   object-fit: contain;
 `
 
@@ -86,6 +116,7 @@ const TextContainer = styled.div`
   padding: 20px;
   margin-top: 8px;
   text-align: left;
+  box-sizing: border-box;
 `
 
 const CenterName = styled.p`

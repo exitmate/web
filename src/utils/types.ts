@@ -1,6 +1,5 @@
 export type Filter = {
-  deadlineType: string
-  supportType: string
-  highAmountOrder: boolean
-  onlySuitableForMe: boolean
+  applicationType: string | null
+  serviceType: string | null
+  appliableOnly: boolean
 }

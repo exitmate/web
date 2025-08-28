@@ -7,20 +7,37 @@ import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+
+const Menu = () => {
+  return (
+    <MenuContainer>
+      <span>맞춤 지원사업 찾기</span>
+      <span>폐업 일정 관리</span>
+      <span><span style={{ color: colors.point }}>AI</span>에게 물어보기</span>
+    </MenuContainer>
+  )
+}
 
 export const Header = () => {
-  const { data: session } = useSession()
-  console.log(session)
+  const { status } = useSession()
+  const router = useRouter()
+  const isUser = status === 'authenticated'
+  const pathname = usePathname()
+  const isAuthPage = pathname.includes('/login') || pathname.includes('/signup')
   return (
     <PaddedBox>
       <HeaderContainer>
         <ContentsContainer>
           <ImageContainer>
-            <Image src={LogoImage} alt="Logo" width={80} height={80} />
+            <Image src={LogoImage} alt="Logo" width={80} height={80} onClick={() => router.push('/')} style={{ cursor: 'pointer' }} />
           </ImageContainer>
-          <SearchBar />
-          <MyPageText>마이페이지</MyPageText>
-          <MyPageText onClick={() => signOut()}>로그아웃</MyPageText>
+          {isAuthPage ? <Menu /> : <SearchBar />}
+          {isUser ? (
+            <MyPageText onClick={() => signOut({ callbackUrl: '/' })}>로그아웃</MyPageText>
+          ) : (
+            <MyPageText onClick={() => router.push('/login')}>로그인</MyPageText>
+          )}
         </ContentsContainer>
       </HeaderContainer>
     </PaddedBox>
@@ -58,3 +75,13 @@ const MyPageText = styled.div`
   color: ${colors.black};
   cursor: pointer;
 `
+
+const MenuContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  color: ${colors.gray[8]};
+  font-size: 16px;
+  font-weight: 700;
+`;

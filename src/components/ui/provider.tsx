@@ -14,7 +14,10 @@ export function Provider({ session, ...props }: Props) {
   const [queryClient] = useState(() => new QueryClient())
   return (
     <ChakraProvider value={defaultSystem}>
-      <SessionProvider session={session}>
+      <SessionProvider session={session}
+          refetchOnWindowFocus={false}
+          refetchWhenOffline={false}
+          refetchInterval={0}>
         <QueryClientProvider client={queryClient}>
           <SessionBridge />
           <ColorModeProvider {...props} />

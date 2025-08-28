@@ -1,15 +1,15 @@
+import { SupportProjectSchema } from '@/generated/zod'
 import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { PaginatedDataResponse } from '../schema'
-import { ProjectSearchParams, ProjectSearchSchema } from './schema'
-import { SupportProjectSchema } from '@/generated/zod'
 import {
   buildErrorResponse,
   getPaginatedParams,
   getPaginationInfo,
 } from '../utils'
+import { ProjectSearchParams, ProjectSearchSchema } from './schema'
 import { getAllProjects, getOrderBy, getWhere } from './search'
 
 export async function GET(request: NextRequest) {
