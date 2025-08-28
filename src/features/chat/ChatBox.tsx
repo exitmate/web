@@ -1,19 +1,74 @@
-import SegmentedProgress from '@/components/common/SegmentedProgress'
-import colors from '@/utils/colors'
-import { constraintsForField } from '@/utils/inputConstraints'
-import { script, Step } from '@/utils/scripts'
-import styled from '@emotion/styled'
-import { useEffect, useRef, useState } from 'react'
-import { ChatBubbleItem } from './ChatBubbleItem'
-import { ChatInput } from './ChatInput'
-import { ToggleButtonGroup } from './ToggleButtonGroup'
+'use client';
+
+import { CommonButton } from '@/components/common/CommonButton';
+import SegmentedProgress from '@/components/common/SegmentedProgress';
+import Spacing from '@/components/common/Spacing';
+import useUserStore from '@/stores/user';
+import colors from '@/utils/colors';
+import { constraintsForField } from '@/utils/inputConstraints';
+import { script as scriptData, Step } from '@/utils/scripts';
+import { Text } from '@chakra-ui/react';
+import styled from '@emotion/styled';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChatBubbleItem } from './ChatBubbleItem';
+import { ChatInput } from './ChatInput';
+import { ToggleButtonGroup } from './ToggleButtonGroup';
+
+type Msg = {
+  stepId: number;
+  role: 'bot' | 'user';
+  _key: string;
+  contentText?: string;
+  contentNode?: React.ReactNode;
+}
+
+const SignupSuccess = () => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/');
+  }
+
+  return (
+    <div style={{ textAlign: 'center', width: '100%', backgroundColor: colors.sub, padding: '32px 76px', borderRadius: '8px' }}>
+      <Text style={{
+        fontSize: '32px',
+        fontWeight: 'bold',
+        color: colors.gray[7],
+      }}>회원가입이 완료되었습니다.</Text>
+      <Spacing height={32} />
+      <CommonButton label="ExitMate 서비스 이용 시작하기" style={{ width: '100%' }} onClick={handleClick} />
+    </div>
+  )
+}
 
 export const ChatBox = () => {
-  const [messages, setMessages] = useState<Step[]>([])
+  const [messages, setMessages] = useState<Msg[]>([])
   const [inputValue, setInputValue] = useState('')
-  const [index, setIndex] = useState(0)
+  const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const { businessInfo, setBusinessInfo, member } = useUserStore();
+  const script = useMemo(() => scriptData(businessInfo, member.name || ""), [businessInfo])
+  const didAutoStartRef = useRef(false)
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const isUserTurn = script[stepIndex]?.role === 'user'
+  const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
+
+  useEffect(() => {
+    if (didAutoStartRef.current) return;
+    if (script.length === 0) return;
+    if (messages.length > 0) return;
+    if (streamingRef.current) return;
+  
+    didAutoStartRef.current = true;
+    setStepIndex(0);
+    pushUntilUserTurnWithDelay(700, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [script]);
+  
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -25,119 +80,184 @@ export const ChatBox = () => {
     scrollToBottom()
   }, [messages])
 
-  const stepIndexRef = useRef(index)
-  useEffect(() => { stepIndexRef.current = index }, [index])
+  useEffect(() => {
+    if (isUserTurn) {
+      inputRef.current?.focus();
+    }
+  }, [isUserTurn]);
+
+  const currentStep = script[stepIndex];
 
   const streamingRef = useRef(false)
-  const timersRef = useRef<number[]>([])
 
-  const clearAllTimers = () => {
-    timersRef.current.forEach(t => clearTimeout(t))
-    timersRef.current = []
-  }
-  useEffect(() => () => clearAllTimers(), [])
+  const playBotSteps = async (steps: Step[], baseDelay = 700) => {
+    const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+  
+    for (let k = 0; k < steps.length; k++) {
+      const s = steps[k];
+  
+      setMessages(prev => [...prev, { stepId: s.id, role: 'bot', _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}` }]);
+      if (k === steps.length - 1 && s.input === 'select') break;
+  
+      const shouldDelay = s.role === 'bot' && s.input !== 'select';
+      if (shouldDelay) {
+        await sleep(baseDelay);
+      }
+    }
+  };
 
-  const pushUntilUserTurnWithDelay = (gapMs: number = 600) => {
+  const pushUntilUserTurnWithDelay = async (baseDelay = 700, startAt?: number) => {
     if (streamingRef.current) return;
     streamingRef.current = true;
   
-    let i = stepIndexRef.current;
+    let i = typeof startAt === 'number' ? startAt : stepIndex;
     const botSteps: Step[] = [];
+    const seen = new Set<number>();
+  
     while (i < script.length && script[i]?.role === 'bot') {
-      botSteps.push(script[i]);
+      if (seen.has(i)) break;
+      seen.add(i);
+      botSteps.push(script[i] as Step);
       i = script[i].nextId ?? i + 1;
     }
   
-    stepIndexRef.current = i;
-    setIndex(i);
-  
-    if (botSteps.length === 0) {
-      streamingRef.current = false;
-      return;
+    if (botSteps.length) {
+      await playBotSteps(botSteps, baseDelay);
     }
   
-    botSteps.forEach((step, idx) => {
-      const t = window.setTimeout(() => {
-        setMessages(prev => [...prev, { ...step, id: Date.now() }]);
-        if (idx === botSteps.length - 1) streamingRef.current = false;
-      }, idx * gapMs);
-      timersRef.current.push(t);
-    });
+    setStepIndex(i);
+    streamingRef.current = false;
   };
 
-const handleSelect = (selectedValue: string, selectedLabel: string, nextId?: string) => {
-  const current = script[stepIndexRef.current];
-  console.log(selectedValue, selectedLabel, nextId)
+  const handleSelect = (selectedValue: string, selectedLabel: string, nextId: number) => {
+    const current = script[stepIndex];
+  
+    setMessages(prev => [
+      ...prev,
+      { stepId: current.id, role: 'user', contentText: selectedLabel, _key: `${performance.now()}-${stepIndex}` },
+    ]);
+  
+    if (!current.field.includes('confirm')) {
+      setAnswers((prev) => ({ ...prev, [current.field]: selectedValue }));
+      setBusinessInfo({ [current.field]: selectedValue });
+    }
+  
+    const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndex + 1);
+    setStepIndex(target);
+    pushUntilUserTurnWithDelay(700, target);
+  };
 
-  setMessages(prev => [
-    ...prev,
-    { ...current, id: Date.now(), role: 'user', input: 'text', content: selectedLabel } as Step,
-  ]);
-
-  if (!current.field.includes('confirm')) {
-    setAnswers(prev => ({ ...prev, [current.field]: selectedValue }));
-  }
-
-  const target = typeof nextId === 'number' ? nextId : (current.nextId ?? stepIndexRef.current + 1);
-  stepIndexRef.current = target;
-  setIndex(target);
-
-  pushUntilUserTurnWithDelay(700);
-};
-
+  const inputConstraints = constraintsForField(currentStep.field ?? '');
 
   useEffect(() => {
-    pushUntilUserTurnWithDelay(1000)
-  }, [])
-
-  const inputConstraints = constraintsForField(script[stepIndexRef.current].field);
-
-const handleSend = (message: string) => {
-  const trimmed = message.trim();
-  if (!trimmed) return;
-
-  const current = script[stepIndexRef.current];
-  const expectingUser = current?.role === 'user';
-
-  setMessages(prev => [
-    ...prev,
-    { ...current, id: Date.now(), input: 'text', content: trimmed },
-  ]);
-  setInputValue('');
-
-  if (expectingUser) {
-    setAnswers(prev => ({ ...prev, [current.field]: trimmed }));
-
-    const targetIndex = current.nextId ?? index;
-    stepIndexRef.current = targetIndex;
-    setIndex(targetIndex);
-
-    pushUntilUserTurnWithDelay(700);
+    const fetchBusinessInfo = async () => {
+      if (stepIndex === 55) {
+      try {
+        console.log("businessInfo", businessInfo)
+        const response = await fetch('/api/business', {
+          method: 'POST',
+          body: JSON.stringify({...businessInfo }),
+        });
+        const data = await response.json();
+        setBusinessInfo(data.data)
+        const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+      setMessages(prev => [
+        ...prev,
+        { stepId: -1, role: 'bot', _key: uid(), contentNode: <SignupSuccess /> },
+      ]);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   }
-};
+    fetchBusinessInfo()
+  }, [stepIndex])
 
-  const isUserTurn = script[stepIndexRef.current]?.role === 'user'
-  const currentPlaceholder = script[stepIndexRef.current]?.placeholder ?? '메시지를 입력해주세요.'
+  const endStep = (id: number, content: React.ReactNode): Step => ({
+    step: 7,
+    field: 'end',
+    id,                 // 유니크하게만
+    role: 'bot',
+    input: 'text',
+    content,
+    _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
+  });
 
+  const handleSend = async (message: string) => {
+    const trimmed = message.trim();
+    if (!trimmed) return;
+  
+    const current = script[stepIndex];
+    const expectingUser = current?.role === 'user';
+  
+    setMessages(prev => [
+      ...prev,
+      { stepId: current.id, role: 'user', contentText: trimmed, _key: `${performance.now()}-${stepIndex}` },
+    ]);
+    setInputValue('');
+  
+    if (expectingUser) {
+      setAnswers((prev) => ({ ...prev, [current.field]: trimmed }));
+      if (current.field === 'city') {
+      } else if (current.field === 'county') {
+        setBusinessInfo({ region: answers.city + ' ' + trimmed });
+      } else if (current.field.endsWith('At')) {
+        const year = parseInt(trimmed.slice(0, 4), 10);
+        const month = parseInt(trimmed.slice(4, 6), 10) - 1;
+        const day = parseInt(trimmed.slice(6, 8), 10);
+        setBusinessInfo({ [current.field]: new Date(year, month, day) });
+      }
+      else {
+        setBusinessInfo({ [current.field]: trimmed });
+      }
+  
+      const target = current.nextId ?? (stepIndex + 1);
+      setStepIndex(target);
+      pushUntilUserTurnWithDelay(700, target);
+    }
+  };
+
+  const renderContent = (step: Step, fallbackUserText?: string) => {
+    if (step.role === 'user' && fallbackUserText) return fallbackUserText;
+  
+    const c = step.content;
+    if (typeof c === 'function') {
+      return (c as (ctx:{businessInfo: typeof businessInfo; userName:string}) => React.ReactNode)({
+        businessInfo,
+        userName: member.name || '',
+      });
+    }
+    return c;
+  };
 
   return (
     <>
-      <SegmentedProgress total={7} current={script[stepIndexRef.current].step} />
+      <SegmentedProgress total={7} current={script[stepIndex].step} />
       <ChatBoxContainer ref={chatContainerRef}>
-        {messages.map((m) => (
-          m.input === 'select' && m.options ? (
-            !answers[m.field] && <ToggleButtonGroup
-            key={m.id}
-            items={m.options}
-            setValue={handleSelect}
-          />
-          ) : ( 
-            <ChatBubbleItem key={m.id} message={m.content} isUser={m.role === 'user'} title={m.title} />
-          )
-        ))}
+        {messages.map((m, idx) => {
+          const step = script[m.stepId]
+          if (!step && m.contentNode) {
+            return (
+              <div key={m._key}>{m.contentNode}</div>
+            );
+          }        
+          if (step.role === 'bot' && step.input === 'select' && step.options) {
+            if (answers[m.stepId]) return null;
+            return (
+              <ToggleButtonGroup
+                key={m._key}
+                items={step.options}
+                setValue={handleSelect}
+              />
+            )
+          } else {
+              return <ChatBubbleItem key={m._key} message={renderContent(step, m.contentText)} isUser={m.role === 'user'} title={step.title} index={idx} />
+          }
+        })} 
       </ChatBoxContainer>
 
       <ChatInput
+        ref={inputRef }
         onSend={handleSend}
         placeholder={currentPlaceholder}
         value={inputValue}
@@ -148,8 +268,8 @@ const handleSend = (message: string) => {
 
       <Debug>
         <pre>{JSON.stringify(answers, null, 2)}</pre>
-        <pre>{JSON.stringify(stepIndexRef.current, null, 2)}</pre>
-        <pre>{JSON.stringify(index, null, 2)}</pre>
+        <pre>{JSON.stringify(stepIndex, null, 2)}</pre>
+        <SignupSuccess />
       </Debug>
     </>
   )
@@ -192,5 +312,3 @@ const Debug = styled.div`
   font-size: 12px;
   color: #666;
 `
-
-export default ChatBox

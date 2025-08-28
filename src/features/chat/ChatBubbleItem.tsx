@@ -55,8 +55,7 @@ const ChatBubbleItemContainer = styled.div<{ isUser: boolean; index?: number }>`
       : css`
           ${fadeInUp} 0.5s ease-out both
         `};
-  animation-delay: ${({ isUser, index }) =>
-    isUser ? '0s' : `${(index || 0) * 0.2}s`};
+  animation-delay: 0s;
   animation-fill-mode: forwards;
   will-change: transform, opacity;
 

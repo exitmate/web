@@ -4,9 +4,10 @@ import { applyConstraints, InputConstraints } from "@/utils/inputConstraints";
 import { Textarea } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 
 interface ChatInputProps {
+  ref: React.RefObject<HTMLTextAreaElement>;
   placeholder: string;
   value: string;
   onSend: (message: string) => void;
@@ -15,7 +16,8 @@ interface ChatInputProps {
   constraints?: InputConstraints;
 }
 
-export const ChatInput = ({ onSend, placeholder, value, onChange, disabled, constraints }: ChatInputProps) => {
+  // eslint-disable-next-line react/display-name
+  export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(({ onSend, placeholder, value, onChange, disabled, constraints }, ref) => {
   const [active, setActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -40,13 +42,14 @@ export const ChatInput = ({ onSend, placeholder, value, onChange, disabled, cons
       onChange={handleChange}
       onKeyPress={handleKeyPress}
       disabled={disabled}
+      ref={ref}
     />
     <SendButton onClick={() => onSend(value)} active={active} disabled={!active || disabled}>
       <Image src={sendIcon} alt="send" />
     </SendButton>
   </ChatInputContainer>
   );
-};
+});
 
 const ChatInputContainer = styled.div`
   display: flex;

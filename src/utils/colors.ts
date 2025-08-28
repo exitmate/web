@@ -1,6 +1,7 @@
 export const colors = {
   point: '#3f8ae3',
   white: '#ffffff',
+  sub: '#F5F9FE',
   gray: {
     1: '#f9fbfd',
     2: '#f3f4f6',
@@ -12,6 +13,7 @@ export const colors = {
     8: '#343537',
   },
   black: '#1b1b1b',
+  error: '#FF3E3E',
 }
 
 export default colors

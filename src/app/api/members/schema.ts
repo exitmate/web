@@ -27,26 +27,30 @@ export const MemberInfoInputSchema = MemberSchema.pick({
   agreedDataUsage: true,
   agreedMarketing: true,
 }).extend({
-  agreedPrivacyPolicy: z
-    .preprocess((v) => v === 'true' || v === true, z.boolean())
-    .pipe(z.literal(true)),
-  agreedTermsOfUse: z
-    .preprocess((v) => v === 'true' || v === true, z.boolean())
-    .pipe(z.literal(true)),
-  agreedDataUsage: z
-    .preprocess((v) => v === 'true' || v === true, z.boolean())
-    .pipe(z.literal(true)),
-  agreedMarketing: z
-    .preprocess((v) => v === 'true' || v === true, z.boolean())
-    .default(false),
+  name: z.string().min(2, '이름은 2자 이상이어야 합니다.'),
+  email: z.string().email('올바른 이메일 형식이 아닙니다.'),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER'], {
+    error: '성별을 선택해주세요.',
+  }),
+  agreedPrivacyPolicy: z.coerce.boolean().refine(v => v === true, {
+    message: '개인정보 처리방침 동의는 필수입니다.',
+  }),
+  agreedTermsOfUse: z.coerce.boolean().refine(v => v === true, {
+    message: '이용약관 동의는 필수입니다.',
+  }),
+  agreedDataUsage: z.coerce.boolean().refine(v => v === true, {
+    message: '데이터 활용 동의는 필수입니다.',
+  }),
+  agreedMarketing: z.coerce.boolean().default(false),
   birthDate: z.coerce
-    .date()
-    .min(new Date('1910-01-01'))
+    .date("생년월일을 입력해주세요")
+    .min(new Date('1910-01-01'), "올바른 생년월일을 입력해주세요.")
     .max(
       new Date(
         new Date().getFullYear() - 19,
         new Date().getMonth(),
         new Date().getDate(),
       ),
-    ),
+      "올바른 생년월일을 입력해주세요."
+    )
 })
