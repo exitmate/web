@@ -1,11 +1,11 @@
-import React from 'react'
-import { Box, HStack, VStack, Text, useToken, Image } from '@chakra-ui/react'
-import type { ApplicationType, ServiceType } from '@/generated/prisma'
-import colors from '@/utils/colors'
-import { useProjectDetail } from './ProjectDetailContext'
 import calendarIcon from '@/assets/icons/calendar.svg'
 import moneyIcon from '@/assets/icons/money.svg'
 import myIcon from '@/assets/icons/my.svg'
+import type { ApplicationType, ServiceType } from '@/generated/prisma'
+import colors from '@/utils/colors'
+import { Box, HStack, Image, Text, useToken, VStack } from '@chakra-ui/react'
+import React from 'react'
+import { useProjectDetail } from './ProjectDetailContext'
 
 type Props = {}
 
@@ -40,12 +40,12 @@ function InfoBox({
   icon: React.ReactNode
 }) {
   return (
-    <Box bg={bg} rounded="lg" p="1.5rem" width={324} height={120}>
-      <VStack align="space-between" gap={6}>
+    <Box bg={bg} rounded="lg" p="1.5rem" width={324} height={140}>
+      <VStack align="space-between" gap={8}>
         <Text fontSize="lg" fontWeight={600} color={titleColor}>
           {title}
         </Text>
-        <HStack gap={4} align="center" justify="flex-end">
+        <HStack gap={4} align="flex-end" justify="flex-end">
           {icon}
           <Text
             fontSize="2xl"

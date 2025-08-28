@@ -14,10 +14,12 @@ export const RecommendedProgramList = () => {
             <ProgramCard
               key={program.id}
               title={program.title}
-              imageUrl={program.imageUrl}
-              postedDate={program.postedDate}
-              deadline={program.deadline}
-              centerName={program.centerName}
+              logoSrc={program.imageUrl}
+              createdAt={new Date(program.postedDate)}
+              deadline={new Date(program.deadline)}
+              host={program.centerName}
+              id={program.id.toString()}
+              onClick={() => {}}
             />
           ))}
         </ProgramCardContainer>

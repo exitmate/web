@@ -1,15 +1,16 @@
 'use client'
 
-import PaddedBox from '@/components/common/PaddedBox'
-import Image from 'next/image'
-import styled from '@emotion/styled'
-import { Text } from '@chakra-ui/react'
-import { useProjectDetail } from './ProjectDetailContext'
 import projectFallback from '@/assets/images/project_fallback.webp'
-import DateDescriptionSection from './DateDescriptionSection'
-import colors from '@/utils/colors'
-import ServiceInfoSection from './ServiceInfoSection'
+import { CommonButton } from '@/components/common/CommonButton'
+import PaddedBox from '@/components/common/PaddedBox'
 import Spacing from '@/components/common/Spacing'
+import colors from '@/utils/colors'
+import { Text, VStack } from '@chakra-ui/react'
+import styled from '@emotion/styled'
+import Image from 'next/image'
+import DateDescriptionSection from './DateDescriptionSection'
+import { useProjectDetail } from './ProjectDetailContext'
+import ServiceInfoSection from './ServiceInfoSection'
 
 export default function ProjectDetailClient() {
   const { project } = useProjectDetail()
@@ -37,7 +38,14 @@ export default function ProjectDetailClient() {
       </DetailHeader>
       <DateDescriptionSection />
       <Spacing height={68} />
-      <ServiceInfoSection />
+      <VStack gap={12}>
+        <ServiceInfoSection />
+        <CommonButton
+          label="ExitMate와 함께 지원사업 신청서 작성하기"
+          onClick={() => {}}
+          style={{ width: '408px', height: '64px', fontSize: '20px' }}
+          />
+      </VStack>
     </PaddedBox>
   )
 }
