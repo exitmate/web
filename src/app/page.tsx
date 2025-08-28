@@ -1,7 +1,7 @@
 import ClientLayout from '@/components/ClientLayout'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/authOptions'
-import ProgramsPage from './programs/page'
+import ProgramsPage from './projects/page'
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
