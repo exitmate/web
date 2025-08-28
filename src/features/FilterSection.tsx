@@ -25,7 +25,6 @@ export const FilterSection = ({
   filter: Filter
   setFilter: (filter: Filter) => void
 }) => {
-  console.log(filter)
   return (
     <FilterContainer>
       <CategoryContainer>

@@ -34,7 +34,7 @@ export const Header = () => {
           </ImageContainer>
           {isAuthPage ? <Menu /> : <SearchBar />}
           {isUser ? (
-            <MyPageText onClick={() => signOut()}>로그아웃</MyPageText>
+            <MyPageText onClick={() => signOut({ callbackUrl: '/' })}>로그아웃</MyPageText>
           ) : (
             <MyPageText onClick={() => router.push('/login')}>로그인</MyPageText>
           )}

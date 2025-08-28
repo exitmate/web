@@ -53,9 +53,10 @@ export const ChatBox = () => {
   const script = useMemo(() => scriptData(businessInfo, member.name || ""), [businessInfo])
   const didAutoStartRef = useRef(false)
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
+  const router = useRouter()  
   const isUserTurn = script[stepIndex]?.role === 'user'
   const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     if (didAutoStartRef.current) return;
@@ -94,6 +95,7 @@ export const ChatBox = () => {
     const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
   
     for (let k = 0; k < steps.length; k++) {
+      if (finished) break;
       const s = steps[k];
   
       setMessages(prev => [...prev, { stepId: s.id, role: 'bot', _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}` }]);
@@ -107,7 +109,7 @@ export const ChatBox = () => {
   };
 
   const pushUntilUserTurnWithDelay = async (baseDelay = 700, startAt?: number) => {
-    if (streamingRef.current) return;
+    if (streamingRef.current || finished) return;
     streamingRef.current = true;
   
     let i = typeof startAt === 'number' ? startAt : stepIndex;
@@ -171,6 +173,7 @@ export const ChatBox = () => {
         ...prev,
         { stepId: -1, role: 'bot', _key: uid(), contentNode: <SignupSuccess /> },
       ]);
+      setFinished(true);
       } catch (error) {
         console.error(error);
       }
@@ -178,16 +181,6 @@ export const ChatBox = () => {
   }
     fetchBusinessInfo()
   }, [stepIndex])
-
-  const endStep = (id: number, content: React.ReactNode): Step => ({
-    step: 7,
-    field: 'end',
-    id,                 // 유니크하게만
-    role: 'bot',
-    input: 'text',
-    content,
-    _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
-  });
 
   const handleSend = async (message: string) => {
     const trimmed = message.trim();

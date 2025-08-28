@@ -1,83 +1,83 @@
+'use client'
 import InsertIcon from '@/assets/icons/insert.svg'
 import SearchBarIcon from '@/assets/icons/search-bar.svg'
 import SearchIcon from '@/assets/icons/search.svg'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import Image from 'next/image'
-import { useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 
-const SearchKeyword = ({
+const SearchKeyword = memo(function SearchKeyword({
   keyword,
   onClick,
 }: {
   keyword: string
-  onClick: () => void
-}) => {
+  onClick: (kw: string) => void
+}) {
+  const handleClick = useCallback(() => onClick(keyword), [onClick, keyword])
   return (
     <SearchKeywordContainer>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Image src={SearchBarIcon} alt="Search Icon" width={24} height={24} />
         <SearchKeywordText>{keyword}</SearchKeywordText>
       </div>
-      <Image
-        src={InsertIcon}
-        alt="Insert Icon"
-        width={24}
-        height={24}
-        onClick={onClick}
-      />
+      <Image src={InsertIcon} alt="Insert Icon" width={24} height={24} onClick={handleClick} />
     </SearchKeywordContainer>
   )
-}
+})
 
 export const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false)
   const [searchKeyword, setSearchKeyword] = useState('')
-  console.log(isFocused)
+  const rootRef = useRef<HTMLDivElement>(null)
 
-  const handleSetSearchKeyword = (keyword: string) => {
-    setSearchKeyword(keyword)
-  }
+  useEffect(() => {
+    if (!isFocused) return
+    const onDown = (e: MouseEvent) => {
+      if (!rootRef.current) return
+      if (!rootRef.current.contains(e.target as Node)) setIsFocused(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [isFocused])
+
+  const handleFocus = useCallback(() => setIsFocused(true), [])
+  const handleClose = useCallback(() => setIsFocused(false), [])
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value)
+  }, [])
+  const handlePick = useCallback((kw: string) => {
+    setSearchKeyword(kw)
+    setIsFocused(false)
+  }, [])
 
   return (
-    <InputContainer className={isFocused ? 'focused' : ''}>
+    <InputContainer ref={rootRef} className={isFocused ? 'focused' : ''}>
       <Input
         value={searchKeyword}
-        onChange={(e) => setSearchKeyword(e.target.value)}
+        onChange={handleChange}
         type="text"
         placeholder="궁금한 지원사업을 검색하세요."
-        onFocus={() => setIsFocused(true)}
-        // onBlur={() => setIsFocused(false)}
+        onFocus={handleFocus}
       />
       <SearchIconContainer>
         <Image src={SearchIcon} alt="Search Icon" width={24} height={24} />
       </SearchIconContainer>
+
       {isFocused && (
-        <SearchKeywordListContainer>
+        <SearchKeywordListContainer onMouseDown={(e) => e.stopPropagation()}>
           <SearchKeywordList>
-            <SearchKeyword
-              keyword="검색어1"
-              onClick={() => setSearchKeyword('검색어1')}
-            />
-            <SearchKeyword
-              keyword="검색어2"
-              onClick={() => setSearchKeyword('검색어2')}
-            />
-            <SearchKeyword
-              keyword="검색어3"
-              onClick={() => setSearchKeyword('검색어3')}
-            />
-            <SearchKeyword
-              keyword="검색어4"
-              onClick={() => setSearchKeyword('검색어4')}
-            />
+            {['검색어1', '검색어2', '검색어3', '검색어4'].map((kw) => (
+              <SearchKeyword key={kw} keyword={kw} onClick={handlePick} />
+            ))}
           </SearchKeywordList>
-          <CloseSection onClick={() => setIsFocused(false)}>닫기</CloseSection>
+          <CloseSection onClick={handleClose}>닫기</CloseSection>
         </SearchKeywordListContainer>
       )}
     </InputContainer>
   )
 }
+
 
 const InputContainer = styled.div`
   display: flex;
