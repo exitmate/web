@@ -23,7 +23,11 @@ export const AvailableProgramCount = () => {
   const { data } = useQuery({
     queryKey: ['projects-count'],
     queryFn: () => {
-      return fetch('/api/projects/count').then((res) => res.json())
+      return fetch('/api/projects/count')
+        .then((res) => res.json())
+        .catch(() => {
+          return { data: { myAppliableCount: 0, todayAppliableCount: 0 } }
+        })
     },
   })
 

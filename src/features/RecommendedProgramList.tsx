@@ -8,7 +8,12 @@ import { useQuery } from '@tanstack/react-query'
 export const RecommendedProgramList = () => {
   const { data } = useQuery({
     queryKey: ['programs'],
-    queryFn: () => fetch('/api/ai/recommendations').then((res) => res.json()),
+    queryFn: () =>
+      fetch('/api/ai/recommendations')
+        .then((res) => res.json())
+        .catch(() => {
+          return { data: { recommendedProjects: [] } }
+        }),
   })
 
   const isRecommended = data?.data?.recommendedProjects.length > 0
