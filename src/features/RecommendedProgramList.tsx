@@ -1,7 +1,7 @@
 import PaddedBox from '@/components/common/PaddedBox'
 import ProgramCard from '@/components/ProgramCard'
 import colors from '@/utils/colors'
-import { programList } from '@/utils/mocks'
+import { Text } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
 
@@ -11,13 +11,15 @@ export const RecommendedProgramList = () => {
     queryFn: () => fetch('/api/ai/recommendations').then((res) => res.json()),
   })
 
+  const isRecommended = data?.data?.recommendedProjects.length > 0
+
   console.log(data)
   return (
-    <RecommendedProgramListContainer>
+    <RecommendedProgramListContainer isRecommended={isRecommended}>
       <PaddedBox>
         <Title>추천 지원 사업 Top 5</Title>
         <ProgramCardContainer>
-          {programList.slice(0, 5).map((program) => (
+          {isRecommended ? data.data.recommendedProjects.map((program) => (
             <ProgramCard
               key={program.id}
               title={program.title}
@@ -28,20 +30,22 @@ export const RecommendedProgramList = () => {
               id={program.id.toString()}
               onClick={() => {}}
             />
-          ))}
+          )) : (
+            <Text>AI가 열심히 생각중이에요...</Text>
+          )}
         </ProgramCardContainer>
       </PaddedBox>
     </RecommendedProgramListContainer>
   )
 }
 
-const RecommendedProgramListContainer = styled.div`
+const RecommendedProgramListContainer = styled.div<{ isRecommended: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 440px;
+  height: ${({ isRecommended }) => isRecommended ? '440px' : '200px'};
   box-sizing: border-box;
   background-color: ${colors.gray[1]};
 `
