@@ -599,6 +599,63 @@
         "summary": "지원사업 필터 및 조회",
         "security": [],
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "default": 1,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "default": 10,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "applicationType": {
+                    "type": "string",
+                    "enum": [
+                      "ALWAYS",
+                      "FIRST_COME",
+                      "DEADLINED"
+                    ]
+                  },
+                  "serviceType": {
+                    "type": "string",
+                    "enum": [
+                      "STORE_DEMOLITION_SUBSIDY",
+                      "CLOSURE_SUPPORT_SUBSIDY",
+                      "CLOSURE_CONSULTING",
+                      "REEMPLOYMENT_EDUCATION",
+                      "BUSINESS_EDUCATION"
+                    ]
+                  },
+                  "maxAmountRange": {
+                    "type": "string",
+                    "enum": [
+                      "under_100",
+                      "100_to_300",
+                      "300_to_500",
+                      "above_500"
+                    ]
+                  },
+                  "isOpen": {
+                    "type": "boolean"
+                  },
+                  "appliableOnly": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "지원사업 필터 및 조회 성공",
@@ -776,6 +833,161 @@
                   "required": [
                     "data",
                     "pagination"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/:id": {
+      "get": {
+        "summary": "지원사업 상세 조회",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "지원사업 상세 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "applicationType": {
+                          "type": "string",
+                          "enum": [
+                            "ALWAYS",
+                            "FIRST_COME",
+                            "DEADLINED"
+                          ]
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "logoSrc": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "host": {
+                          "type": "string"
+                        },
+                        "deadline": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "isOpen": {
+                          "type": "boolean"
+                        },
+                        "detailPageUrl": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "inquiryPhone": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "inquiryEmail": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "requiredDocs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "applicationRequirements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "restrictions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "maxAmount": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "applicationType",
+                        "id",
+                        "logoSrc",
+                        "title",
+                        "host",
+                        "deadline",
+                        "isOpen",
+                        "detailPageUrl",
+                        "inquiryPhone",
+                        "inquiryEmail",
+                        "requiredDocs",
+                        "applicationRequirements",
+                        "restrictions",
+                        "createdAt",
+                        "updatedAt",
+                        "maxAmount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
                   ],
                   "additionalProperties": false
                 }
