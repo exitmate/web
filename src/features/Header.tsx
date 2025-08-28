@@ -5,9 +5,12 @@ import PaddedBox from '@/components/common/PaddedBox'
 import SearchBar from '@/components/common/SearchBar'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
+import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 
 export const Header = () => {
+  const { data: session } = useSession()
+  console.log(session)
   return (
     <PaddedBox>
       <HeaderContainer>
@@ -17,6 +20,7 @@ export const Header = () => {
           </ImageContainer>
           <SearchBar />
           <MyPageText>마이페이지</MyPageText>
+          <MyPageText onClick={() => signOut()}>로그아웃</MyPageText>
         </ContentsContainer>
       </HeaderContainer>
     </PaddedBox>
