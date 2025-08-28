@@ -1,7 +1,9 @@
+import { ProgramDescriptionSection } from '@/features/projects/detail/ProgramDescriptionSection'
+import ProjectDetailClient from '@/features/projects/detail/ProjectDetailClient'
+import { RequiredDocumentsSection } from '@/features/projects/detail/RequiredDocumentsSection'
 import prisma from '@/utils/prisma'
 import { redirect } from 'next/navigation'
 import { ProjectDetailProvider } from '../../../features/projects/detail/ProjectDetailContext'
-import ProjectDetailClient from '@/features/projects/detail/ProjectDetailClient'
 
 export default async function ProgramDetailsPage({
   params,
@@ -23,6 +25,8 @@ export default async function ProgramDetailsPage({
   return (
     <ProjectDetailProvider project={program}>
       <ProjectDetailClient />
+      <RequiredDocumentsSection />
+      <ProgramDescriptionSection />
     </ProjectDetailProvider>
   )
 }

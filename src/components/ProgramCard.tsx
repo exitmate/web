@@ -59,7 +59,7 @@ export const ProgramCard = ({
         <BookMark isBookmarked={false} />
       </div>
       <ImageContainer>
-        <StyledImage src={logoSrc || FallbackImage} alt={title} />
+        <StyledImage src={logoSrc || FallbackImage} alt={title} width={100} height={67} />
       </ImageContainer>
       <HorizontalLine />
       <TextContainer>
@@ -99,8 +99,6 @@ const ImageContainer = styled.div`
 `
 
 const StyledImage = styled(Image)`
-  width: auto;
-  height: auto;
   max-height: 67px;
   max-width: 100px;
   object-fit: contain;
