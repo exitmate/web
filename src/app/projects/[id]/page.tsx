@@ -1,3 +1,4 @@
+import { ProgramDescriptionSection } from '@/features/projects/detail/ProgramDescriptionSection'
 import ProjectDetailClient from '@/features/projects/detail/ProjectDetailClient'
 import { RequiredDocumentsSection } from '@/features/projects/detail/RequiredDocumentsSection'
 import prisma from '@/utils/prisma'
@@ -25,6 +26,7 @@ export default async function ProgramDetailsPage({
     <ProjectDetailProvider project={program}>
       <ProjectDetailClient />
       <RequiredDocumentsSection />
+      <ProgramDescriptionSection />
     </ProjectDetailProvider>
   )
 }
