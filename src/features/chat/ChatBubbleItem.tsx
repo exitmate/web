@@ -16,12 +16,12 @@ export const ChatBubbleItem = ({
   title = '',
 }: ChatBubbleItemProps) => {
   return (
-  <>
-  {title && <ChatBubbleTitle>{title}</ChatBubbleTitle>}
-    <ChatBubbleItemContainer isUser={isUser} index={index}>
-      {message}
-    </ChatBubbleItemContainer>
-  </>
+    <>
+      {title && <ChatBubbleTitle>{title}</ChatBubbleTitle>}
+      <ChatBubbleItemContainer isUser={isUser} index={index}>
+        {message}
+      </ChatBubbleItemContainer>
+    </>
   )
 }
 

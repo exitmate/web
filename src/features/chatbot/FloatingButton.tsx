@@ -1,18 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
 import colors from '@/utils/colors'
 import { ChatBot } from './ChatBot'
 
 export const FloatingChatButton = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggleChat = () => {
     setIsOpen(!isOpen)
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <>
       <FloatingButtonContainer>
         <FloatingButton onClick={toggleChat} isOpen={isOpen}>
@@ -21,76 +29,87 @@ export const FloatingChatButton = () => {
       </FloatingButtonContainer>
 
       {isOpen && (
-        <ChatModalOverlay onClick={toggleChat}>
-          <ChatModal onClick={(e) => e.stopPropagation()}>
-            <ChatHeader>
-              <ChatTitle>ExitMate 챗봇</ChatTitle>
-              <CloseButton onClick={toggleChat}>✕</CloseButton>
-            </ChatHeader>
-            <ChatBot />
-          </ChatModal>
-        </ChatModalOverlay>
+        <ChatContainer>
+          <ChatHeader>
+            <ChatTitle>ExitMate 챗봇</ChatTitle>
+            <CloseButton onClick={toggleChat}>✕</CloseButton>
+          </ChatHeader>
+          <ChatBot />
+        </ChatContainer>
       )}
-    </>
+    </>,
+    document.body,
   )
 }
 
 const FloatingButtonContainer = styled.div`
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+  display: block !important;
 `
 
 const FloatingButton = styled.button<{ isOpen: boolean }>`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: ${(props) => (props.isOpen ? colors.gray[6] : colors.point)};
-  color: white;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  background: ${(props) =>
+    props.isOpen ? colors.gray[6] : colors.point} !important;
+  color: white !important;
+  border: none !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 99999 !important;
 
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.95) !important;
   }
 `
 
-const ChatModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-`
+const ChatContainer = styled.div`
+  position: fixed !important;
+  bottom: 100px !important;
+  right: 24px !important;
+  width: 380px !important;
+  height: 600px !important;
+  background: white !important;
+  border-radius: 12px !important;
+  z-index: 99998 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
 
-const ChatModal = styled.div`
-  background: white;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+  @media (max-width: 420px) {
+    width: calc(100vw - 48px) !important;
+    right: 24px !important;
+  }
+
+  animation: slideUp 0.3s ease-out !important;
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 `
 
 const ChatHeader = styled.div`

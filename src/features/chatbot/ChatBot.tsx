@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from '@emotion/styled'
 import colors from '@/utils/colors'
 import { ChatInput } from '@/features/chat/ChatInput'
-import { ChatBubbleItem } from '@/features/chat/ChatBubbleItem'
+import { ChatBotBubble } from './ChatBotBubble'
 
 interface Message {
   id: string
@@ -96,7 +96,7 @@ export const ChatBot = () => {
     <ChatBotContainer>
       <ChatBotMessages ref={chatContainerRef}>
         {messages.map((message, index) => (
-          <ChatBubbleItem
+          <ChatBotBubble
             key={message.id}
             message={message.content}
             isUser={message.role === 'user'}
@@ -113,14 +113,16 @@ export const ChatBot = () => {
           </LoadingBubble>
         )}
       </ChatBotMessages>
-      <ChatInput
-        ref={inputRef}
-        onSend={handleSend}
-        placeholder="궁금한 점을 물어보세요..."
-        value={inputValue}
-        onChange={setInputValue}
-        disabled={isLoading}
-      />
+      <ChatInputWrapper>
+        <ChatInput
+          ref={inputRef}
+          onSend={handleSend}
+          placeholder="궁금한 점을 물어보세요..."
+          value={inputValue}
+          onChange={setInputValue}
+          disabled={isLoading}
+        />
+      </ChatInputWrapper>
     </ChatBotContainer>
   )
 }
@@ -130,15 +132,18 @@ const ChatBotContainer = styled.div`
   flex-direction: column;
   height: 100%;
   padding: 20px;
+  min-height: 0;
 `
 
 const ChatBotMessages = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0;
   overflow-y: auto;
   gap: 8px;
   margin-bottom: 16px;
+  min-height: 0;
+  line-height: 1.2;
 
   scrollbar-width: thin;
   scrollbar-color: ${colors.gray[3]} transparent;
@@ -202,4 +207,9 @@ const LoadingDots = styled.div`
       opacity: 1;
     }
   }
+`
+
+const ChatInputWrapper = styled.div`
+  flex-shrink: 0;
+  margin-top: auto;
 `
