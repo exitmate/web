@@ -2,7 +2,7 @@ import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import { getPersonalizedWhere } from '../search'
-import { GetAppliableProjectCountResponse } from './schema'
+import { AppliableProjectCountResponse } from './schema'
 
 export async function GET(request: NextRequest) {
   const token = await getToken({ req: request })
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   const where = getPersonalizedWhere(businessInfo)
   const count = await prisma.supportProject.count({ where })
-  return NextResponse.json<GetAppliableProjectCountResponse>({
+  return NextResponse.json<AppliableProjectCountResponse>({
     data: { count },
   })
 }

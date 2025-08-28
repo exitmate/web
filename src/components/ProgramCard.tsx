@@ -17,7 +17,7 @@ interface CardProps {
 
 export const ProgramCard = ({
   title,
-  imageUrl,
+  // imageUrl,
   postedDate,
   deadline,
   centerName,

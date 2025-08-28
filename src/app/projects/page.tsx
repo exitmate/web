@@ -7,7 +7,7 @@ import RecommendedProgramList from '@/features/RecommendedProgramList'
 import { Filter } from '@/utils/types'
 import { useState } from 'react'
 
-const ProgramsPage = () => {
+const ProjectsPage = () => {
   const [filter, setFilter] = useState<Filter>({
     deadlineType: '모집 유형',
     supportType: '지원 유형',
@@ -26,4 +26,4 @@ const ProgramsPage = () => {
   )
 }
 
-export default ProgramsPage
+export default ProjectsPage

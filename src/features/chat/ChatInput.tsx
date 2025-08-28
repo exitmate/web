@@ -1,55 +1,60 @@
-import sendIcon from "@/assets/icons/arrow-up.svg";
-import colors from "@/utils/colors";
-import { applyConstraints, InputConstraints } from "@/utils/inputConstraints";
-import { Textarea } from "@chakra-ui/react";
-import styled from "@emotion/styled";
-import Image from "next/image";
-import { forwardRef, useState } from "react";
+import sendIcon from '@/assets/icons/arrow-up.svg'
+import colors from '@/utils/colors'
+import { applyConstraints, InputConstraints } from '@/utils/inputConstraints'
+import { Textarea } from '@chakra-ui/react'
+import styled from '@emotion/styled'
+import Image from 'next/image'
+import { forwardRef, useState } from 'react'
 
 interface ChatInputProps {
-  ref: React.RefObject<HTMLTextAreaElement>;
-  placeholder: string;
-  value: string;
-  onSend: (message: string) => void;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  constraints?: InputConstraints;
+  ref: React.RefObject<HTMLTextAreaElement>
+  placeholder: string
+  value: string
+  onSend: (message: string) => void
+  onChange: (value: string) => void
+  disabled?: boolean
+  constraints?: InputConstraints
 }
 
-  // eslint-disable-next-line react/display-name
-  export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(({ onSend, placeholder, value, onChange, disabled, constraints }, ref) => {
-  const [active, setActive] = useState(false);
+export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
+  ({ onSend, placeholder, value, onChange, disabled, constraints }, ref) => {
+    const [active, setActive] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = applyConstraints(e.target.value, constraints);
-    setActive(newValue.length > 0);
-    onChange(newValue);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey && active) {
-      e.preventDefault();
-      onSend(value);
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newValue = applyConstraints(e.target.value, constraints)
+      setActive(newValue.length > 0)
+      onChange(newValue)
     }
-  };
 
-  return (
-  <ChatInputContainer>
-    <CustomTextarea 
-      resize="none" 
-      placeholder={placeholder} 
-      value={value} 
-      onChange={handleChange}
-      onKeyPress={handleKeyPress}
-      disabled={disabled}
-      ref={ref}
-    />
-    <SendButton onClick={() => onSend(value)} active={active} disabled={!active || disabled}>
-      <Image src={sendIcon} alt="send" />
-    </SendButton>
-  </ChatInputContainer>
-  );
-});
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey && active) {
+        e.preventDefault()
+        onSend(value)
+      }
+    }
+
+    return (
+      <ChatInputContainer>
+        <CustomTextarea
+          resize="none"
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          onKeyPress={handleKeyPress}
+          disabled={disabled}
+          ref={ref}
+        />
+        <SendButton
+          onClick={() => onSend(value)}
+          active={active}
+          disabled={!active || disabled}
+        >
+          <Image src={sendIcon} alt="send" />
+        </SendButton>
+      </ChatInputContainer>
+    )
+  },
+)
 
 const ChatInputContainer = styled.div`
   display: flex;
@@ -58,14 +63,14 @@ const ChatInputContainer = styled.div`
   width: 100%;
   height: 100%;
   border-radius: 12px;
-`;
+`
 
 const CustomTextarea = styled(Textarea)`
   border: 1px solid ${colors.gray[3]};
   outline: none;
   resize: none;
   padding: 16px;
-`;
+`
 
 const SendButton = styled.button<{ active: boolean }>`
   position: absolute;
@@ -83,14 +88,15 @@ const SendButton = styled.button<{ active: boolean }>`
   cursor: ${({ active }) => (active ? 'pointer' : 'not-allowed')};
   opacity: ${({ active }) => (active ? 1 : 0.5)};
   transition: all 0.2s ease;
-  
+
   &:hover {
-    background-color: ${({ active }) => (active ? colors.point : colors.gray[3])};
+    background-color: ${({ active }) =>
+      active ? colors.point : colors.gray[3]};
   }
-  
+
   &:disabled {
     cursor: not-allowed;
   }
-`;
+`
 
-export default ChatInput;
+export default ChatInput

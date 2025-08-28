@@ -17,7 +17,7 @@ export default function DateDescriptionSection() {
       )
     }
     return () => <DateDescription label="마감일" badge="소진 시 종료" />
-  }, [project.applicationType])
+  }, [project.applicationType, project.deadline])
   const CreatedAtInfo = useMemo(() => {
     return () => <DateDescription label="공고일" date={project.createdAt} />
   }, [project.createdAt])
