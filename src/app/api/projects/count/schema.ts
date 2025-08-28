@@ -3,7 +3,8 @@ import { DataResponseSchema } from '../../schema'
 
 export const AppliableProjectCountResponseSchema = DataResponseSchema(
   z.object({
-    count: z.number(),
+    myAppliableCount: z.number(),
+    todayAppliableCount: z.number(),
   }),
 )
 

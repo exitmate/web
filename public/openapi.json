@@ -681,12 +681,16 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "count": {
+                        "myAppliableCount": {
+                          "type": "number"
+                        },
+                        "todayAppliableCount": {
                           "type": "number"
                         }
                       },
                       "required": [
-                        "count"
+                        "myAppliableCount",
+                        "todayAppliableCount"
                       ],
                       "additionalProperties": false
                     }
