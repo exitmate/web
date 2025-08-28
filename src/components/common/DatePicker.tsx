@@ -8,9 +8,10 @@ import { CommonSelect } from './CommonSelect'
 interface DatePickerProps {
   isInvalid?: boolean
   onDateChange?: (year: string, month: string, day: string) => void
+  errorMessage?: string
 }
 
-export const DatePicker = ({ isInvalid, onDateChange }: DatePickerProps) => {
+export const DatePicker = ({ isInvalid, onDateChange, errorMessage }: DatePickerProps) => {
   const [selectedYear, setSelectedYear] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedDay, setSelectedDay] = useState('')
@@ -52,6 +53,7 @@ export const DatePicker = ({ isInvalid, onDateChange }: DatePickerProps) => {
   }
 
   return (
+    <>
     <DatePickerContainer>
       <YearSelect>
         <CommonSelect
@@ -81,6 +83,8 @@ export const DatePicker = ({ isInvalid, onDateChange }: DatePickerProps) => {
         <Text>일</Text>
       </DaySelect>
     </DatePickerContainer>
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </>
   )
 }
 
@@ -115,6 +119,11 @@ const DaySelect = styled.div`
   justify-content: center;
   gap: 12px;
   color: ${colors.gray[7]};
+`
+
+const ErrorMessage = styled.p`
+  color: ${colors.error};
+  font-size: 12px;
 `
 
 export default DatePicker

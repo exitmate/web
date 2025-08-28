@@ -10,6 +10,7 @@ interface CommonInputProps {
   type: string
   register?: UseFormRegisterReturn
   isInvalid?: boolean
+  errorMessage?: string
 }
 
 export const CommonInput = ({
@@ -17,20 +18,24 @@ export const CommonInput = ({
   type,
   register,
   isInvalid,
+  errorMessage,
 }: CommonInputProps) => {
   return (
+    <>
     <CustomInput
       placeholder={placeholder}
       type={type}
       {...(register || {})}
       isInvalid={isInvalid}
     />
+    <ErrorMessage>{errorMessage}</ErrorMessage>
+    </>
   )
 }
 
 const CustomInput = styled(Input, {
   shouldForwardProp: (prop) => prop !== 'isInvalid',
-})<{ isInvalid?: boolean }>`
+})<{ isInvalid?: boolean, errorMessage?: string }>`
   border-radius: 8px;
   border: 1px solid;
   padding: 12px 16px;
@@ -47,4 +52,10 @@ const CustomInput = styled(Input, {
     outline: none;
     box-shadow: none;
   }
+`
+
+const ErrorMessage = styled.p`
+  color: ${colors.error};
+  font-size: 12px;
+  margin-top: 2px;
 `

@@ -1,8 +1,11 @@
 import { Provider } from '@/components/ui/provider'
+import Footer from '@/features/Footer'
 import { Header } from '@/features/Header'
 import type { Metadata } from 'next'
+import { getServerSession } from 'next-auth'
 import localfont from 'next/font/local'
 import 'normalize.css'
+import { authOptions } from './api/auth/[...nextauth]/authOptions'
 import './globals.css'
 
 const pretendard = localfont({
@@ -21,16 +24,24 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await getServerSession(authOptions)
   return (
     <html
       lang="ko"
       className={`${pretendard.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
+      </head>
       <body className={pretendard.className}>
-        <Provider>
-          <Header />
-          {children}
+          <Provider session={session}>
+            <Header />
+            {children}
+          <Footer />
         </Provider>
       </body>
     </html>

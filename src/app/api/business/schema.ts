@@ -27,27 +27,30 @@ export const BusinessInfoInputSchema = BusinessInfoSchema.pick({
 })
   .extend({
     openedAt: z.coerce.date(),
-    closedAt: z.coerce.date().optional(),
-    isClosed: z.coerce.boolean().default(false),
-    isReemployed: z.coerce.boolean().optional(),
-    isDemolished: z.coerce.boolean().optional(),
-    areaSizeM2: z.coerce.number().positive().optional(),
-    employeeCount: z.coerce.number().int().positive().optional(),
-    depositAmount: z.coerce.number().int().positive().optional(),
-    monthlyRent: z.coerce.number().int().positive().optional(),
+    closedAt: z.coerce.date().nullable(),
+    isClosed: z.preprocess((v) => v === 'true' || v === true, z.boolean()),
+    isReemployed: z.preprocess((v) => v === 'true' || v === true, z.boolean()).nullable(),
+    isDemolished: z.preprocess((v) => v === 'true' || v === true, z.boolean()).nullable(),
+    areaSizeM2: z.coerce.number().positive(),
+    employeeCount: z.coerce.number().int().positive(),
+    depositAmount: z.coerce.number().int().positive().nullable(),
+    monthlyRent: z.coerce.number().int().positive().nullable(),
   })
   .refine(
     (data) => {
-      // 폐업 상태가 아닐 때는 폐업 관련 필드들이 없어야 함
-      if (!data.isClosed) {
-        return !data.closedAt && !data.isReemployed && !data.isDemolished
+      if (data.isClosed === false) {
+        return (
+          data.closedAt == null && 
+          data.isReemployed == null &&
+          data.isDemolished == null
+        )
       }
-      return true
+      return true;
     },
     {
       message: '폐업 상태가 아닐 때는 폐업 관련 정보를 입력할 수 없습니다',
       path: ['isClosed'],
-    },
+    }
   )
   .refine(
     (data) => {

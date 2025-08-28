@@ -1,5 +1,7 @@
 import MyIcon from '@/assets/icons/my.svg'
+import todayIcon from '@/assets/icons/today.svg'
 import UserCard from '@/components/UserCard'
+import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 
@@ -17,6 +19,7 @@ const TodayTextComponent = () => {
 }
 
 export const AvailableProgramCount = () => {
+  const { member } = useUserStore()
   return (
     <AvailableProgramCountContainer>
       <TextContainer>
@@ -26,12 +29,12 @@ export const AvailableProgramCount = () => {
       <ProgramCardContainer>
         <UserCard
           imageUrl={MyIcon}
-          title={['김이름님이 신청가능한', '지원사업 개수']}
+          title={[`${member.name}님이 신청가능한`, '지원사업 개수']}
           programCount={10}
         />
         <UserCard
-          imageUrl={MyIcon}
-          title={['김이름님이 신청가능한', '지원사업 개수']}
+          imageUrl={todayIcon}
+          title={[`오늘 신청가능한`, '모든 지원사업 개수']}
           programCount={10}
         />
       </ProgramCardContainer>
