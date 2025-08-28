@@ -562,7 +562,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 41,
     step: 6,
-    nextId: 41,
+    nextId: 42,
     field: 'areaSizeM2',
     role: 'user',
     input: 'text',
@@ -572,7 +572,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 42,
     step: 6,
-    nextId: 42,
+    nextId: 43,
     field: 'employeeCount',
     role: 'bot',
     input: 'text',
@@ -582,7 +582,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 43,
     step: 6,
-    nextId: 43,
+    nextId: 44,
     field: 'employeeCount',
     role: 'user',
     input: 'text',
@@ -592,6 +592,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 44,
     step: 6,
+    nextId: 45, 
     field: 'employeeCount',
     role: 'bot',
     input: 'text',
@@ -600,6 +601,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 45,
     step: 7,
+    nextId: 46,
     field: 'leaseType',
     role: 'bot',
     title: 'STEP7. 임대차 계약 형태',
@@ -610,6 +612,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 46,
     step: 7,
+    nextId: 47,
     field: 'leaseType',
     role: 'bot',
     input: 'text',
@@ -619,18 +622,20 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 47,
     step: 7,
+    nextId: 48,
     field: 'leaseType',
     role: 'bot',
     input: 'select',
     options: [
-      { value: LeaseType.OWNED, label: '자가', nextId: 52},
-      { value: LeaseType.MONTHLY, label: '월세', nextId: 48},
+      { value: LeaseType.OWNED, label: '자가', nextId: 53},
+      { value: LeaseType.MONTHLY, label: '월세', nextId: 49},
     ],
     placeholder: '폐업(예정) 점포의 임대차 계약 형태를 입력해주세요.'
   },
   {
     id: 48,
     step: 7,
+    nextId: 49,
     field: 'leaseType',
     role: 'user',
     input: 'text',
@@ -640,6 +645,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 49,
     step: 7,
+    nextId: 50,
     field: 'depositAmount',
     role: 'bot',
     input: 'text',
@@ -649,7 +655,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 50,
     step: 7,
-    nextId: 50,
+    nextId: 51,
     field: 'depositAmount',
     role: 'user',
     input: 'text',
@@ -659,6 +665,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 51,
     step: 7,
+    nextId: 52,
     field: 'monthlyRent',
     role: 'bot',
     input: 'text',
@@ -668,7 +675,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
   id: 52,
     step: 7,
-    nextId: 52,
+    nextId: 53,
     field: 'monthlyRent',
     role: 'user',
     input: 'text',
@@ -678,6 +685,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 53,
     step: 7,
+    nextId: 54,
     field: 'confirm',
     role: 'bot',
     input: 'text',
@@ -686,10 +694,19 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 54,
     step: 7,
+    nextId: 55,
     field: 'end',
     role: 'bot',
     input: 'text',
     content: <p>ExitMate에서 사장님께 가장 도움이 되는 지원 사업을 추천드릴게요.</p> ,
   },
-]
+  {
+    id: 55,
+    step: 7,
+    field: 'end',
+    role: 'user',
+    input: 'text',
+    content: <p>회원가입이 완료되었습니다.</p>,
+  },
+  ]
 }

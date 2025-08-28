@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
 
     const { id: userId } = token
     const body = await request.json()
+    console.log("business", body)
 
     const data = BusinessInfoInputSchema.parse(body)
 

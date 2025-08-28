@@ -7,6 +7,7 @@ interface CommonButtonProps {
   disabled?: boolean
   onClick?: () => void
   type?: 'button' | 'submit' | 'reset'
+  style?: React.CSSProperties
 }
 
 export const CommonButton = ({
@@ -14,9 +15,10 @@ export const CommonButton = ({
   disabled,
   onClick,
   type = 'button',
+  style,
 }: CommonButtonProps) => {
   return (
-    <CustomButton disabled={disabled} onClick={onClick} type={type}>
+    <CustomButton disabled={disabled} onClick={onClick} type={type} style={style}>
       {label}
     </CustomButton>
   )

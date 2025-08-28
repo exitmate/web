@@ -1,14 +1,16 @@
-import { BusinessInfoInputSchema } from '@/app/api/business/schema';
+'use client';
+
+import { CommonButton } from '@/components/common/CommonButton';
 import SegmentedProgress from '@/components/common/SegmentedProgress';
+import Spacing from '@/components/common/Spacing';
 import useUserStore from '@/stores/user';
 import colors from '@/utils/colors';
 import { constraintsForField } from '@/utils/inputConstraints';
 import { script as scriptData, Step } from '@/utils/scripts';
+import { Text } from '@chakra-ui/react';
 import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import z from 'zod';
 import { ChatBubbleItem } from './ChatBubbleItem';
 import { ChatInput } from './ChatInput';
 import { ToggleButtonGroup } from './ToggleButtonGroup';
@@ -18,7 +20,28 @@ type Msg = {
   role: 'bot' | 'user';
   _key: string;
   contentText?: string;
-};
+  contentNode?: React.ReactNode;
+}
+
+const SignupSuccess = () => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/');
+  }
+
+  return (
+    <div style={{ textAlign: 'center', width: '100%', backgroundColor: colors.sub, padding: '32px 76px', borderRadius: '8px' }}>
+      <Text style={{
+        fontSize: '32px',
+        fontWeight: 'bold',
+        color: colors.gray[7],
+      }}>회원가입이 완료되었습니다.</Text>
+      <Spacing height={32} />
+      <CommonButton label="ExitMate 서비스 이용 시작하기" style={{ width: '100%' }} onClick={handleClick} />
+    </div>
+  )
+}
 
 export const ChatBox = () => {
   const [messages, setMessages] = useState<Msg[]>([])
@@ -33,12 +56,6 @@ export const ChatBox = () => {
 
   const isUserTurn = script[stepIndex]?.role === 'user'
   const currentPlaceholder = script[stepIndex]?.placeholder ?? '메시지를 입력해주세요.';
-
-  const { formState: { errors } } = useForm<z.input<typeof BusinessInfoInputSchema>>({
-    resolver: zodResolver(BusinessInfoInputSchema),
-  })
-
-  console.log(businessInfo)
 
   useEffect(() => {
     if (didAutoStartRef.current) return;
@@ -132,7 +149,41 @@ export const ChatBox = () => {
 
   const inputConstraints = constraintsForField(currentStep.field ?? '');
 
-  const handleSend = (message: string) => {
+  useEffect(() => {
+    const fetchBusinessInfo = async () => {
+      if (stepIndex === 55) {
+      try {
+        console.log("businessInfo", businessInfo)
+        const response = await fetch('/api/business', {
+          method: 'POST',
+          body: JSON.stringify({...businessInfo }),
+        });
+        const data = await response.json();
+        setBusinessInfo(data.data)
+        const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+      setMessages(prev => [
+        ...prev,
+        { stepId: -1, role: 'bot', _key: uid(), contentNode: <SignupSuccess /> },
+      ]);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+    fetchBusinessInfo()
+  }, [stepIndex])
+
+  const endStep = (id: number, content: React.ReactNode): Step => ({
+    step: 7,
+    field: 'end',
+    id,                 // 유니크하게만
+    role: 'bot',
+    input: 'text',
+    content,
+    _key: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
+  });
+
+  const handleSend = async (message: string) => {
     const trimmed = message.trim();
     if (!trimmed) return;
   
@@ -166,10 +217,6 @@ export const ChatBox = () => {
     }
   };
 
-  const onSubmit = (data: Record<string, unknown>) => {
-    console.log(data);
-  }
-
   const renderContent = (step: Step, fallbackUserText?: string) => {
     if (step.role === 'user' && fallbackUserText) return fallbackUserText;
   
@@ -189,7 +236,11 @@ export const ChatBox = () => {
       <ChatBoxContainer ref={chatContainerRef}>
         {messages.map((m, idx) => {
           const step = script[m.stepId]
-          console.log(step)
+          if (!step && m.contentNode) {
+            return (
+              <div key={m._key}>{m.contentNode}</div>
+            );
+          }        
           if (step.role === 'bot' && step.input === 'select' && step.options) {
             if (answers[m.stepId]) return null;
             return (
@@ -218,6 +269,7 @@ export const ChatBox = () => {
       <Debug>
         <pre>{JSON.stringify(answers, null, 2)}</pre>
         <pre>{JSON.stringify(stepIndex, null, 2)}</pre>
+        <SignupSuccess />
       </Debug>
     </>
   )

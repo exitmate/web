@@ -1,6 +1,7 @@
 export const colors = {
   point: '#3f8ae3',
   white: '#ffffff',
+  sub: '#F5F9FE',
   gray: {
     1: '#f9fbfd',
     2: '#f3f4f6',
