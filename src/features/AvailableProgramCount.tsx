@@ -4,6 +4,7 @@ import UserCard from '@/components/UserCard'
 import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
+import { useQuery } from '@tanstack/react-query'
 
 const TodayTextComponent = () => {
   const today = new Date()
@@ -19,6 +20,15 @@ const TodayTextComponent = () => {
 }
 
 export const AvailableProgramCount = () => {
+  const { data } = useQuery({
+    queryKey: ['projects-count'],
+    queryFn: () => {
+      return fetch('/api/projects/count').then((res) => res.json())
+    },
+  })
+
+  console.log(data?.data)
+
   const { member } = useUserStore()
   return (
     <AvailableProgramCountContainer>
@@ -30,12 +40,12 @@ export const AvailableProgramCount = () => {
         <UserCard
           imageUrl={MyIcon}
           title={[`${member.name}님이 신청가능한`, '지원사업 개수']}
-          programCount={10}
+          programCount={data?.data.myAppliableCount}
         />
         <UserCard
           imageUrl={todayIcon}
           title={[`오늘 신청가능한`, '모든 지원사업 개수']}
-          programCount={10}
+          programCount={data?.data.todayAppliableCount}
         />
       </ProgramCardContainer>
     </AvailableProgramCountContainer>
