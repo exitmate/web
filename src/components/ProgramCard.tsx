@@ -99,10 +99,8 @@ const ImageContainer = styled.div`
 `
 
 const StyledImage = styled(Image)`
-  width: auto;
-  height: auto;
-  min-height: 67px;
-  min-width: 100px;
+  max-height: 67px;
+  max-width: 100px;
   object-fit: contain;
 `
 
