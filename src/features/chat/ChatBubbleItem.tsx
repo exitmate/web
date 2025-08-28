@@ -58,11 +58,6 @@ const ChatBubbleItemContainer = styled.div<{ isUser: boolean; index?: number }>`
   animation-delay: 0s;
   animation-fill-mode: forwards;
   will-change: transform, opacity;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-  }
 `
 
 const ChatBubbleTitle = styled.div`

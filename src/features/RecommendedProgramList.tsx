@@ -3,8 +3,15 @@ import ProgramCard from '@/components/ProgramCard'
 import colors from '@/utils/colors'
 import { programList } from '@/utils/mocks'
 import styled from '@emotion/styled'
+import { useQuery } from '@tanstack/react-query'
 
 export const RecommendedProgramList = () => {
+  const { data } = useQuery({
+    queryKey: ['programs'],
+    queryFn: () => fetch('/api/ai/recommendations').then((res) => res.json()),
+  })
+
+  console.log(data)
   return (
     <RecommendedProgramListContainer>
       <PaddedBox>
