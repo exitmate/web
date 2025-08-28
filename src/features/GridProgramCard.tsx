@@ -1,7 +1,6 @@
 import { ProjectResponse } from '@/app/api/projects/schema'
 import PageNation from '@/components/common/PageNation'
 import ProgramCard from '@/components/ProgramCard'
-import { programList } from '@/utils/mocks'
 import { Filter } from '@/utils/types'
 import { Flex } from '@chakra-ui/react'
 import styled from '@emotion/styled'
@@ -9,32 +8,41 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import FilterSection from './FilterSection'
 
-async function fetchPrograms(): Promise<ProjectResponse> {
-  const res = await fetch('/api/projects', { credentials: 'include' })
-  if (!res.ok) throw new Error('Failed to fetch /api/projects')
-  return res.json()
+const buildProjectsUrl = (page: number, filter: Filter) => {
+  const params = new URLSearchParams();
+  params.set('limit', '15');
+  params.set('page', String(page));
+
+  if (filter.applicationType) params.set('applicationType', filter.applicationType);
+  if (filter.serviceType) params.set('serviceType', filter.serviceType);
+  if (filter.appliableOnly) params.set('appliableOnly', 'true'); // false면 안 붙임
+
+  return `/api/projects?${params.toString()}`;
+};
+
+async function fetchPrograms(page: number, filter: Filter): Promise<ProjectResponse> {
+  const url = buildProjectsUrl(page, filter);
+  const res = await fetch(url, { credentials: 'include' });
+  if (!res.ok) throw new Error('Failed to fetch /api/projects');
+  return res.json();
 }
 
 export const GridProgramCard = () => {
-  const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = Math.ceil(programList.length / 15)
-
-  const startIndex = (currentPage - 1) * 15
-  const currentPagePrograms = programList.slice(startIndex, startIndex + 15)
-
   const [filter, setFilter] = useState<Filter>({
-    deadlineType: '모집 유형',
-    supportType: '지원 유형',
-    highAmountOrder: true,
-    onlySuitableForMe: true,
+    applicationType: null,
+    serviceType: null,
+    appliableOnly: false,
   })
+
+  const [currentPage, setCurrentPage] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['projects'],
-    queryFn: fetchPrograms,
+    queryKey: ['projects', currentPage, filter],
+    queryFn: () => fetchPrograms(currentPage, filter),
   })
 
-  console.log(data)
+  const items = data?.data ?? [];
+  const rows = Math.ceil(items.length / 5);
 
   return (
     <div>
@@ -42,12 +50,12 @@ export const GridProgramCard = () => {
       <GridProgramCardContainer>
         <FlexContainer>
           {Array.from(
-            { length: Math.ceil(currentPagePrograms.length / 5) },
+            { length: rows },
             (_, rowIndex) => (
               <Flex key={rowIndex} gap={4} width="100%">
                 {Array.from({ length: 5 }, (_, colIndex) => {
                   const programIndex = rowIndex * 5 + colIndex
-                  const program = currentPagePrograms[programIndex]
+                    const program = data?.data[programIndex]
 
                   return program ? (
                     <ProgramCard key={programIndex} {...program} />
@@ -62,7 +70,7 @@ export const GridProgramCard = () => {
         <PageNation
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          totalPages={totalPages}
+          totalPages={data?.pagination.totalPages ?? 1}
         />
       </GridProgramCardContainer>
     </div>
