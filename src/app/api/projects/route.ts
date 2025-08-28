@@ -1,16 +1,16 @@
-import { BusinessInfo, Prisma, SupportProject } from '@/generated/prisma'
+import { BusinessInfo, Prisma } from '@/generated/prisma'
+import { SupportProjectSchema } from '@/generated/zod'
 import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import {
-  ErrorResponse,
-  PaginatedDataResponse,
-  ValidationErrorResponse,
+    ErrorResponse,
+    PaginatedDataResponse,
+    ValidationErrorResponse,
 } from '../schema'
-import { ProjectSearchParams, ProjectSearchSchema } from './schema'
-import { SupportProjectSchema } from '@/generated/zod'
 import { getPaginatedParams, getPaginationInfo } from '../utils'
+import { ProjectSearchParams, ProjectSearchSchema } from './schema'
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     })
     if (!businessInfo) {
       return NextResponse.json<ErrorResponse>(
-        { error: '사업자 정보가 없습니다.' },
+        { error: ' 없습니다.' },
         { status: 400 },
       )
     }

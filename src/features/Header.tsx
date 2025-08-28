@@ -7,10 +7,13 @@ import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export const Header = () => {
-  const { data: session } = useSession()
-  console.log(session)
+  const { status } = useSession()
+  console.log(status)
+  const router = useRouter()
+  const isUser = status === 'authenticated'
   return (
     <PaddedBox>
       <HeaderContainer>
@@ -19,8 +22,11 @@ export const Header = () => {
             <Image src={LogoImage} alt="Logo" width={80} height={80} />
           </ImageContainer>
           <SearchBar />
-          <MyPageText>마이페이지</MyPageText>
-          <MyPageText onClick={() => signOut()}>로그아웃</MyPageText>
+          {isUser ? (
+            <MyPageText onClick={() => signOut()}>로그아웃</MyPageText>
+          ) : (
+            <MyPageText onClick={() => router.push('/login')}>로그인</MyPageText>
+          )}
         </ContentsContainer>
       </HeaderContainer>
     </PaddedBox>

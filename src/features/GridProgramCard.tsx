@@ -1,11 +1,19 @@
+import { ProjectResponse } from '@/app/api/projects/schema'
 import PageNation from '@/components/common/PageNation'
 import ProgramCard from '@/components/ProgramCard'
 import { programList } from '@/utils/mocks'
 import { Filter } from '@/utils/types'
 import { Flex } from '@chakra-ui/react'
 import styled from '@emotion/styled'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import FilterSection from './FilterSection'
+
+async function fetchPrograms(): Promise<ProjectResponse> {
+  const res = await fetch('/api/projects', { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to fetch /api/projects')
+  return res.json()
+}
 
 export const GridProgramCard = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -20,6 +28,13 @@ export const GridProgramCard = () => {
     highAmountOrder: true,
     onlySuitableForMe: true,
   })
+
+  const { data } = useQuery({
+    queryKey: ['projects'],
+    queryFn: fetchPrograms,
+  })
+
+  console.log(data)
 
   return (
     <div>
