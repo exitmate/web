@@ -62,32 +62,9 @@ export const SignUpForm = () => {
   })
 
 const onSubmit = async () => {
-  try {
-    const payload = getValues();
-    const res = await fetch('/api/members', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      let message = '서버 오류';
-      try {
-        const json = text ? JSON.parse(text) : null;
-        message = json?.message ?? message;
-      } catch {
-        /* ignore JSON parse error */
-      }
-      alert(`회원가입에 실패했습니다: ${message}`);
-      return;
-    }
-    setMember(payload as Partial<Member>);
-    router.push('/signup/detail');
-  } catch (err) {
-    console.error('Fetch 에러:', err);
-    alert('네트워크에 문제가 발생했습니다. 다시 시도해주세요.');
-  }
+  const payload = getValues();
+  setMember(payload as Partial<Member>);
+  router.push('/signup/detail');
 };
 
   useEffect(() => {
