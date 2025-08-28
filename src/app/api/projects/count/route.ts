@@ -23,8 +23,16 @@ export async function GET(request: NextRequest) {
   }
 
   const where = getPersonalizedWhere(businessInfo)
-  const count = await prisma.supportProject.count({ where })
+  const myAppliableCount = await prisma.supportProject.count({ where })
+  const todayAppliableCount = await prisma.supportProject.count({
+    where: {
+      isOpen: true,
+      deadline: {
+        gte: new Date(),
+      },
+    },
+  })
   return NextResponse.json<AppliableProjectCountResponse>({
-    data: { count },
+    data: { myAppliableCount, todayAppliableCount },
   })
 }
