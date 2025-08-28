@@ -1,13 +1,13 @@
 import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
-import z from 'zod'
 import { buildErrorResponse } from '../../utils'
-import { getBusinessInfoEntity } from '../utils'
 import {
   RecommendationBridgeResponseSchema,
   RecommendationResponse,
 } from './schema'
+import z from 'zod'
+import { getBusinessInfoEntity } from '../utils'
 
 const AI_SERVER_URL = process.env.AI_SERVER_URL
 
@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'application/json',
       },
     })
+
     if (!response.ok) {
       return NextResponse.json(
         buildErrorResponse(
