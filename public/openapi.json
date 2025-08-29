@@ -392,6 +392,46 @@
                             }
                           ]
                         },
+                        "phoneNumber": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "address": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "addressDetail": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "zipCode": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "agreedPrivacyPolicy": {
                           "type": "boolean"
                         },
@@ -409,6 +449,156 @@
                         },
                         "updatedAt": {
                           "type": "string"
+                        },
+                        "businessInfo": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "industryCategory": {
+                                  "type": "string",
+                                  "enum": [
+                                    "FOOD_SERVICE",
+                                    "NON_ALCOHOL_CAFE"
+                                  ]
+                                },
+                                "monthlySalesRange": {
+                                  "type": "string",
+                                  "enum": [
+                                    "BELOW_500",
+                                    "FROM_500_TO_1000",
+                                    "FROM_1000_TO_1500",
+                                    "FROM_1500_TO_2000",
+                                    "FROM_2000_TO_5000",
+                                    "ABOVE_5000"
+                                  ]
+                                },
+                                "leaseType": {
+                                  "type": "string",
+                                  "enum": [
+                                    "OWNED",
+                                    "MONTHLY"
+                                  ]
+                                },
+                                "region": {
+                                  "type": "string"
+                                },
+                                "industryDetail": {
+                                  "type": "string"
+                                },
+                                "openedAt": {
+                                  "type": "string"
+                                },
+                                "isClosed": {
+                                  "type": "boolean"
+                                },
+                                "closedAt": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "isReemployed": {
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "isDemolished": {
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "areaSizeM2": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "employeeCount": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "depositAmount": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "monthlyRent": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "createdAt": {
+                                  "type": "string"
+                                },
+                                "updatedAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "industryCategory",
+                                "monthlySalesRange",
+                                "leaseType",
+                                "region",
+                                "industryDetail",
+                                "openedAt",
+                                "isClosed",
+                                "closedAt",
+                                "isReemployed",
+                                "isDemolished",
+                                "areaSizeM2",
+                                "employeeCount",
+                                "depositAmount",
+                                "monthlyRent",
+                                "createdAt",
+                                "updatedAt"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -417,12 +607,17 @@
                         "email",
                         "name",
                         "birthDate",
+                        "phoneNumber",
+                        "address",
+                        "addressDetail",
+                        "zipCode",
                         "agreedPrivacyPolicy",
                         "agreedTermsOfUse",
                         "agreedDataUsage",
                         "agreedMarketing",
                         "createdAt",
-                        "updatedAt"
+                        "updatedAt",
+                        "businessInfo"
                       ],
                       "additionalProperties": false
                     }
@@ -479,6 +674,22 @@
                       "OTHER"
                     ]
                   },
+                  "phoneNumber": {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  "address": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "addressDetail": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "zipCode": {
+                    "type": "string",
+                    "minLength": 5
+                  },
                   "agreedPrivacyPolicy": {
                     "type": "boolean"
                   },
@@ -498,6 +709,10 @@
                   "email",
                   "birthDate",
                   "gender",
+                  "phoneNumber",
+                  "address",
+                  "addressDetail",
+                  "zipCode",
                   "agreedPrivacyPolicy",
                   "agreedTermsOfUse",
                   "agreedDataUsage"
@@ -571,6 +786,46 @@
                             }
                           ]
                         },
+                        "phoneNumber": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "address": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "addressDetail": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "zipCode": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "agreedPrivacyPolicy": {
                           "type": "boolean"
                         },
@@ -598,6 +853,10 @@
                         "email",
                         "name",
                         "birthDate",
+                        "phoneNumber",
+                        "address",
+                        "addressDetail",
+                        "zipCode",
                         "agreedPrivacyPolicy",
                         "agreedTermsOfUse",
                         "agreedDataUsage",

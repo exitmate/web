@@ -2,6 +2,10 @@ import { BusinessInfoSchema } from '@/generated/zod'
 import z from 'zod'
 import { DataResponseSchema } from '../schema'
 
+export const BusinessInfoResponseSchema = DataResponseSchema(BusinessInfoSchema)
+
+export type BusinessInfoResponse = z.infer<typeof BusinessInfoResponseSchema>
+
 export const BusinessInfoInputResponseSchema =
   DataResponseSchema(BusinessInfoSchema)
 

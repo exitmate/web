@@ -22,6 +22,10 @@ model Member {
   name          String?
   birthDate     DateTime?
   gender        Gender?
+  phoneNumber   String?
+  address       String?
+  addressDetail String?
+  zipCode       String?
 
   agreedPrivacyPolicy Boolean @default(false)
   agreedTermsOfUse    Boolean @default(false)
@@ -95,6 +99,8 @@ model SupportProject {
   logoSrc String? // 로고 이미지 URL
   title   String // 제목
   host    String // 주최단체
+
+  summary String? // 요약
 
   applicationType ApplicationType // 지원사업 모집 종류. 상시/선착순/유기한
   deadline        DateTime? // 마감일자, null일 시 소진 시까지

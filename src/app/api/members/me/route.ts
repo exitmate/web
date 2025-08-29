@@ -17,6 +17,14 @@ export async function GET(request: NextRequest) {
       id: true,
       kakaoClientId: true,
     },
+    include: {
+      businessInfo: {
+        omit: {
+          id: true,
+          memberId: true,
+        },
+      },
+    },
   })
   if (!member) {
     return NextResponse.json(

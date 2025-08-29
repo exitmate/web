@@ -29,7 +29,9 @@ export function getOrderBy({
       deadline: 'asc',
     })
   }
-
+  ret.push({
+    createdAt: 'desc',
+  })
   return ret
 }
 
@@ -46,6 +48,13 @@ export function getWhere(
   const and: Prisma.SupportProjectWhereInput[] = []
 
   and.push({ isOpen })
+  if (isOpen) {
+    and.push({
+      deadline: {
+        gte: new Date(),
+      },
+    })
+  }
   if (applicationType) {
     and.push({ applicationType })
   }
@@ -73,12 +82,23 @@ export function getPersonalizedWhere(
   // 1) 지역 제한
   // 지역 제한이 있거나, 본인 지역인 것을 검색
   if (business.region) {
-    ret.push({
-      OR: [
-        { eligibility: { is: { mustBeInRegion: null } } },
-        { eligibility: { is: { mustBeInRegion: business.region } } },
-      ],
+    const splittedRegion = business.region.split(' ')
+    const regionOr: Prisma.SupportProjectWhereInput[] = [
+      { eligibility: { is: { mustBeInRegion: null } } },
+    ]
+    splittedRegion.forEach((region) => {
+      regionOr.push({
+        eligibility: {
+          is: { mustBeInRegion: region },
+        },
+      })
     })
+    regionOr.push({
+      eligibility: {
+        is: { mustBeInRegion: business.region },
+      },
+    })
+    ret.push({ OR: regionOr })
   }
 
   // 2) 폐업 여부
