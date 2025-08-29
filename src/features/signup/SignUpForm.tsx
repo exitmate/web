@@ -54,6 +54,10 @@ export const SignUpForm = () => {
       email: '',
       birthDate: undefined,
       gender: undefined,
+      phoneNumber: '',
+      address: '',
+      addressDetail: '',
+      zipCode: '',
       agreedPrivacyPolicy: false,
       agreedTermsOfUse: false,
       agreedDataUsage: false,
@@ -124,6 +128,46 @@ const onSubmit = async () => {
                 isInvalid={!!errors.birthDate}
                 onDateChange={handleDateChange}
                 errorMessage={touchedFields.birthDate ? errors.birthDate?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>전화번호</CustomFieldLabel>
+              <CommonInput
+                placeholder="전화번호를 입력해주세요."
+                register={register('phoneNumber')}
+                type="tel"
+                isInvalid={!!errors.phoneNumber}
+                errorMessage={touchedFields.phoneNumber ? errors.phoneNumber?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>우편번호</CustomFieldLabel>
+              <CommonInput
+                placeholder="우편번호를 입력해주세요."
+                register={register('zipCode')}
+                type="text"
+                isInvalid={!!errors.zipCode}
+                errorMessage={touchedFields.zipCode ? errors.zipCode?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>주소</CustomFieldLabel>
+              <CommonInput
+                placeholder="주소를 입력해주세요."
+                register={register('address')}
+                type="text"
+                isInvalid={!!errors.address}
+                errorMessage={touchedFields.address ? errors.address?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>상세주소</CustomFieldLabel>
+              <CommonInput
+                placeholder="상세주소를 입력해주세요."
+                register={register('addressDetail')}
+                type="text"
+                isInvalid={!!errors.addressDetail}
+                errorMessage={touchedFields.addressDetail ? errors.addressDetail?.message : undefined}
               />
             </FieldRoot>
             <Spacing height={18} />
