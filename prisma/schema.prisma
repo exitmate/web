@@ -22,6 +22,10 @@ model Member {
   name          String?
   birthDate     DateTime?
   gender        Gender?
+  phoneNumber   String?
+  address       String?
+  addressDetail String?
+  zipCode       String?
 
   agreedPrivacyPolicy Boolean @default(false)
   agreedTermsOfUse    Boolean @default(false)

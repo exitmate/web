@@ -3,7 +3,42 @@ import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { ErrorResponse, ValidationErrorResponse } from '../schema'
-import { BusinessInfoInputResponse, BusinessInfoInputSchema } from './schema'
+import {
+  BusinessInfoInputResponse,
+  BusinessInfoInputSchema,
+  BusinessInfoResponse,
+} from './schema'
+
+export async function GET(request: NextRequest) {
+  try {
+    const token = await getToken({ req: request })
+
+    if (!token) {
+      return NextResponse.json<ErrorResponse>(
+        { error: '로그인이 필요합니다' },
+        { status: 401 },
+      )
+    }
+    const { id: userId } = token
+    const businessInfo = await prisma.businessInfo.findUnique({
+      where: { memberId: userId },
+    })
+    if (!businessInfo) {
+      return NextResponse.json<ErrorResponse>(
+        { error: '사업자 정보가 존재하지 않습니다' },
+        { status: 404 },
+      )
+    }
+    return NextResponse.json<BusinessInfoResponse>({
+      data: businessInfo,
+    })
+  } catch (error) {
+    return NextResponse.json<ErrorResponse>(
+      { error: '서버 오류가 발생했습니다' },
+      { status: 500 },
+    )
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     const { id: userId } = token
     const body = await request.json()
-    console.log("business", body)
+    console.log('business', body)
 
     const data = BusinessInfoInputSchema.parse(body)
 
