@@ -321,7 +321,7 @@ export const RecommendedProgramList = () => {
           ) : (
             tempData.data.recommendedProjects.map((program: any) => (
               <ProgramCard
-                key={program.id}
+                key={program._id.$oid}
                 title={program.title}
                 logoSrc={program.logoSrc}
                 createdAt={new Date(program.createdAt)}
