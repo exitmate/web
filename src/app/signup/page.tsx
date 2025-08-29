@@ -4,6 +4,8 @@ import { SignUpForm } from '@/features/signup/SignUpForm'
 import { SignUpStepCards } from '@/features/signup/SignUpStepCards'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
+
+
 const SignupPage = () => {
   return (
     <PaddedBox

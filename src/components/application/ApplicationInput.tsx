@@ -14,7 +14,7 @@ interface ApplicationInputProps {
   setSaved: (value: boolean) => void
 }
 
-const POINT_COLOR = colors.green
+const POINT_COLOR = colors.point
 
 export const ApplicationInput = ({
   label,

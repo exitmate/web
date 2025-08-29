@@ -15,14 +15,16 @@ import {
   FieldRoot,
   Fieldset,
   FieldsetContent,
-  Text,
+  HStack,
+  Text
 } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import SearchAddressModal from './SearchAddressModal'
 
 const ReadFullText = ({ url }: { url: string }) => {
   return (
@@ -36,7 +38,8 @@ const ReadFullText = ({ url }: { url: string }) => {
 export const SignUpForm = () => {
   const router = useRouter()
   const { setMember } = useUserStore()
-
+  const [isSearchAddressModalOpen, setIsSearchAddressModalOpen] = useState(false)
+  
   const {
     register,
     handleSubmit,
@@ -70,6 +73,19 @@ const onSubmit = async () => {
   setMember(payload as Partial<Member>);
   router.push('/signup/detail');
 };
+
+const handleCompleteAddress = (data: any) => {
+  setValue('address', data.address, {
+    shouldValidate: true,
+    shouldDirty: true,
+    shouldTouch: true,
+  })
+  setValue('zipCode', String(data.zonecode), {
+    shouldValidate: true,
+    shouldDirty: true,
+    shouldTouch: true,
+  })
+}
 
   useEffect(() => {
     trigger()
@@ -152,6 +168,7 @@ const onSubmit = async () => {
             </FieldRoot>
             <FieldRoot>
               <CustomFieldLabel>주소</CustomFieldLabel>
+            <HStack width="100%" justifyContent="space-between" alignItems="flex-start" gap={2}>
               <CommonInput
                 placeholder="주소를 입력해주세요."
                 register={register('address')}
@@ -159,6 +176,8 @@ const onSubmit = async () => {
                 isInvalid={!!errors.address}
                 errorMessage={touchedFields.address ? errors.address?.message : undefined}
               />
+              <CommonButton label="주소검색" onClick={() => setIsSearchAddressModalOpen(true)} />
+            </HStack>
             </FieldRoot>
             <FieldRoot>
               <CustomFieldLabel>상세주소</CustomFieldLabel>
@@ -275,6 +294,7 @@ const onSubmit = async () => {
           </FieldsetContent>
         </Fieldset.Root>
       </form>
+      <SearchAddressModal isOpen={isSearchAddressModalOpen} onClose={() => setIsSearchAddressModalOpen(false)} onComplete={handleCompleteAddress} />
     </SignUpFormContainer>
   )
 }
