@@ -4,6 +4,7 @@ import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 const tempData = {
   data: {
@@ -286,6 +287,7 @@ const tempData = {
 export const RecommendedProgramList = () => {
   const { status } = useSession()
   const isLoggedIn = status === 'authenticated'
+  const router = useRouter()
   const { data } = useQuery({
     queryKey: ['programs'],
     queryFn: () =>
@@ -328,7 +330,7 @@ export const RecommendedProgramList = () => {
                 deadline={program.deadline}
                 host={program.host}
                 id={program._id.$oid}
-                onClick={() => {}}
+                onClick={() => { router.push(`/projects/${program._id.$oid}`) }}
               />
             ))
           )}
