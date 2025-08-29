@@ -3,8 +3,10 @@ import todayIcon from '@/assets/icons/today.svg'
 import UserCard from '@/components/UserCard'
 import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
+import { Text } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
+import { useSession } from 'next-auth/react'
 
 const TodayTextComponent = () => {
   const today = new Date()
@@ -20,6 +22,8 @@ const TodayTextComponent = () => {
 }
 
 export const AvailableProgramCount = () => {
+  const { status } = useSession()
+  const isLoggedIn = status === 'authenticated'
   const { data } = useQuery({
     queryKey: ['projects-count'],
     queryFn: () => {
@@ -29,6 +33,7 @@ export const AvailableProgramCount = () => {
           return { data: { myAppliableCount: 0, todayAppliableCount: 0 } }
         })
     },
+    enabled: isLoggedIn,
   })
 
   console.log(data?.data)
@@ -40,6 +45,7 @@ export const AvailableProgramCount = () => {
         <TodayTextComponent />
         <BlackBoldText> 지원 사업 정보</BlackBoldText>
       </TextContainer>
+      {isLoggedIn ? (
       <ProgramCardContainer>
         <UserCard
           imageUrl={MyIcon}
@@ -52,6 +58,9 @@ export const AvailableProgramCount = () => {
           programCount={data?.data.todayAppliableCount}
         />
       </ProgramCardContainer>
+      ) : (
+        <Text>로그인 후 이용해주세요.</Text>
+      )}
     </AvailableProgramCountContainer>
   )
 }
