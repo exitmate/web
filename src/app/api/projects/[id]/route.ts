@@ -2,9 +2,9 @@ import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-import { ErrorResponse, ValidationErrorResponse } from '../../schema'
+import { ErrorResponse } from '../../schema'
 import { buildErrorResponse } from '../../utils'
-import { ProjectDetailRequestSchema } from './schema'
+import { ProjectDetailRequestSchema, ProjectDetailResponse } from './schema'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -36,7 +36,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    return NextResponse.json(project)
+    return NextResponse.json<ProjectDetailResponse>({
+      data: project,
+    })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(buildErrorResponse(error), { status: 400 })

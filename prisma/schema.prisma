@@ -100,6 +100,8 @@ model SupportProject {
   title   String // 제목
   host    String // 주최단체
 
+  summary String? // 요약
+
   applicationType ApplicationType // 지원사업 모집 종류. 상시/선착순/유기한
   deadline        DateTime? // 마감일자, null일 시 소진 시까지
   isOpen          Boolean         @default(true) // 모집/마감 여부 -> 마감 시 업데이트 필요
