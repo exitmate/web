@@ -12,3 +12,12 @@ export function getDday(endDate: Date): string {
   if (diffDays > 0) return `D-${diffDays}`
   return `D+${Math.abs(diffDays)}`
 }
+
+export const formatYMD = (v?: string | number | Date) => {
+  if (!v) return ''
+  const d = new Date(v)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}년 ${m}월 ${day}일`
+}
