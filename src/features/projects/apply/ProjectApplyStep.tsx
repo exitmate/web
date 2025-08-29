@@ -148,6 +148,9 @@ export const ProjectApplyStep = ({
           onClick={() => {}}
           disabled={!isCompletedAll}
         />
+        <CationText>
+        허위 정보 작성 시 법적 책임을 물을 수 있습니다. 엑시트 메이트는 서류 작성 보조 도구로써 최종 책임은 제출자 본인에게 있습니다.
+        </CationText>
       </VStack>
     </div>
   )
@@ -163,4 +166,10 @@ const CompletedText = styled(Text)`
   font-size: 20px;
   font-weight: 600;
   color: ${colors.gray[7]};
+`
+
+const CationText = styled(Text)`
+  font-size: 10px;
+  font-weight: 600;
+  color: ${colors.gray[5]};
 `
