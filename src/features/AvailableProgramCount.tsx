@@ -36,8 +36,6 @@ export const AvailableProgramCount = () => {
     enabled: isLoggedIn,
   })
 
-  console.log(data?.data)
-
   const { member } = useUserStore()
   return (
     <AvailableProgramCountContainer>

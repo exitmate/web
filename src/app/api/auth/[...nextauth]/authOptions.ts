@@ -1,6 +1,6 @@
+import prisma from '@/utils/prisma'
 import { AuthOptions } from 'next-auth'
 import KakaoProvider from 'next-auth/providers/kakao'
-import prisma from '@/utils/prisma'
 
 export const authOptions: AuthOptions = {
   providers: [
