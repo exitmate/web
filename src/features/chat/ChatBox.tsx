@@ -1,5 +1,6 @@
 'use client'
 
+import SignSuccess from '@/assets/images/sign_success.gif'
 import { CommonButton } from '@/components/common/CommonButton'
 import SegmentedProgress from '@/components/common/SegmentedProgress'
 import Spacing from '@/components/common/Spacing'
@@ -9,6 +10,7 @@ import { constraintsForField } from '@/utils/inputConstraints'
 import { script as scriptData, Step } from '@/utils/scripts'
 import { Text } from '@chakra-ui/react'
 import styled from '@emotion/styled'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChatBubbleItem } from './ChatBubbleItem'
@@ -38,8 +40,14 @@ const SignupSuccess = () => {
         backgroundColor: colors.sub,
         padding: '32px 76px',
         borderRadius: '8px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
+      <Image src={SignSuccess} alt="Sign Success" width={136} height={136} />
+      <Spacing height={8} />
       <Text
         style={{
           fontSize: '32px',
