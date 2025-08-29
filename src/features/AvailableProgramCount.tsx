@@ -44,18 +44,18 @@ export const AvailableProgramCount = () => {
         <BlackBoldText> 지원 사업 정보</BlackBoldText>
       </TextContainer>
       {isLoggedIn ? (
-      <ProgramCardContainer>
-        <UserCard
-          imageUrl={MyIcon}
-          title={[`${member.name}님이 신청가능한`, '지원사업 개수']}
-          programCount={data?.data.myAppliableCount}
-        />
-        <UserCard
-          imageUrl={todayIcon}
-          title={[`오늘 신청가능한`, '모든 지원사업 개수']}
-          programCount={data?.data.todayAppliableCount}
-        />
-      </ProgramCardContainer>
+        <ProgramCardContainer>
+          <UserCard
+            imageUrl={MyIcon}
+            title={[`${member.name}님이 신청가능한`, '지원사업 개수']}
+            programCount={data?.data ? data.data.myAppliableCount : 0}
+          />
+          <UserCard
+            imageUrl={todayIcon}
+            title={[`오늘 신청가능한`, '모든 지원사업 개수']}
+            programCount={data?.data ? data.data.todayAppliableCount : 0}
+          />
+        </ProgramCardContainer>
       ) : (
         <Text>로그인 후 이용해주세요.</Text>
       )}
