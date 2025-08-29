@@ -1,4 +1,4 @@
-import { MemberSchema } from '@/generated/zod'
+import { BusinessInfoSchema, MemberSchema } from '@/generated/zod'
 import z from 'zod'
 import { DataResponseSchema } from '../schema'
 
@@ -6,6 +6,11 @@ export const MyInfoResponseSchema = DataResponseSchema(
   MemberSchema.omit({
     id: true,
     kakaoClientId: true,
+  }).extend({
+    businessInfo: BusinessInfoSchema.omit({
+      id: true,
+      memberId: true,
+    }).nullable(),
   }),
 )
 
@@ -22,6 +27,10 @@ export const MemberInfoInputSchema = MemberSchema.pick({
   email: true,
   birthDate: true,
   gender: true,
+  phoneNumber: true,
+  address: true,
+  addressDetail: true,
+  zipCode: true,
   agreedPrivacyPolicy: true,
   agreedTermsOfUse: true,
   agreedDataUsage: true,
@@ -32,6 +41,10 @@ export const MemberInfoInputSchema = MemberSchema.pick({
   gender: z.enum(['MALE', 'FEMALE', 'OTHER'], {
     error: '성별을 선택해주세요.',
   }),
+  phoneNumber: z.string().min(10, '올바른 전화번호를 입력해주세요.'),
+  address: z.string().min(1, '주소를 입력해주세요.'),
+  addressDetail: z.string().min(1, '상세주소를 입력해주세요.'),
+  zipCode: z.string().min(5, '우편번호를 입력해주세요.'),
   agreedPrivacyPolicy: z.coerce.boolean().refine((v) => v === true, {
     message: '개인정보 처리방침 동의는 필수입니다.',
   }),

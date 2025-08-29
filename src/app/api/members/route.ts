@@ -2,6 +2,7 @@ import prisma from '@/utils/prisma'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
+import { buildErrorResponse } from '../utils'
 import { ErrorResponse, ValidationErrorResponse } from '../schema'
 import { MemberInfoInputResponse, MemberInfoInputSchema } from './schema'
 
@@ -43,15 +44,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json<ValidationErrorResponse>(
-        {
-          errors: error.issues.map((issue) => ({
-            field: issue.path.join('.'),
-            message: issue.message,
-          })),
-        },
-        { status: 400 },
-      )
+      return NextResponse.json(buildErrorResponse(error), { status: 400 })
     }
 
     console.error('서버 오류:', error)
