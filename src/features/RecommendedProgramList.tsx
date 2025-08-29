@@ -1,5 +1,6 @@
 import PaddedBox from '@/components/common/PaddedBox'
 import ProgramCard from '@/components/ProgramCard'
+import { ProgramCardSkeleton } from '@/components/ProgramCardSkeleton'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
@@ -288,7 +289,7 @@ export const RecommendedProgramList = () => {
   const { status } = useSession()
   const isLoggedIn = status === 'authenticated'
   const router = useRouter()
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['programs'],
     queryFn: () =>
       fetch('/api/ai/recommendations')
@@ -301,7 +302,21 @@ export const RecommendedProgramList = () => {
 
   const isRecommended = data?.data?.recommendedProjects.length > 0
 
-  console.log(data)
+  if (isLoading) {
+    return (
+      <RecommendedProgramListContainer isRecommended={false}>
+        <PaddedBox>
+          <Title>추천 지원 사업 Top 5</Title>
+        <ProgramCardContainer>
+          {Array.from({ length: 5 }, (_, index) => (
+            <ProgramCardSkeleton key={index} />
+          ))}
+        </ProgramCardContainer>
+        </PaddedBox>
+      </RecommendedProgramListContainer>
+    )
+  }
+
   return (
     <RecommendedProgramListContainer isRecommended={isRecommended}>
       <PaddedBox>

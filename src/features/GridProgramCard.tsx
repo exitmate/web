@@ -1,6 +1,7 @@
 import { ProjectResponse } from '@/app/api/projects/schema'
 import PageNation from '@/components/common/PageNation'
 import ProgramCard from '@/components/ProgramCard'
+import { ProgramCardSkeleton } from '@/components/ProgramCardSkeleton'
 import { Filter } from '@/utils/types'
 import { Flex } from '@chakra-ui/react'
 import styled from '@emotion/styled'
@@ -38,7 +39,7 @@ export const GridProgramCard = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const router = useRouter()
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['projects', currentPage, filter],
     queryFn: () => fetchPrograms(currentPage, filter),
   })
@@ -48,6 +49,25 @@ export const GridProgramCard = () => {
 
   const onClickProgramCard = (id: string) => {
     router.push(`/projects/${id}`)
+  }
+
+  if (isLoading) {
+    return (
+      <div>
+        <FilterSection filter={filter} setFilter={setFilter} />
+          <GridProgramCardContainer>
+            <FlexContainer>
+              {Array.from({ length: 3 }, (_, index) => (
+                <Flex key={index} gap={4} width="100%">
+                  {Array.from({ length: 5 }, (_, colIndex) => (
+                    <ProgramCardSkeleton key={colIndex} />
+                  ))}
+                </Flex>
+              ))}
+            </FlexContainer>
+          </GridProgramCardContainer>
+      </div>
+    )
   }
 
   return (

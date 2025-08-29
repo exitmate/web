@@ -1,6 +1,7 @@
 import MyIcon from '@/assets/icons/my.svg'
 import todayIcon from '@/assets/icons/today.svg'
 import UserCard from '@/components/UserCard'
+import UserCardSkeleton from '@/components/UserCardSkeleton'
 import useUserStore from '@/stores/user'
 import colors from '@/utils/colors'
 import { Text } from '@chakra-ui/react'
@@ -24,7 +25,7 @@ const TodayTextComponent = () => {
 export const AvailableProgramCount = () => {
   const { status } = useSession()
   const isLoggedIn = status === 'authenticated'
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['projects-count'],
     queryFn: () => {
       return fetch('/api/projects/count')
@@ -45,16 +46,25 @@ export const AvailableProgramCount = () => {
       </TextContainer>
       {isLoggedIn ? (
       <ProgramCardContainer>
-        <UserCard
-          imageUrl={MyIcon}
-          title={[`${member.name}님이 신청가능한`, '지원사업 개수']}
-          programCount={data?.data.myAppliableCount}
-        />
-        <UserCard
-          imageUrl={todayIcon}
-          title={[`오늘 신청가능한`, '모든 지원사업 개수']}
-          programCount={data?.data.todayAppliableCount}
-        />
+        { isLoading ? (
+          <>
+            <UserCardSkeleton />
+            <UserCardSkeleton />
+          </>
+        ) : (
+          <>
+            <UserCard
+            imageUrl={MyIcon}
+            title={[isLoading ? '사용자님이 오늘' : `${member.name}님이 오늘`, '신청가능한 지원사업 개수']}
+            programCount={data?.data.myAppliableCount}
+          />
+          <UserCard
+            imageUrl={todayIcon}
+            title={[`오늘 신청가능한`, '모든 지원사업 개수']}
+            programCount={data?.data.todayAppliableCount}
+          />
+        </>
+        )}
       </ProgramCardContainer>
       ) : (
         <Text>로그인 후 이용해주세요.</Text>
