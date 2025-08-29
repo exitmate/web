@@ -73,12 +73,19 @@ export function getPersonalizedWhere(
   // 1) 지역 제한
   // 지역 제한이 있거나, 본인 지역인 것을 검색
   if (business.region) {
-    ret.push({
-      OR: [
-        { eligibility: { is: { mustBeInRegion: null } } },
-        { eligibility: { is: { mustBeInRegion: business.region } } },
-      ],
-    })
+    const splittedRegion = business.region.split(' ')[0]
+    const regionOr = [
+      { eligibility: { is: { mustBeInRegion: null } } },
+      { eligibility: { is: { mustBeInRegion: business.region } } },
+    ]
+    if (typeof splittedRegion === 'string') {
+      regionOr.push({
+        eligibility: {
+          is: { mustBeInRegion: splittedRegion },
+        },
+      })
+    }
+    ret.push({ OR: regionOr })
   }
 
   // 2) 폐업 여부
