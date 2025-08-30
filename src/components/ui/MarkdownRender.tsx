@@ -10,7 +10,6 @@ interface MarkdownRenderProps {
   markdown: string
 }
 
-
 export const MarkdownRender = ({ markdown }: MarkdownRenderProps) => {
   const htmlContent = useMemo(() => {
     return remark().use(remarkGfm).use(html).processSync(markdown).toString()
