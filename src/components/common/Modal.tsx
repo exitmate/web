@@ -10,6 +10,7 @@ type ModalProps = {
   children: React.ReactNode
   ariaLabel?: string
   closeOnOverlay?: boolean
+  style?: React.CSSProperties
 }
 
 const Modal = ({
@@ -18,6 +19,7 @@ const Modal = ({
   children,
   ariaLabel = 'dialog',
   closeOnOverlay = true,
+  style,
 }: ModalProps) => {
   const overlayRef = useRef<HTMLDivElement | null>(null)
 
@@ -44,7 +46,7 @@ const Modal = ({
   }
 
   return createPortal(
-    <Overlay ref={overlayRef} onMouseDown={handleOverlayClick}>
+    <Overlay ref={overlayRef} onMouseDown={handleOverlayClick} style={style}>
       <Dialog
         role="dialog"
         aria-modal="true"
