@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!response.ok) {
+      console.error(await response.text())
       return NextResponse.json(
         buildErrorResponse(
           new Error('AI 서버 요청 실패'),

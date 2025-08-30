@@ -7,6 +7,7 @@ import localfont from 'next/font/local'
 import 'normalize.css'
 import { authOptions } from './api/auth/[...nextauth]/authOptions'
 import './globals.css'
+import { FloatingChatButton } from '@/features/chatbot/FloatingButton'
 
 const pretendard = localfont({
   src: '../../public/fonts/PretendardVariable.woff2',
@@ -38,10 +39,11 @@ export default async function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
-          <Provider session={session}>
-            <Header />
-            {children}
+        <Provider session={session}>
+          <Header />
+          {children}
           <Footer />
+          <FloatingChatButton />
         </Provider>
       </body>
     </html>
