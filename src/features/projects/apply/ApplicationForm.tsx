@@ -60,6 +60,7 @@ const renderRows = (
             active={activeIndex === baseOffset + i}
             preValue={fieldMap[left]}
             isSaved={!!saved[prefix + left]}
+            fieldType={left}
             setSaved={(val) =>
               setSavedFor(
                 prefix + left,
@@ -82,6 +83,7 @@ const renderRows = (
               active={activeIndex === baseOffset + i + 1}
               preValue={fieldMap[right]}
               isSaved={!!saved[prefix + right]}
+              fieldType={right}
               setSaved={(val) =>
                 setSavedFor(
                   prefix + right,
