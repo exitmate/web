@@ -27,6 +27,7 @@ export const ApplicationInput = ({
 }: ApplicationInputProps) => {
   const onClickContainer = () => {
     if (!preValue || isSaved || !active) return
+    if (value && value.trim() !== '') return
     onChange(preValue)
   }
   const [isLoading, setIsLoading] = useState(false)
