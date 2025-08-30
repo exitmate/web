@@ -1,4 +1,10 @@
-import { $Enums, BusinessInfo, Gender, LeaseType, Member } from '@/generated/prisma'
+import {
+  $Enums,
+  BusinessInfo,
+  Gender,
+  LeaseType,
+  Member,
+} from '@/generated/prisma'
 import { create } from 'zustand'
 
 type UserStore = {

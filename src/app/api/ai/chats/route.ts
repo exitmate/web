@@ -4,14 +4,41 @@ import { NextRequest, NextResponse } from 'next/server'
 import { buildErrorResponse } from '../../utils'
 import {
   ChatBridgeResponseSchema,
-  ChatRequestSchema,
-  ChatResponse,
+  ChatbotRequestSchema,
+  ChatbotResponse,
+  ChatbotSessionListResponse,
 } from './schema'
 import z from 'zod'
-import { getBusinessInfoEntity } from '../utils'
+import { createChatbotSession, getPromptResponse, saveMessage } from './chat'
+import { SenderType } from '@/generated/prisma'
 
-const AI_SERVER_URL = process.env.AI_SERVER_URL
+export async function GET(request: NextRequest) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  const chatbotSessions = await prisma.chatbotSession.findMany({
+    where: {
+      createdById: token.id,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      messages: {
+        take: 1,
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  })
+
+  return NextResponse.json<ChatbotSessionListResponse>({
+    data: chatbotSessions,
+  })
+}
 export async function POST(request: NextRequest) {
   try {
     const token = await getToken({ req: request })
@@ -20,7 +47,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { question } = ChatRequestSchema.parse(body)
+
+    const parsedBody = ChatbotRequestSchema.parse(body)
+    const { chatbotSessionId: sessionId, question } = parsedBody
+    let chatbotSessionId = sessionId
+
+    if (!chatbotSessionId) {
+      // 채팅방 id가 undefined일 경우 생성
+      const chatbotSession = await createChatbotSession(token.id)
+      chatbotSessionId = chatbotSession.id
+    }
+
+    await saveMessage(chatbotSessionId, question, SenderType.MEMBER)
 
     const businessInfo = await prisma.businessInfo.findFirst({
       where: {
@@ -34,18 +72,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await fetch(`${AI_SERVER_URL}/api/chatbot`, {
-      method: 'POST',
-      body: JSON.stringify({
-        question,
-        businessInfo: getBusinessInfoEntity(businessInfo),
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    const response = await getPromptResponse(question, businessInfo)
 
     if (!response.ok) {
+      console.error(await response.text())
       return NextResponse.json(
         buildErrorResponse(
           new Error('AI 서버 요청 실패'),
@@ -57,10 +87,13 @@ export async function POST(request: NextRequest) {
 
     const { answer } = ChatBridgeResponseSchema.parse(await response.json())
 
-    return NextResponse.json<ChatResponse>({
-      data: { answer },
+    await saveMessage(chatbotSessionId, answer, SenderType.BOT)
+
+    return NextResponse.json<ChatbotResponse>({
+      data: { answer, chatbotSessionId },
     })
   } catch (error) {
+    console.error(error)
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         buildErrorResponse(error, '채팅 요청 처리 중 오류가 발생했습니다.'),

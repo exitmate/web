@@ -34,8 +34,10 @@ model Member {
 
   businessInfo BusinessInfo?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ChatbotSession ChatbotSession[]
+  ChatbotMessage ChatbotMessage[]
 
   @@map("Member")
 }
@@ -113,7 +115,6 @@ model SupportProject {
   requiredDocs            String[] // 필요서류
   eligibility             SupportEligibility
   applicationRequirements String[] // 자격요건 목록
-  // applicationDetails      String?  // 지원 상세정보. 지원내용 및 자격조건으로 귀결될 것 같아 제외
   restrictions            String[] // 제한사항
 
   services Service[] // 지원내용. 하나의 공고에는 여러개의 지원 내용들이 1:N관계로 지정될 수 있음.
@@ -161,4 +162,34 @@ enum ServiceType {
   CLOSURE_CONSULTING // 폐업 컨설팅
   REEMPLOYMENT_EDUCATION // 재취업/재창업 교육
   BUSINESS_EDUCATION // 경영 교육
+}
+
+model ChatbotSession {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  createdBy   Member?  @relation(fields: [createdById], references: [id])
+  createdById String?  @db.ObjectId
+
+  messages ChatbotMessage[]
+
+  @@map("ChatbotSession")
+}
+
+model ChatbotMessage {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  senderType SenderType
+  senderId   String?    @db.ObjectId
+  sender     Member?    @relation(fields: [senderId], references: [id])
+  createdAt  DateTime   @default(now())
+  content    String
+
+  session   ChatbotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String         @db.ObjectId
+
+  @@map("ChatbotMessage")
+}
+
+enum SenderType {
+  MEMBER
+  BOT
 }
