@@ -97,10 +97,11 @@ enum LeaseType {
 }
 
 model SupportProject {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  logoSrc String? // 로고 이미지 URL
-  title   String // 제목
-  host    String // 주최단체
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  logoSrc   String? // 로고 이미지 URL
+  posterSrc String? // 포스터 이미지 URL
+  title     String // 제목
+  host      String // 주최단체
 
   summary String? // 요약
 
