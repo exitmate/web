@@ -15,6 +15,8 @@ interface CardProps {
   host: string
   id: string
   onClick: (id: string) => void
+  isBookmarked: boolean
+  onToggleBookmark: (id: string, next: boolean) => void 
 }
 
 const renderDate = (date: Date | null) => {
@@ -49,6 +51,8 @@ export const ProgramCard = ({
   host,
   id,
   onClick,
+  isBookmarked,
+  onToggleBookmark,
 }: CardProps) => {
   return (
     <CardContainer onClick={() => onClick(id)}>
@@ -56,7 +60,11 @@ export const ProgramCard = ({
         <Badge content={renderDeadline(deadline ? new Date(deadline) : null)} />
       </div>
       <div style={{ position: 'absolute', bottom: '12px', right: '12px' }}>
-        <BookMark isBookmarked={false} />
+        <BookMark isBookmarked={isBookmarked} onClick={(e) => {
+            e.stopPropagation()
+            onToggleBookmark(id, !isBookmarked)
+          }}
+        />
       </div>
       <ImageContainer>
         <StyledImage

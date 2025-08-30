@@ -6,6 +6,7 @@ import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const tempData = {
   data: {
@@ -289,6 +290,7 @@ export const RecommendedProgramList = () => {
   const { status } = useSession()
   const isLoggedIn = status === 'authenticated'
   const router = useRouter()
+  const [bookmarkedProjects, setBookmarkedProjects] = useState<string[]>([])
   const { data, isLoading } = useQuery({
     queryKey: ['programs'],
     queryFn: () =>
@@ -333,6 +335,15 @@ export const RecommendedProgramList = () => {
                 host={program.host}
                 id={program.id}
                 onClick={() => { router.push(`/projects/${program.id}`) }}
+                isBookmarked={bookmarkedProjects.includes(program.id)}
+                onToggleBookmark={(id, next) => {
+                  setBookmarkedProjects((prev) => {
+                    if (next) {
+                      return [...prev, id]
+                    }
+                    return prev.filter((projectId) => projectId !== id)
+                  })
+                }}
               />
             ))
           ) : (
@@ -344,8 +355,17 @@ export const RecommendedProgramList = () => {
                 createdAt={new Date(program.createdAt)}
                 deadline={program.deadline}
                 host={program.host}
-                id={program.id}
-                onClick={() => { router.push(`/projects/${program.id}`) }}
+                id={program._id.$oid}
+                onClick={() => { router.push(`/projects/${program._id.id}`) }}
+                isBookmarked={bookmarkedProjects.includes(program._id.$oid)}
+                onToggleBookmark={(id, next) => {
+                  setBookmarkedProjects((prev) => {
+                    if (next) {
+                      return [...prev, id]
+                    }
+                    return prev.filter((projectId) => projectId !== id)
+                  })  
+                }}
               />
             ))
           )}
