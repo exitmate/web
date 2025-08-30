@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 const ApplyPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [step, setStep] = useState(1);
-  const [isCompleted, setIsCompleted] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {

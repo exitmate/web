@@ -46,7 +46,7 @@ const Modal = ({
   }
 
   return createPortal(
-    <Overlay ref={overlayRef} onMouseDown={handleOverlayClick} style={style}>
+    <Overlay ref={overlayRef} onMouseDown={handleOverlayClick}>
       <Dialog
         role="dialog"
         aria-modal="true"
