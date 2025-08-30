@@ -1,22 +1,17 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
-import colors from '@/utils/colors'
-import { ChatInput } from '@/features/chat/ChatInput'
-import { ChatBotBubble } from './ChatBotBubble'
-
-interface Message {
-  id: string
-  role: 'user' | 'bot'
-  content: string
-  timestamp: Date
-}
+import { ChatList } from './chatlist/ChatList'
+import { ChatSection } from './chatsection/ChatSection'
+import { Message, ChatbotSession } from './types'
 
 export const ChatBot = () => {
+  const [sessions, setSessions] = useState<ChatbotSession[]>([])
+  const [currentSessionId, setCurrentSessionId] = useState<string>()
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
+      id: 'welcome',
       role: 'bot',
       content:
         '안녕하세요! ExitMate 챗봇입니다. 폐업과 관련된 궁금한 점이 있으시면 언제든 물어보세요.',
@@ -25,18 +20,91 @@ export const ChatBot = () => {
   ])
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const chatContainerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [isLoadingSessions, setIsLoadingSessions] = useState(true)
+  const [isSessionListOpen, setIsSessionListOpen] = useState(false)
 
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+  // 채팅방 목록 불러오기
+  const loadSessions = async () => {
+    try {
+      const response = await fetch('/api/ai/chats')
+      if (!response.ok) {
+        throw new Error('채팅방 목록을 불러오는데 실패했습니다.')
+      }
+      const data = await response.json()
+      setSessions(data.data)
+
+      // 첫 번째 세션이 있으면 자동으로 선택하지 않음 - 새로운 대화 화면 유지
+    } catch (error) {
+      console.error('Failed to load sessions:', error)
+    } finally {
+      setIsLoadingSessions(false)
     }
   }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+  // 특정 세션의 메시지 불러오기
+  const loadMessagesForSession = async (sessionId: string) => {
+    try {
+      const response = await fetch(`/api/ai/chats/${sessionId}`)
+      if (!response.ok) {
+        throw new Error('채팅 메시지를 불러오는데 실패했습니다.')
+      }
+      const data = await response.json()
+
+      const formattedMessages: Message[] = data.data.messages.map(
+        (msg: any) => ({
+          id: msg.id,
+          role: msg.senderType === 'MEMBER' ? 'user' : 'bot',
+          content: msg.content,
+          timestamp: new Date(msg.createdAt),
+        }),
+      )
+
+      // 첫 번째 메시지가 봇 메시지가 아니면 환영 메시지 추가
+      if (
+        formattedMessages.length === 0 ||
+        formattedMessages[0].role === 'user'
+      ) {
+        formattedMessages.unshift({
+          id: 'welcome',
+          role: 'bot',
+          content:
+            '안녕하세요! ExitMate 챗봇입니다. 폐업과 관련된 궁금한 점이 있으시면 언제든 물어보세요.',
+          timestamp: new Date(),
+        })
+      }
+
+      setMessages(formattedMessages)
+      setCurrentSessionId(sessionId)
+      setIsSessionListOpen(false) // 채팅방 선택 시 목록 닫기
+    } catch (error) {
+      console.error('Failed to load messages:', error)
+    }
+  }
+
+  // 컴포넌트 마운트 시 채팅방 목록 불러오기
+  React.useEffect(() => {
+    loadSessions()
+  }, [])
+
+  // 새 채팅방 생성
+  const createNewSession = () => {
+    setCurrentSessionId(undefined)
+    setMessages([
+      {
+        id: 'welcome',
+        role: 'bot',
+        content:
+          '안녕하세요! ExitMate 챗봇입니다. 폐업과 관련된 궁금한 점이 있으시면 언제든 물어보세요.',
+        timestamp: new Date(),
+      },
+    ])
+    setIsSessionListOpen(false) // 새 채팅방 생성 시 목록 닫기
+  }
+
+  // 채팅방 목록 토글
+  const toggleSessionList = () => {
+    setIsSessionListOpen(!isSessionListOpen)
+  }
 
   const handleSend = async (message: string) => {
     const trimmed = message.trim()
@@ -61,6 +129,7 @@ export const ChatBot = () => {
         },
         body: JSON.stringify({
           question: trimmed,
+          chatbotSessionId: currentSessionId,
         }),
       })
 
@@ -77,6 +146,13 @@ export const ChatBot = () => {
       }
 
       setMessages((prev) => [...prev, botMessage])
+
+      // 새로운 세션이 생성된 경우
+      if (!currentSessionId && data.data.chatbotSessionId) {
+        setCurrentSessionId(data.data.chatbotSessionId)
+        // 세션 목록 새로고침
+        await loadSessions()
+      }
     } catch (error) {
       console.error('Chat error:', error)
       const errorMessage: Message = {
@@ -92,124 +168,39 @@ export const ChatBot = () => {
     }
   }
 
+  // 초기 로딩 상태는 표시하지 않음 - 채팅방 목록을 열 때만 표시
+
   return (
     <ChatBotContainer>
-      <ChatBotMessages ref={chatContainerRef}>
-        {messages.map((message, index) => (
-          <ChatBotBubble
-            key={message.id}
-            message={message.content}
-            isUser={message.role === 'user'}
-            index={index}
-          />
-        ))}
-        {isLoading && (
-          <LoadingBubble>
-            <LoadingDots>
-              <span></span>
-              <span></span>
-              <span></span>
-            </LoadingDots>
-          </LoadingBubble>
-        )}
-      </ChatBotMessages>
-      <ChatInputWrapper>
-        <ChatInput
-          ref={inputRef}
-          onSend={handleSend}
-          placeholder="궁금한 점을 물어보세요..."
-          value={inputValue}
-          onChange={setInputValue}
-          disabled={isLoading}
-        />
-      </ChatInputWrapper>
+      <ChatList
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        isLoadingSessions={isLoadingSessions}
+        isOpen={isSessionListOpen}
+        onSessionSelect={loadMessagesForSession}
+        onNewChat={createNewSession}
+        onBackToChat={toggleSessionList}
+      />
+
+      <ChatSection
+        messages={messages}
+        currentSessionId={currentSessionId}
+        sessions={sessions}
+        inputValue={inputValue}
+        isLoading={isLoading}
+        isOpen={!isSessionListOpen}
+        onSend={handleSend}
+        onInputChange={setInputValue}
+        onToggleSessionList={toggleSessionList}
+      />
     </ChatBotContainer>
   )
 }
 
 const ChatBotContainer = styled.div`
   display: flex;
-  flex-direction: column;
   height: 100%;
-  padding: 20px;
   min-height: 0;
-`
-
-const ChatBotMessages = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 0;
-  overflow-y: auto;
-  gap: 8px;
-  margin-bottom: 16px;
-  min-height: 0;
-  line-height: 1.2;
-
-  scrollbar-width: thin;
-  scrollbar-color: ${colors.gray[3]} transparent;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${colors.gray[3]};
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: ${colors.gray[4]};
-  }
-`
-
-const LoadingBubble = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin: 8px 0;
-`
-
-const LoadingDots = styled.div`
-  background: ${colors.gray[2]};
-  border-radius: 18px;
-  padding: 12px 16px;
-  display: flex;
-  gap: 4px;
-
-  span {
-    width: 6px;
-    height: 6px;
-    background: ${colors.gray[5]};
-    border-radius: 50%;
-    animation: loading 1.4s infinite ease-in-out;
-
-    &:nth-of-type(1) {
-      animation-delay: -0.32s;
-    }
-
-    &:nth-of-type(2) {
-      animation-delay: -0.16s;
-    }
-  }
-
-  @keyframes loading {
-    0%,
-    80%,
-    100% {
-      transform: scale(0.8);
-      opacity: 0.5;
-    }
-    40% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-`
-
-const ChatInputWrapper = styled.div`
-  flex-shrink: 0;
-  margin-top: auto;
+  position: relative;
+  overflow: hidden;
 `
