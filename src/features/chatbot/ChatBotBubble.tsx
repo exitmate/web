@@ -1,5 +1,6 @@
 'use client'
 
+import { MarkdownRender } from '@/components/ui/MarkdownRender'
 import colors from '@/utils/colors'
 import { css, keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -16,18 +17,18 @@ export const ChatBotBubble = ({
   index,
 }: ChatBotBubbleProps) => {
   // 문자열에서 줄바꿈 처리
-  const formatMessage = (msg: string) => {
-    return msg.split('\n').map((line, i) => (
-      <span key={i}>
-        {line}
-        {i < msg.split('\n').length - 1 && <br />}
-      </span>
-    ))
-  }
+  // const formatMessage = (msg: string) => {
+  //   return msg.split('\n').map((line, i) => (
+  //     <span key={i}>
+  //       {line}
+  //       {i < msg.split('\n').length - 1 && <br />}
+  //     </span>
+  //   ))
+  // }
 
   return (
     <ChatBotBubbleContainer isUser={isUser} index={index}>
-      {formatMessage(message)}
+      <MarkdownRender markdown={message} />
     </ChatBotBubbleContainer>
   )
 }
@@ -48,7 +49,7 @@ const ChatBotBubbleContainer = styled.div<{ isUser: boolean; index?: number }>`
   flex-direction: column;
   max-width: 280px;
   width: fit-content;
-  padding: 12px 16px;
+  padding: 12px 16px 0 16px;
   font-size: 14px;
   line-height: 1.4;
   border-radius: 12px;
@@ -71,6 +72,11 @@ const ChatBotBubbleContainer = styled.div<{ isUser: boolean; index?: number }>`
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     opacity: 1;
+  }
+
+  & div p {
+    margin: 0 !important;
+    line-height: 1.5 !important;
   }
 `
 
