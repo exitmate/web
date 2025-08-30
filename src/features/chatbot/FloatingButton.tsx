@@ -94,8 +94,8 @@ const ChatContainer = styled.div`
   position: fixed !important;
   bottom: 100px !important;
   right: 24px !important;
-  width: 380px !important;
-  height: 600px !important;
+  width: 500px !important;
+  height: 700px !important;
   background: white !important;
   border-radius: 12px !important;
   z-index: 99998 !important;
@@ -104,7 +104,7 @@ const ChatContainer = styled.div`
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
   overflow: hidden !important;
 
-  @media (max-width: 420px) {
+  @media (max-width: 540px) {
     width: calc(100vw - 48px) !important;
     right: 24px !important;
   }
