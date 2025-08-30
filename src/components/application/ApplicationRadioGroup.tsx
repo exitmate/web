@@ -1,7 +1,8 @@
 import { CommonRadioGroup } from "@/components/common/CommonRadioGroup"
 import colors from "@/utils/colors"
-import { HStack, Input } from "@chakra-ui/react"
+import { HStack, Input, Spinner } from "@chakra-ui/react"
 import styled from "@emotion/styled"
+import { useState } from "react"
 
 interface ApplicationRadioGroupProps {
   label: string
@@ -28,10 +29,14 @@ export const ApplicationRadioGroup = ({
   onChangeEtcText,
   setSavedFor,
 }: ApplicationRadioGroupProps) => {
-  const onSave = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const onSave = async () => {
     const finalValue = selected === '5' ? (etcText ?? '').trim() : selected
     if (!finalValue) return
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 300))    
     setSavedFor(label, true, index, finalValue)
+    setIsLoading(false)
   }
 
   const disabledAll = isSaved || !active
@@ -63,13 +68,15 @@ export const ApplicationRadioGroup = ({
         />
       </div>
 
-      <MaterialIcon
-        className="material-symbols-outlined"
-        onClick={onSave}
-        isSaved={isSaved}
-      >
-        check_circle
-      </MaterialIcon>
+      {isLoading ? <Spinner size="sm" color={POINT_COLOR} /> : (
+        <MaterialIcon
+          className="material-symbols-outlined"
+          onClick={onSave}
+          isSaved={isSaved}
+        >
+          check_circle
+        </MaterialIcon>
+      )}
     </HStack>
   )
 }

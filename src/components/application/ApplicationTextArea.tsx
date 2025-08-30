@@ -1,6 +1,7 @@
 import colors from '@/utils/colors'
-import { HStack, Text, VStack } from '@chakra-ui/react'
+import { HStack, Spinner, Text, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 interface ApplicationTextAreaProps {
   label: string
@@ -26,14 +27,19 @@ export const ApplicationTextArea = ({
   setSavedFor,
 }: ApplicationTextAreaProps) => {
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const onClickContainer = () => {
     if (!defaultValue || isSaved || !active) return
     if (value && value.trim() !== '') return
     onChange(defaultValue)
   }
 
-  const onSave = () => {
+  const onSave = async () => {
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 300))
     setSavedFor(label, true, index, value)
+    setIsLoading(false)
   }
 
   return (
@@ -61,6 +67,7 @@ export const ApplicationTextArea = ({
           rows={4}
         />
       </VStack>
+      {isLoading ? <Spinner size="sm" color={POINT_COLOR} /> : (
       <MaterialIcon
         className="material-symbols-outlined"
         onClick={onSave}
@@ -68,6 +75,7 @@ export const ApplicationTextArea = ({
       >
         check_circle
       </MaterialIcon>
+      )}
     </HStack>
   )
 }
