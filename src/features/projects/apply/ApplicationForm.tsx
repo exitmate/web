@@ -9,6 +9,7 @@ import { formatYMD } from '@/utils/date'
 import { Box, HStack, Text, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { useEffect, useState } from 'react'
+import { useProjectDetail } from '../detail/ProjectDetailContext'
 
 interface UserInfoSectionProps {
   activeIndex: number
@@ -285,6 +286,7 @@ export const ApplicationForm = ({ isCompleted, setIsCompleted, step, setStep }: 
   const [activeIndex, setActiveIndex] = useState(0)
   const [saved, setSaved] = useState<Record<string, boolean>>({})
   const [values, setValues] = useState<Record<string, string>>({})
+  const { project } = useProjectDetail()
 
   const setSavedFor = (
     key: string,
@@ -311,6 +313,10 @@ export const ApplicationForm = ({ isCompleted, setIsCompleted, step, setStep }: 
 
   return (
     <PaddedBox style={{ gap: 28, display: 'flex', flexDirection: 'column' }}>
+      <VStack gap={2} marginBottom={8}>
+        <Text fontSize="32px" fontWeight="600" color={colors.gray[8]}>{project?.title} 신청서</Text>
+        <Text fontSize="16px" fontWeight="400" color={colors.gray[6]}>사실과 내용이 다를 경우 클릭하면 수정할 수 있습니다.</Text>
+      </VStack>
       <UserInfoSection
         activeIndex={activeIndex}
         saved={saved}
