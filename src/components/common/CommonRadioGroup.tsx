@@ -19,11 +19,11 @@ export const CommonRadioGroup = ({
   return (
     <RadioGroup.Root
       value={value}
-      onValueChange={onChange}
+      onValueChange={(detail) => onChange(detail.value ?? '')}
       disabled={disabled}
       style={{ paddingBottom: '8px' }}
     >
-      <Text>{label}</Text>
+      <Text fontSize="16px" fontWeight="500">{label}</Text>
       <Spacing height={16} />
       <HStack gap="6">
         {items.map((item) => (
@@ -31,7 +31,7 @@ export const CommonRadioGroup = ({
             key={item.value}
             value={item.value}
             disabled={disabled || item.disabled}
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: '16px', color: disabled || item.disabled ? 'gray' : 'black' }}
           >
             <RadioGroup.ItemHiddenInput />
             <RadioGroup.ItemIndicator />
