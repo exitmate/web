@@ -1,4 +1,5 @@
 import { ApplicationInput } from '@/components/application/ApplicationInput'
+import { ApplicationRadioGroup } from '@/components/application/ApplicationRadioGroup'
 import { PaddedBox } from '@/components/common/PaddedBox'
 import { $Enums } from '@/generated/prisma'
 import useUserStore from '@/stores/user'
@@ -12,6 +13,8 @@ interface UserInfoSectionProps {
   activeIndex: number
   saved: Record<string, boolean>
   setSavedFor: (label: string, val: boolean, idx: number) => void
+  values: Record<string, string>
+  setValues: (values: Record<string, string>) => void
 }
 
 interface UserInfoSectionProps {
@@ -19,12 +22,25 @@ interface UserInfoSectionProps {
   saved: Record<string, boolean>
   setSavedFor: (key: string, val: boolean, idx: number) => void
   baseOffset: number
+  values: Record<string, string>
+  setValues: (values: Record<string, string>) => void
 }
 
 const USER_PREFIX = 'USER:'
 const BIZ_PREFIX = 'BIZ:'
 
-const renderRows = (items: string[], prefix: string, baseOffset: number, activeIndex: number, offset: number, saved: Record<string, boolean>, setSavedFor: (key: string, val: boolean, idx: number) => void, fieldMap: Record<string, string>) => {
+const renderRows = (
+  items: string[],
+  prefix: string,
+  baseOffset: number,
+  activeIndex: number,
+  offset: number,
+  saved: Record<string, boolean>,
+  setSavedFor: (key: string, val: boolean, idx: number, value?: string) => void,
+  fieldMap: Record<string, string>,
+  values: Record<string, string>,
+  setValues: (values: Record<string, string>) => void
+) => {
   const rows: React.ReactNode[] = []
   for (let i = 0; i < items.length; i += 2) {
     const left  = items[i]
@@ -36,13 +52,20 @@ const renderRows = (items: string[], prefix: string, baseOffset: number, activeI
           <ApplicationInput
             key={prefix + left}
             label={left}
-            value=""
-            onChange={() => {}}
+            value={values[prefix + left] ?? ''}
+            onChange={(v) => setValues({ ...values, [prefix + left]: v })}
             index={baseOffset + i}
             active={activeIndex === baseOffset + i}
             preValue={fieldMap[left]}
             isSaved={!!saved[prefix + left]}
-            setSaved={(val) => setSavedFor(prefix + left, val, baseOffset + i)}
+            setSaved={(val) =>
+              setSavedFor(
+                prefix + left,
+                val,
+                baseOffset + i,
+                (values[prefix + left] ?? '')
+              )
+            }
           />
         </Box>
 
@@ -51,13 +74,20 @@ const renderRows = (items: string[], prefix: string, baseOffset: number, activeI
             <ApplicationInput
               key={prefix + right}
               label={right}
-              value=""
-              onChange={() => {}}
+              value={values[prefix + right] ?? ''} 
+              onChange={(v) => setValues({ ...values, [prefix + right]: v })} 
               index={baseOffset + i + 1}
               active={activeIndex === baseOffset + i + 1}
               preValue={fieldMap[right]}
               isSaved={!!saved[prefix + right]}
-              setSaved={(val) => setSavedFor(prefix + right, val, baseOffset + i + 1)}
+              setSaved={(val) =>
+                setSavedFor(
+                  prefix + right,
+                  val,
+                  baseOffset + i + 1,
+                  (values[prefix + right] ?? '')
+                )
+              }
             />
           </Box>
         ) : (
@@ -68,8 +98,7 @@ const renderRows = (items: string[], prefix: string, baseOffset: number, activeI
   }
   return <VStack w="100%" gap={8}>{rows}</VStack>
 }
-
-const UserInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset }: UserInfoSectionProps) => {
+const UserInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset, values, setValues }: UserInfoSectionProps) => {
   const { member } = useUserStore()
   const fieldMap: Record<string, string> = {
     '신청인(대표자)': member.name ?? '',
@@ -88,14 +117,18 @@ const UserInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset }: UserIn
     <VStack width="100%" alignItems="flex-start" gap={8}>
       <SectionTitle>1. 신청자 정보 (대표자)</SectionTitle>
       <VStack width="100%" alignItems="flex-start" gap={8}>
-      <LeftSection>{renderRows(leftLabels, USER_PREFIX, 0, activeIndex, 0, saved, setSavedFor, fieldMap)}</LeftSection>
-      <RightSection>{renderRows(rightLabels, USER_PREFIX, mid, activeIndex, mid, saved, setSavedFor, fieldMap)}</RightSection>
+      <LeftSection>
+        {renderRows(leftLabels, USER_PREFIX, 0, activeIndex, 0, saved, setSavedFor, fieldMap, values, setValues)}
+      </LeftSection>
+      <RightSection>
+        {renderRows(rightLabels, USER_PREFIX, mid, activeIndex, mid, saved, setSavedFor, fieldMap, values, setValues)}
+      </RightSection>
       </VStack>
     </VStack>
   )
 }
 
-const BusinessInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset }: UserInfoSectionProps) => {
+const BusinessInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset, values, setValues }: UserInfoSectionProps) => {
   const { member } = useUserStore()
 
   const formatIndustryCategory = (category?: $Enums.IndustryCategory) => {
@@ -115,11 +148,10 @@ const BusinessInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset }: Us
     '팩스': '',
     '사업장 주소': member.businessInfo?.region ?? '',
     '상시 종업원': member.businessInfo?.employeeCount != null ? `${member.businessInfo.employeeCount}명` : '',
-    '점포 입지': '',
   }
 
   const labels = Object.keys(fieldMap)
-  const mid = Math.ceil(labels.length / 2)
+  const mid = Math.ceil(labels.length / 2) + 1
   const leftLabels = labels.slice(0, mid)
   const rightLabels = labels.slice(mid)
 
@@ -127,16 +159,26 @@ const BusinessInfoSection = ({ activeIndex, saved, setSavedFor, baseOffset }: Us
     <VStack width="100%" alignItems="flex-start" gap={8}>
       <SectionTitle>2. 사업자 등록정보</SectionTitle>
       <VStack width="100%" alignItems="flex-start" gap={8}>
-        {renderRows(leftLabels, BIZ_PREFIX, baseOffset, activeIndex, 0, saved, setSavedFor, fieldMap)}
-        {renderRows(rightLabels, BIZ_PREFIX, mid + baseOffset, activeIndex, mid, saved, setSavedFor, fieldMap)}
+      {renderRows(leftLabels, BIZ_PREFIX, baseOffset, activeIndex, 0, saved, setSavedFor, fieldMap, values, setValues)}
+      {renderRows(rightLabels, BIZ_PREFIX, mid + baseOffset, activeIndex, mid, saved, setSavedFor, fieldMap, values, setValues)}
       </VStack>
+      <ApplicationRadioGroup
+        label="점포 입지"
+        index={14}
+        value={values[BIZ_PREFIX + '점포 입지'] ?? ''}
+        onChange={(v) => setValues({ ...values, [BIZ_PREFIX + '점포 입지']: v })}
+        active={activeIndex === 14}
+        preValue={fieldMap['점포 입지']}
+        isSaved={!!saved[BIZ_PREFIX + '점포 입지']}
+        setSavedFor={setSavedFor}
+      />
     </VStack>
   )
 }
 
 export const ApplicationForm = () => {
   const USER_LABELS = ['신청인(대표자)', '휴대폰', '생년월일', '이메일'] as const
-  const BUSINESS_LABELS = ['업체명','사업개시일','사업자 등록번호','전화번호', '팩스','폐업예정일','점포 입지','업태','업종','사업장 주소','상시 종업원'] as const
+  const BUSINESS_LABELS = ['업체명','사업개시일','사업자 등록번호','전화번호', '팩스','폐업예정일','점포 입지','업태','업종','사업장 주소','상시 종업원', '점포 입지'] as const
 
   const userOffset = 0
   const businessOffset = USER_LABELS.length
@@ -144,9 +186,15 @@ export const ApplicationForm = () => {
 
   const [activeIndex, setActiveIndex] = useState(0)
   const [saved, setSaved] = useState<Record<string, boolean>>({})
+  const [values, setValues] = useState<Record<string, string>>({})
 
-  const setSavedFor = (key: string, val: boolean, idx: number) => {
+  console.log(values)
+
+  const setSavedFor = (key: string, val: boolean, idx: number, value?: string) => {
     setSaved(prev => ({ ...prev, [key]: val }))
+    if (value !== undefined) {
+      setValues(prev => ({ ...prev, [key]: value }))
+    }
     if (val && idx === activeIndex) {
       setActiveIndex(Math.min(idx + 1, TOTAL - 1))
     }
@@ -159,12 +207,16 @@ export const ApplicationForm = () => {
         saved={saved}
         setSavedFor={setSavedFor}
         baseOffset={userOffset}
+        values={values}
+        setValues={setValues}
       />
       <BusinessInfoSection
         activeIndex={activeIndex}
         saved={saved}
         setSavedFor={setSavedFor}
         baseOffset={businessOffset}
+        values={values}
+        setValues={setValues}
       />
     </PaddedBox>
   )

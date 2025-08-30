@@ -1,7 +1,6 @@
 import colors from '@/utils/colors'
 import { Input, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
-import { useState } from 'react'
 
 interface ApplicationInputProps {
   label: string
@@ -25,17 +24,13 @@ export const ApplicationInput = ({
   isSaved,
   setSaved,
 }: ApplicationInputProps) => {
-  const [inputValue, setInputValue] = useState(value)
-
   const onClickContainer = () => {
-    if (!preValue) return
-    setInputValue(preValue)
-    onChange(preValue) 
+    if (!preValue || isSaved || !active) return
+    onChange(preValue)
   }
 
   const onSave = () => {
-    if (!inputValue.trim()) return
-    onChange(inputValue)
+    if (!value.trim()) return
     setSaved(true)
   }
 
@@ -44,10 +39,11 @@ export const ApplicationInput = ({
       <Label>{label}</Label>
       <CustomInputContainer isSaved={isSaved} active={active} onClick={onClickContainer}>
         <CustomInput
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}  
           placeholder={preValue}
           readOnly={isSaved || !active}
+          disabled={isSaved || !active}
         />
         <MaterialIcon
           className="material-symbols-outlined"
@@ -64,7 +60,8 @@ export const ApplicationInput = ({
 const Label = styled.span`
   font-size: 16px;
   color: ${colors.gray[8]};
-  font-weight: 500;`
+  font-weight: 500;
+`
 
 const CustomInputContainer = styled.div<{
   isSaved?: boolean
@@ -92,7 +89,7 @@ const CustomInputContainer = styled.div<{
   }
 `
 
-const CustomInput = styled(Input)<{ isSaved?: boolean, }>`
+const CustomInput = styled(Input)`
   border: none;
   outline: none;
   box-shadow: none;
