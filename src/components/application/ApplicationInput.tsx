@@ -1,6 +1,7 @@
 import colors from '@/utils/colors'
-import { Input, VStack } from '@chakra-ui/react'
+import { Input, Spinner, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 interface ApplicationInputProps {
   label: string
@@ -28,10 +29,14 @@ export const ApplicationInput = ({
     if (!preValue || isSaved || !active) return
     onChange(preValue)
   }
+  const [isLoading, setIsLoading] = useState(false)
 
-  const onSave = () => {
+  const onSave = async () => {
     if (!value.trim()) return
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 300))
     setSaved(true)
+    setIsLoading(false)
   }
 
   return (
@@ -45,13 +50,17 @@ export const ApplicationInput = ({
           readOnly={isSaved || !active}
           disabled={isSaved || !active}
         />
-        <MaterialIcon
-          className="material-symbols-outlined"
-          onClick={onSave}
-          isSaved={isSaved}
-        >
-          check_circle
-        </MaterialIcon>
+        {isLoading ? (
+          <Spinner size="sm" color={POINT_COLOR} />
+        ) : (
+          <MaterialIcon
+            className="material-symbols-outlined"
+            onClick={onSave}
+            isSaved={isSaved}
+          >
+            check_circle
+          </MaterialIcon>
+        )}
       </CustomInputContainer>
     </VStack>
   )
@@ -101,8 +110,8 @@ const CustomInput = styled(Input)`
   }
 `
 
-const MaterialIcon = styled.span<{ isSaved?: boolean }>`
-  color: ${({ isSaved }) => (isSaved ? POINT_COLOR : colors.gray[5])};
+const MaterialIcon = styled.span<{ isSaved?: boolean, isLoading?: boolean }>`
+  color: ${({ isSaved, isLoading }) => (isSaved || isLoading ? POINT_COLOR : colors.gray[5])};
   font-size: 24px;
   cursor: pointer;
 `
