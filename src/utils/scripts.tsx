@@ -241,7 +241,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
     id: 10,
     step: 2,
     nextId: 11,
-    field: 'industryCategoryDetail',
+    field: 'industryDetail',
     role: 'bot',
     input: 'select',
     placeholder: '업종 대분류를 입력해주세요.',
@@ -249,7 +249,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   },
   {
     step: 2,
-    field: 'industryCategoryDetail',
+    field: 'industryDetail',
     id: 11,
     nextId: 15,
     role: 'user',
@@ -260,7 +260,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 12,
     step: 2,
-    field: 'industryCategoryDetail',
+    field: 'industryDetail',
     role: 'bot',
     input: 'text',
     placeholder: '업종 세분류를 입력해주세요.',
@@ -269,7 +269,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 13,
     step: 2,
-    field: 'industryCategoryDetail',
+    field: 'industryDetail',
     role: 'bot',
     input: 'select',
     placeholder: '업종 세분류를 입력해주세요.',
@@ -278,7 +278,7 @@ export const script = (businessInfo: BusinessInfo, userName: string) => {
   {
     id: 14,
     step: 2,
-    field: 'industryCategoryDetail',
+    field: 'industryDetail',
     nextId: 15,
     role: 'user',
     input: 'text',

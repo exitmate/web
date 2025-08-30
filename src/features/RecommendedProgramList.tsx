@@ -1,10 +1,12 @@
 import PaddedBox from '@/components/common/PaddedBox'
 import ProgramCard from '@/components/ProgramCard'
+import { ProgramCardSkeleton } from '@/components/ProgramCardSkeleton'
 import colors from '@/utils/colors'
 import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const tempData = {
   data: {
@@ -288,7 +290,8 @@ export const RecommendedProgramList = () => {
   const { status } = useSession()
   const isLoggedIn = status === 'authenticated'
   const router = useRouter()
-  const { data } = useQuery({
+  const [bookmarkedProjects, setBookmarkedProjects] = useState<string[]>([])
+  const { data, isLoading } = useQuery({
     queryKey: ['programs'],
     queryFn: () =>
       fetch('/api/ai/recommendations')
@@ -301,7 +304,21 @@ export const RecommendedProgramList = () => {
 
   const isRecommended = data?.data?.recommendedProjects.length > 0
 
-  console.log(data)
+  if (isLoading) {
+    return (
+      <RecommendedProgramListContainer isRecommended={false}>
+        <PaddedBox>
+          <Title>추천 지원 사업 Top 5</Title>
+        <ProgramCardContainer>
+          {Array.from({ length: 5 }, (_, index) => (
+            <ProgramCardSkeleton key={index} />
+          ))}
+        </ProgramCardContainer>
+        </PaddedBox>
+      </RecommendedProgramListContainer>
+    )
+  }
+
   return (
     <RecommendedProgramListContainer isRecommended={isRecommended}>
       <PaddedBox>
@@ -312,12 +329,21 @@ export const RecommendedProgramList = () => {
               <ProgramCard
                 key={program.id}
                 title={program.title}
-                logoSrc={program.imageUrl}
-                createdAt={new Date(program.postedDate)}
+                logoSrc={program.logoSrc}
+                createdAt={new Date(program.createdAt)}
                 deadline={new Date(program.deadline)}
-                host={program.centerName}
-                id={program.id.toString()}
-                onClick={() => {}}
+                host={program.host}
+                id={program.id}
+                onClick={() => { router.push(`/projects/${program.id}`) }}
+                isBookmarked={bookmarkedProjects.includes(program.id)}
+                onToggleBookmark={(id, next) => {
+                  setBookmarkedProjects((prev) => {
+                    if (next) {
+                      return [...prev, id]
+                    }
+                    return prev.filter((projectId) => projectId !== id)
+                  })
+                }}
               />
             ))
           ) : (
@@ -330,7 +356,16 @@ export const RecommendedProgramList = () => {
                 deadline={program.deadline}
                 host={program.host}
                 id={program._id.$oid}
-                onClick={() => { router.push(`/projects/${program._id.$oid}`) }}
+                onClick={() => { router.push(`/projects/${program._id.id}`) }}
+                isBookmarked={bookmarkedProjects.includes(program._id.$oid)}
+                onToggleBookmark={(id, next) => {
+                  setBookmarkedProjects((prev) => {
+                    if (next) {
+                      return [...prev, id]
+                    }
+                    return prev.filter((projectId) => projectId !== id)
+                  })  
+                }}
               />
             ))
           )}

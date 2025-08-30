@@ -1,6 +1,7 @@
 import { ProjectResponse } from '@/app/api/projects/schema'
 import PageNation from '@/components/common/PageNation'
 import ProgramCard from '@/components/ProgramCard'
+import { ProgramCardSkeleton } from '@/components/ProgramCardSkeleton'
 import { Filter } from '@/utils/types'
 import { Flex } from '@chakra-ui/react'
 import styled from '@emotion/styled'
@@ -10,22 +11,26 @@ import { useState } from 'react'
 import FilterSection from './FilterSection'
 
 const buildProjectsUrl = (page: number, filter: Filter) => {
-  const params = new URLSearchParams();
-  params.set('limit', '15');
-  params.set('page', String(page));
+  const params = new URLSearchParams()
+  params.set('limit', '15')
+  params.set('page', String(page))
 
-  if (filter.applicationType) params.set('applicationType', filter.applicationType);
-  if (filter.serviceType) params.set('serviceType', filter.serviceType);
-  if (filter.appliableOnly) params.set('appliableOnly', 'true'); // false면 안 붙임
+  if (filter.applicationType)
+    params.set('applicationType', filter.applicationType)
+  if (filter.serviceType) params.set('serviceType', filter.serviceType)
+  if (filter.appliableOnly) params.set('appliableOnly', 'true')
 
-  return `/api/projects?${params.toString()}`;
-};
+  return `/api/projects?${params.toString()}`
+}
 
-async function fetchPrograms(page: number, filter: Filter): Promise<ProjectResponse> {
-  const url = buildProjectsUrl(page, filter);
-  const res = await fetch(url, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch /api/projects');
-  return res.json();
+async function fetchPrograms(
+  page: number,
+  filter: Filter,
+): Promise<ProjectResponse> {
+  const url = buildProjectsUrl(page, filter)
+  const res = await fetch(url, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to fetch /api/projects')
+  return res.json()
 }
 
 export const GridProgramCard = () => {
@@ -38,16 +43,37 @@ export const GridProgramCard = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const router = useRouter()
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['projects', currentPage, filter],
     queryFn: () => fetchPrograms(currentPage, filter),
   })
 
-  const items = data?.data ?? [];
-  const rows = Math.ceil(items.length / 5);
+  const items = data?.data ?? []
+  const rows = Math.ceil(items.length / 5)
+
+  const [bookmarkedProjects, setBookmarkedProjects] = useState<string[]>([])
 
   const onClickProgramCard = (id: string) => {
     router.push(`/projects/${id}`)
+  }
+
+  if (isLoading) {
+    return (
+      <div>
+        <FilterSection filter={filter} setFilter={setFilter} />
+        <GridProgramCardContainer>
+          <FlexContainer>
+            {Array.from({ length: 3 }, (_, index) => (
+              <Flex key={index} gap={4} width="100%">
+                {Array.from({ length: 5 }, (_, colIndex) => (
+                  <ProgramCardSkeleton key={colIndex} />
+                ))}
+              </Flex>
+            ))}
+          </FlexContainer>
+        </GridProgramCardContainer>
+      </div>
+    )
   }
 
   return (
@@ -55,23 +81,35 @@ export const GridProgramCard = () => {
       <FilterSection filter={filter} setFilter={setFilter} />
       <GridProgramCardContainer>
         <FlexContainer>
-          {Array.from(
-            { length: rows },
-            (_, rowIndex) => (
-              <Flex key={rowIndex} gap={4} width="100%">
-                {Array.from({ length: 5 }, (_, colIndex) => {
-                  const programIndex = rowIndex * 5 + colIndex
-                    const program = data?.data[programIndex]
+          {Array.from({ length: rows }, (_, rowIndex) => (
+            <Flex key={rowIndex} gap={4} width="100%">
+              {Array.from({ length: 5 }, (_, colIndex) => {
+                const programIndex = rowIndex * 5 + colIndex
+                const program = data?.data[programIndex]
 
-                  return program ? (
-                    <ProgramCard key={programIndex} {...program} onClick={onClickProgramCard} id={program.id} />
-                  ) : (
-                    <EmptyCard key={programIndex} />
-                  )
-                })}
-              </Flex>
-            ),
-          )}
+                return program ? (
+                  <ProgramCard
+                    key={programIndex}
+                    {...program}
+                    onClick={onClickProgramCard}
+                    id={program.id}
+                    isBookmarked={bookmarkedProjects.includes(program.id)}
+                    onToggleBookmark={(id, next) => {
+                      console.log(id, next)
+                        setBookmarkedProjects((prev) => {
+                          if (next) {
+                            return [...prev, id]
+                          }
+                          return prev.filter((projectId) => projectId !== id)
+                        })
+                      }}
+                  />
+                ) : (
+                  <EmptyCard key={programIndex} />
+                )
+              })}
+            </Flex>
+          ))}
         </FlexContainer>
         <PageNation
           currentPage={currentPage}

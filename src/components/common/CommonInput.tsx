@@ -1,7 +1,7 @@
 'use client'
 
 import colors from '@/utils/colors'
-import { Input } from '@chakra-ui/react'
+import { Input, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
@@ -21,7 +21,7 @@ export const CommonInput = ({
   errorMessage,
 }: CommonInputProps) => {
   return (
-    <>
+    <VStack width="100%" alignItems="flex-start">
     <CustomInput
       placeholder={placeholder}
       type={type}
@@ -29,7 +29,7 @@ export const CommonInput = ({
       isInvalid={isInvalid}
     />
     <ErrorMessage>{errorMessage}</ErrorMessage>
-    </>
+    </VStack>
   )
 }
 

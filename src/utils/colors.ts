@@ -3,6 +3,7 @@ export const colors = {
   white: '#ffffff',
   sub: '#F5F9FE',
   backgroundBrighter: '#F9FBFD',
+  backgroundBlue: '#E4F0FF',
   gray: {
     1: '#f9fbfd',
     2: '#f3f4f6',
@@ -15,6 +16,7 @@ export const colors = {
   },
   black: '#1b1b1b',
   error: '#FF3E3E',
+  green: '#3EE232',
 }
 
 export default colors

@@ -8,31 +8,11 @@ import {
 import { create } from 'zustand'
 
 type UserStore = {
-  member: Member
+  member: Member & { businessInfo: BusinessInfo }
   businessInfo: BusinessInfo
   setMember: (patch: Partial<Member>) => void
   setBusinessInfo: (patch: Partial<BusinessInfo>) => void
   reset: () => void
-}
-
-const initialMember: Member = {
-  id: '',
-  kakaoClientId: '',
-  kakaoNickname: '',
-  email: '',
-  name: '',
-  phoneNumber: '',
-  address: '',
-  addressDetail: '',
-  zipCode: '',
-  birthDate: new Date(),
-  gender: Gender.MALE,
-  agreedPrivacyPolicy: false,
-  agreedTermsOfUse: false,
-  agreedDataUsage: false,
-  agreedMarketing: false,
-  createdAt: new Date(),
-  updatedAt: new Date(),
 }
 
 const initialBusinessInfo: BusinessInfo = {
@@ -54,6 +34,27 @@ const initialBusinessInfo: BusinessInfo = {
   createdAt: new Date(),
   updatedAt: new Date(),
   memberId: null,
+}
+
+const initialMember: Member & { businessInfo: BusinessInfo } = {
+  id: '',
+  kakaoClientId: '',
+  kakaoNickname: '',
+  email: '',
+  name: '',
+  birthDate: new Date(),
+  phoneNumber: '',
+  address: '',
+  addressDetail: '',
+  zipCode: '',
+  gender: Gender.MALE,
+  agreedPrivacyPolicy: false,
+  agreedTermsOfUse: false,
+  agreedDataUsage: false,
+  agreedMarketing: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  businessInfo: initialBusinessInfo,
 }
 
 const useUserStore = create<UserStore>((set) => ({

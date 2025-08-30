@@ -15,14 +15,16 @@ import {
   FieldRoot,
   Fieldset,
   FieldsetContent,
-  Text,
+  HStack,
+  Text
 } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import SearchAddressModal from './SearchAddressModal'
 
 const ReadFullText = ({ url }: { url: string }) => {
   return (
@@ -36,7 +38,8 @@ const ReadFullText = ({ url }: { url: string }) => {
 export const SignUpForm = () => {
   const router = useRouter()
   const { setMember } = useUserStore()
-
+  const [isSearchAddressModalOpen, setIsSearchAddressModalOpen] = useState(false)
+  
   const {
     register,
     handleSubmit,
@@ -54,6 +57,10 @@ export const SignUpForm = () => {
       email: '',
       birthDate: undefined,
       gender: undefined,
+      phoneNumber: '',
+      address: '',
+      addressDetail: '',
+      zipCode: '',
       agreedPrivacyPolicy: false,
       agreedTermsOfUse: false,
       agreedDataUsage: false,
@@ -66,6 +73,19 @@ const onSubmit = async () => {
   setMember(payload as Partial<Member>);
   router.push('/signup/detail');
 };
+
+const handleCompleteAddress = (data: any) => {
+  setValue('address', data.address, {
+    shouldValidate: true,
+    shouldDirty: true,
+    shouldTouch: true,
+  })
+  setValue('zipCode', String(data.zonecode), {
+    shouldValidate: true,
+    shouldDirty: true,
+    shouldTouch: true,
+  })
+}
 
   useEffect(() => {
     trigger()
@@ -124,6 +144,49 @@ const onSubmit = async () => {
                 isInvalid={!!errors.birthDate}
                 onDateChange={handleDateChange}
                 errorMessage={touchedFields.birthDate ? errors.birthDate?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>전화번호</CustomFieldLabel>
+              <CommonInput
+                placeholder="전화번호를 입력해주세요."
+                register={register('phoneNumber')}
+                type="tel"
+                isInvalid={!!errors.phoneNumber}
+                errorMessage={touchedFields.phoneNumber ? errors.phoneNumber?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>우편번호</CustomFieldLabel>
+              <CommonInput
+                placeholder="우편번호를 입력해주세요."
+                register={register('zipCode')}
+                type="text"
+                isInvalid={!!errors.zipCode}
+                errorMessage={touchedFields.zipCode ? errors.zipCode?.message : undefined}
+              />
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>주소</CustomFieldLabel>
+            <HStack width="100%" justifyContent="space-between" alignItems="flex-start" gap={2}>
+              <CommonInput
+                placeholder="주소를 입력해주세요."
+                register={register('address')}
+                type="text"
+                isInvalid={!!errors.address}
+                errorMessage={touchedFields.address ? errors.address?.message : undefined}
+              />
+              <CommonButton label="주소검색" onClick={() => setIsSearchAddressModalOpen(true)} />
+            </HStack>
+            </FieldRoot>
+            <FieldRoot>
+              <CustomFieldLabel>상세주소</CustomFieldLabel>
+              <CommonInput
+                placeholder="상세주소를 입력해주세요."
+                register={register('addressDetail')}
+                type="text"
+                isInvalid={!!errors.addressDetail}
+                errorMessage={touchedFields.addressDetail ? errors.addressDetail?.message : undefined}
               />
             </FieldRoot>
             <Spacing height={18} />
@@ -231,6 +294,7 @@ const onSubmit = async () => {
           </FieldsetContent>
         </Fieldset.Root>
       </form>
+      <SearchAddressModal isOpen={isSearchAddressModalOpen} onClose={() => setIsSearchAddressModalOpen(false)} onComplete={handleCompleteAddress} />
     </SignUpFormContainer>
   )
 }

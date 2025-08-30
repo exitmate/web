@@ -5,11 +5,12 @@ import Image from 'next/image'
 
 interface BookMarkProps {
   isBookmarked: boolean
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
-export const BookMark = ({ isBookmarked }: BookMarkProps) => {
+export const BookMark = ({ isBookmarked, onClick }: BookMarkProps) => {
   return (
-    <BookmarkContainer>
+    <BookmarkContainer onClick={onClick}>
       {isBookmarked ? (
         <Image src={StarClicked} alt="Bookmarked" />
       ) : (
