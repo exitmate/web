@@ -4,16 +4,16 @@ import PaddedBox from '@/components/common/PaddedBox'
 import Spacing from '@/components/common/Spacing'
 import { MarkdownRender } from '@/components/ui/MarkdownRender'
 import colors from '@/utils/colors'
-import { Grid, GridItem, Text, VStack } from '@chakra-ui/react'
+import { Grid, GridItem, Image, Text, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import Link from 'next/link'
 import { useProjectDetail } from './ProjectDetailContext'
 
 export const ProgramDescriptionSection = () => {
   const { project } = useProjectDetail()
-  console.log(project)
   return (
     <PaddedBox style={{marginTop: '40px'}}>
+      { project.posterSrc && <Image src={project.posterSrc} alt={project.title} width="100%" height="auto" /> }
       { project.summary && <MarkdownRender markdown={project.summary} /> }
       <Title>자격 요건</Title>
       <VStack gap={2} alignItems="flex-start">

@@ -151,8 +151,8 @@ export const ComfirmDownloadModal = ({
                   startLoading()
                   setTimeout(() => {
                     const link = document.createElement('a')
-                    link.href = '/files/sample.pdf'
-                    link.download = 'sample.pdf'
+                    link.href = '/files/2025_사업정리_도우미_지원사업_신청서.hwp'
+                    link.download = '2025_사업정리_도우미_지원사업_신청서.hwp'
                     document.body.appendChild(link)
                     link.click()
                     document.body.removeChild(link)
