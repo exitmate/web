@@ -14,7 +14,7 @@ import { useProjectDetail } from '../detail/ProjectDetailContext'
 interface UserInfoSectionProps {
   activeIndex: number
   saved: Record<string, boolean>
-  setSavedFor: (label: string, val: boolean, idx: number) => void
+  setSavedFor: (key: string, val: boolean, idx: number, value?: string) => void
   values: Record<string, string>
   setValues: (values: Record<string, string>) => void
 }
@@ -22,7 +22,7 @@ interface UserInfoSectionProps {
 interface UserInfoSectionProps {
   activeIndex: number
   saved: Record<string, boolean>
-  setSavedFor: (key: string, val: boolean, idx: number) => void
+  setSavedFor: (key: string, val: boolean, idx: number, value?: string) => void
   baseOffset: number
   values: Record<string, string>
   setValues: (values: Record<string, string>) => void

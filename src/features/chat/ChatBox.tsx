@@ -168,6 +168,8 @@ export const ChatBox = () => {
     streamingRef.current = false
   }
 
+  console.log(businessInfo)
+
   const handleSelect = (
     selectedValue: string,
     selectedLabel: string,
