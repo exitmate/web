@@ -15,6 +15,7 @@ export const MarkdownRender = ({ markdown }: MarkdownRenderProps) => {
   const htmlContent = useMemo(() => {
     return remark().use(remarkGfm).use(html).processSync(markdown).toString()
   }, [markdown])
+  console.log(htmlContent)
 
   return <MarkdownContainer dangerouslySetInnerHTML={{ __html: htmlContent }} />
 }
@@ -25,7 +26,7 @@ const MarkdownContainer = styled.div`
     padding-bottom: 0.5rem;
     margin-top: 2.5rem;
     margin-bottom: 1.5rem;
-    font-size: 1.875rem;
+    font-size: 2rem;
     font-weight: 700;
   }
 
@@ -33,7 +34,7 @@ const MarkdownContainer = styled.div`
     padding-bottom: 0.5rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 600;
   }
 
@@ -48,7 +49,6 @@ const MarkdownContainer = styled.div`
   & p {
     margin: 1rem 0;
     line-height: 1.7;
-    font-size: 1rem;
   }
 
   & ul {
@@ -65,7 +65,7 @@ const MarkdownContainer = styled.div`
   & li {
     margin: 0.5rem 0;
     line-height: 1.7;
-    font-size: 1rem;
+    font-size: 1.25rem;
     list-style-type: disc;
   }
 
@@ -96,14 +96,14 @@ const MarkdownContainer = styled.div`
     font-weight: 600;
     border-bottom: 2px solid #e5e7eb;
     color: #374151;
-    font-size: 0.875rem;
+    font-size: 1.25rem;
   }
 
   & td {
     padding: 12px 16px;
     border-bottom: 1px solid #e5e7eb;
     vertical-align: top;
-    font-size: 0.9rem;
+    font-size: 1.25rem;
   }
 
   & tbody tr:hover {
