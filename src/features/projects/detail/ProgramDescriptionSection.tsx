@@ -13,8 +13,11 @@ export const ProgramDescriptionSection = () => {
   const { project } = useProjectDetail()
   return (
     <PaddedBox style={{marginTop: '40px'}}>
-      { project.posterSrc && <Image src={project.posterSrc} alt={project.title} width="100%" height="auto" /> }
-      { project.summary && <MarkdownRender markdown={project.summary} /> }
+      { project.posterSrc && <Image src={project.posterSrc} alt={project.title} width="70%" height="auto" /> }
+      { project.summary && <>
+      <MarkdownRender markdown={project.summary} />
+      <Spacing height={36} />
+      </> }
       <Title>자격 요건</Title>
       <VStack gap={2} alignItems="flex-start">
         {project.applicationRequirements?.map((requirement) => (
