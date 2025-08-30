@@ -47,14 +47,12 @@ export function getWhere(
 ): Prisma.SupportProjectFindManyArgs['where'] {
   const and: Prisma.SupportProjectWhereInput[] = []
 
-  and.push({ isOpen })
-  if (isOpen) {
-    and.push({
-      deadline: {
-        gte: new Date(),
-      },
-    })
-  }
+  and.push({ isOpen: true })
+  and.push({
+    deadline: {
+      gte: new Date(),
+    },
+  })
   if (applicationType) {
     and.push({ applicationType })
   }
