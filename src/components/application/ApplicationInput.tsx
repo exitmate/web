@@ -83,6 +83,7 @@ const CustomInputContainer = styled.div<{
   outline: none;
   padding: 0 12px;
   cursor: pointer;
+  flex: 1;
 
   &:focus {
     border-color: ${({ active, isSaved }) => (active || isSaved ? POINT_COLOR : colors.gray[5])};
