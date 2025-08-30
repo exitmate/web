@@ -8,7 +8,6 @@ export default async function Home() {
   return (
     <div>
       <ProjectsPage />
-      <FloatingChatButton />
     </div>
   )
 }
