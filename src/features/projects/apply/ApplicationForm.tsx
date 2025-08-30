@@ -8,7 +8,7 @@ import colors from '@/utils/colors'
 import { formatYMD } from '@/utils/date'
 import { Box, HStack, Text, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface UserInfoSectionProps {
   activeIndex: number
@@ -247,7 +247,14 @@ const BusinessInfoSection = ({
   )
 }
 
-export const ApplicationForm = () => {
+interface ApplicationFormProps {
+  isCompleted: boolean
+  setIsCompleted: (isCompleted: boolean) => void
+  step: number
+  setStep: (step: number) => void
+}
+
+export const ApplicationForm = ({ isCompleted, setIsCompleted, step, setStep }: ApplicationFormProps ) => {
   const USER_LABELS = [
     '신청인(대표자)',
     '휴대폰',
@@ -293,8 +300,14 @@ export const ApplicationForm = () => {
       setActiveIndex(Math.min(idx + 1, TOTAL - 1))
     }
   }
-  console.log(values)
-  console.log(saved)
+
+
+  useEffect(() => { 
+    if (Object.keys(saved).length === 17) {
+      setIsCompleted(true)
+      setStep(step + 1)
+    }
+  }, [isCompleted, saved])
 
   return (
     <PaddedBox style={{ gap: 28, display: 'flex', flexDirection: 'column' }}>

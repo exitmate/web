@@ -6,7 +6,10 @@ import Spacing from '@/components/common/Spacing'
 import colors from '@/utils/colors'
 import { HStack, Text, VStack } from '@chakra-ui/react'
 import styled from '@emotion/styled'
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useProjectDetail } from '../detail/ProjectDetailContext'
+import { ComfirmDownloadModal } from './ComfirmDownloadModal'
 
 interface ProjectApplyStepCardProps {
   applicationName: string
@@ -93,7 +96,7 @@ const MaterialIcon = styled.span`
 `
 
 interface ProjectApplyStepProps {
-  isCompleted: boolean[]
+  isCompleted: boolean
   step: number
 }
 
@@ -102,7 +105,15 @@ export const ProjectApplyStep = ({
   step,
 }: ProjectApplyStepProps) => {
   const { project } = useProjectDetail()
-  const isCompletedAll = isCompleted.every(Boolean)
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
+  const isCompletedAll = isCompleted
+  const { id } = useParams()
+
+  const onClose = () => {
+    setIsOpen(false)
+    router.push(`/projects/${id}`)
+  }
   return (
     <div
       style={{
@@ -115,26 +126,20 @@ export const ProjectApplyStep = ({
         <ProjectApplyStepText>
           작성 완료된 서류:{' '}
           <span style={{ color: colors.point }}>
-            {isCompleted.filter(Boolean).length}
+            {isCompleted ? 1 : 0}
           </span>
           개
         </ProjectApplyStepText>
         <div style={{ width: '308px', margin: '0 auto' }}>
-          <SegmentedProgress total={2} current={step} />
+          <SegmentedProgress total={1} current={step - 1} />
         </div>
         <Spacing height={16} />
         <HStack gap={4}>
           <ProjectApplyStepCard
             applicationName="지원사업 신청서"
             canAutoWrite={true}
-            isCompleted={isCompleted[0]}
+            isCompleted={isCompleted}
             isActive={step === 1}
-          />
-          <ProjectApplyStepCard
-            applicationName="원상 복구비용 신청서"
-            canAutoWrite={true}
-            isCompleted={isCompleted[1]}
-            isActive={step === 2}
           />
         </HStack>
         <Spacing height={16} />
@@ -143,15 +148,19 @@ export const ProjectApplyStep = ({
             ? '작성이 완료되었어요. 아래에서 정보를 확인 후에 다운로드 받아주세요.'
             : '열심히 작성해요 영차영차!'}
         </CompletedText>
+        
         <CommonButton
           label="파일 다운로드"
-          onClick={() => {}}
+          onClick={() => {
+            setIsOpen(true)
+          }}
           disabled={!isCompletedAll}
         />
         <CationText>
         허위 정보 작성 시 법적 책임을 물을 수 있습니다. 엑시트 메이트는 서류 작성 보조 도구로써 최종 책임은 제출자 본인에게 있습니다.
         </CationText>
       </VStack>
+      <ComfirmDownloadModal isOpen={isOpen} onClose={onClose} />
     </div>
   )
 }
