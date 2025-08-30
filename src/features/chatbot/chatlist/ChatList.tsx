@@ -64,7 +64,7 @@ export const ChatList = ({
   )
 }
 
-const SessionList = styled.div`
+const SessionList = styled.div<{ isOpen: boolean }>`
   width: 100%;
   display: flex;
   flex-direction: column;

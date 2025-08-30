@@ -48,7 +48,9 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    let { question, chatbotSessionId } = ChatbotRequestSchema.parse(body)
+    const parsedBody = ChatbotRequestSchema.parse(body)
+    const { chatbotSessionId: sessionId, question } = parsedBody
+    let chatbotSessionId = sessionId
 
     if (!chatbotSessionId) {
       // 채팅방 id가 undefined일 경우 생성

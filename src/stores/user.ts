@@ -1,4 +1,10 @@
-import { $Enums, BusinessInfo, Gender, LeaseType, Member } from '@/generated/prisma'
+import {
+  $Enums,
+  BusinessInfo,
+  Gender,
+  LeaseType,
+  Member,
+} from '@/generated/prisma'
 import { create } from 'zustand'
 
 type UserStore = {
@@ -15,6 +21,10 @@ const initialMember: Member = {
   kakaoNickname: '',
   email: '',
   name: '',
+  phoneNumber: '',
+  address: '',
+  addressDetail: '',
+  zipCode: '',
   birthDate: new Date(),
   gender: Gender.MALE,
   agreedPrivacyPolicy: false,
