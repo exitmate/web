@@ -180,8 +180,16 @@ export function getPersonalizedWhere(
 }
 
 export async function getAllProjects(skip: number, take: number) {
-  const where = {
+  const where: Prisma.SupportProjectWhereInput = {
     isOpen: true,
+    OR: [
+      {
+        deadline: {
+          gte: new Date(),
+        },
+      },
+      { deadline: null },
+    ],
   }
 
   const projects = await prisma.supportProject.findMany({
